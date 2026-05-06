@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mappa del capitolo — L'Italia dopo l'unità (1861–1900)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    background: #FAF7F2;
+    color: #2C2C2A;
+    min-height: 100vh;
+  }
+
+  .header {
+    background: #2C2C2A;
+    padding: 1.4rem 2.5rem;
+    border-bottom: 4px solid #8B7355;
+  }
+
+  .header-title {
+    font-size: 1.15rem;
+    font-weight: normal;
+    color: #F0EBE0;
+    line-height: 1.4;
+  }
+
+  .header-title em { color: #C2A882; font-style: italic; }
+
+  .header-sub {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    font-size: 0.78rem;
+    color: #888070;
+    margin-top: 0.35rem;
+  }
+
+  .canvas-wrap {
+    width: 100%;
+    overflow-x: auto;
+    padding: 1.5rem 1rem 0.5rem;
+  }
+
+  svg#map {
+    display: block;
+    margin: 0 auto;
+  }
+
+  /* Tooltip / info panel */
+  .info-panel {
+    display: none;
+    margin: 0 2rem 1.5rem;
+    max-width: 780px;
+    background: #FFFDF8;
+    border-radius: 0 6px 6px 0;
+    padding: 1rem 1.25rem;
+    animation: fadeUp 0.2s ease;
+  }
+
+  .info-panel.show { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(-5px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .info-period {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
+  }
+
+  .info-theme {
+    font-size: 1rem;
+    font-weight: normal;
+    margin-bottom: 0.5rem;
+    line-height: 1.35;
+  }
+
+  .info-text {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    font-size: 0.85rem;
+    line-height: 1.65;
+    color: #2C2C2A;
+  }
+
+  .close-info {
+    float: right;
+    font-family: 'Gill Sans', Calibri, sans-serif;
+    font-size: 11px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    margin-left: 1rem;
+    color: #888070;
+  }
+  .close-info:hover { color: #2C2C2A; }
+
+  .legend {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    font-size: 11px;
+    color: #888070;
+    text-align: center;
+    padding: 0.4rem 1rem 1.25rem;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-title"><em>L'Italia dopo l'unità (1861–1900)</em></div>
+  <div class="header-sub">Clicca su un nodo del secondo livello per leggere la descrizione del tema</div>
+</div>
+
+<div class="canvas-wrap">
+<svg id="map" viewBox="0 0 900 660" width="900" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <!-- Period colors as vars via stop tricks; use fill directly -->
+</defs>
+
+<!-- ===================== CONNECTORS CENTER → L1 ===================== -->
+<!-- Destra (top-left) -->
+<line x1="450" y1="330" x2="185" y2="185" stroke="#4A6741" stroke-width="1.5" opacity="0.5"/>
+<!-- Sinistra (top-right) -->
+<line x1="450" y1="330" x2="715" y2="185" stroke="#5B7FA6" stroke-width="1.5" opacity="0.5"/>
+<!-- Crispina (bottom-right) -->
+<line x1="450" y1="330" x2="715" y2="475" stroke="#8B5E3C" stroke-width="1.5" opacity="0.5"/>
+<!-- Crisi (bottom-left) -->
+<line x1="450" y1="330" x2="185" y2="475" stroke="#7A2E1A" stroke-width="1.5" opacity="0.5"/>
+
+<!-- ===================== CONNECTORS L1 → L2: DESTRA ===================== -->
+<line x1="185" y1="185" x2="52"  y2="80"  stroke="#4A6741" stroke-width="1" opacity="0.4"/>
+<line x1="185" y1="185" x2="52"  y2="148" stroke="#4A6741" stroke-width="1" opacity="0.4"/>
+<line x1="185" y1="185" x2="52"  y2="216" stroke="#4A6741" stroke-width="1" opacity="0.4"/>
+<line x1="185" y1="185" x2="52"  y2="284" stroke="#4A6741" stroke-width="1" opacity="0.4"/>
+
+<!-- ===================== CONNECTORS L1 → L2: SINISTRA ===================== -->
+<line x1="715" y1="185" x2="848" y2="58"  stroke="#5B7FA6" stroke-width="1" opacity="0.4"/>
+<line x1="715" y1="185" x2="848" y2="116" stroke="#5B7FA6" stroke-width="1" opacity="0.4"/>
+<line x1="715" y1="185" x2="848" y2="174" stroke="#5B7FA6" stroke-width="1" opacity="0.4"/>
+<line x1="715" y1="185" x2="848" y2="232" stroke="#5B7FA6" stroke-width="1" opacity="0.4"/>
+<line x1="715" y1="185" x2="848" y2="290" stroke="#5B7FA6" stroke-width="1" opacity="0.4"/>
+
+<!-- ===================== CONNECTORS L1 → L2: CRISPINA ===================== -->
+<line x1="715" y1="475" x2="848" y2="390" stroke="#8B5E3C" stroke-width="1" opacity="0.4"/>
+<line x1="715" y1="475" x2="848" y2="458" stroke="#8B5E3C" stroke-width="1" opacity="0.4"/>
+<line x1="715" y1="475" x2="848" y2="526" stroke="#8B5E3C" stroke-width="1" opacity="0.4"/>
+
+<!-- ===================== CONNECTORS L1 → L2: CRISI ===================== -->
+<line x1="185" y1="475" x2="52"  y2="374" stroke="#7A2E1A" stroke-width="1" opacity="0.4"/>
+<line x1="185" y1="475" x2="52"  y2="432" stroke="#7A2E1A" stroke-width="1" opacity="0.4"/>
+<line x1="185" y1="475" x2="52"  y2="490" stroke="#7A2E1A" stroke-width="1" opacity="0.4"/>
+<line x1="185" y1="475" x2="52"  y2="548" stroke="#7A2E1A" stroke-width="1" opacity="0.4"/>
+<line x1="185" y1="475" x2="52"  y2="606" stroke="#7A2E1A" stroke-width="1" opacity="0.4"/>
+
+<!-- ===================== CENTER NODE ===================== -->
+<rect x="348" y="292" width="204" height="76" rx="10" fill="#2C2C2A"/>
+<text x="450" y="320" fill="#F0EBE0" font-family="Georgia,serif" font-size="12.5" text-anchor="middle">L'Italia dopo l'unità</text>
+<text x="450" y="340" fill="#C2A882" font-family="Georgia,serif" font-size="11" text-anchor="middle" font-style="italic">1861 – 1900</text>
+<text x="450" y="358" fill="#888070" font-family="'Gill Sans',Calibri,sans-serif" font-size="9.5" text-anchor="middle">quattro periodi</text>
+
+<!-- ===================== L1: DESTRA STORICA ===================== -->
+<g id="l1-destra" onclick="togglePeriod('destra')" style="cursor:pointer">
+  <rect x="108" y="155" width="154" height="60" rx="8" fill="#4A6741" id="rect-destra"/>
+  <text x="185" y="178" fill="#EEF5EC" font-family="'Gill Sans',Calibri,sans-serif" font-size="11" text-anchor="middle" font-weight="600">Destra storica</text>
+  <text x="185" y="195" fill="#B8D4B0" font-family="'Gill Sans',Calibri,sans-serif" font-size="10" text-anchor="middle">1861 – 1876</text>
+</g>
+
+<!-- ===================== L1: SINISTRA STORICA ===================== -->
+<g id="l1-sinistra" onclick="togglePeriod('sinistra')" style="cursor:pointer">
+  <rect x="638" y="155" width="154" height="60" rx="8" fill="#5B7FA6" id="rect-sinistra"/>
+  <text x="715" y="178" fill="#EEF3F9" font-family="'Gill Sans',Calibri,sans-serif" font-size="11" text-anchor="middle" font-weight="600">Sinistra storica</text>
+  <text x="715" y="195" fill="#B0C8E4" font-family="'Gill Sans',Calibri,sans-serif" font-size="10" text-anchor="middle">1876 – 1887</text>
+</g>
+
+<!-- ===================== L1: ETÀ CRISPINA ===================== -->
+<g id="l1-crispi" onclick="togglePeriod('crispi')" style="cursor:pointer">
+  <rect x="638" y="445" width="154" height="60" rx="8" fill="#8B5E3C" id="rect-crispi"/>
+  <text x="715" y="468" fill="#FAF0E8" font-family="'Gill Sans',Calibri,sans-serif" font-size="11" text-anchor="middle" font-weight="600">Età crispina</text>
+  <text x="715" y="485" fill="#D4A882" font-family="'Gill Sans',Calibri,sans-serif" font-size="10" text-anchor="middle">1887 – 1896</text>
+</g>
+
+<!-- ===================== L1: CRISI DI FINE SECOLO ===================== -->
+<g id="l1-crisi" onclick="togglePeriod('crisi')" style="cursor:pointer">
+  <rect x="108" y="445" width="154" height="60" rx="8" fill="#7A2E1A" id="rect-crisi"/>
+  <text x="185" y="466" fill="#FAF0EC" font-family="'Gill Sans',Calibri,sans-serif" font-size="10.5" text-anchor="middle" font-weight="600">Crisi di fine secolo</text>
+  <text x="185" y="483" fill="#D4907A" font-family="'Gill Sans',Calibri,sans-serif" font-size="10" text-anchor="middle">1896 – 1900</text>
+</g>
+
+<!-- ===================== L2: DESTRA themes ===================== -->
+<g class="l2-destra theme-node" id="t-destra-0" onclick="showInfo('destra',0)" style="display:none;cursor:pointer">
+  <rect x="4" y="60" width="96" height="40" rx="5" fill="#EEF5EC" stroke="#4A6741" stroke-width="1.2"/>
+  <text x="52" y="76" fill="#2C3C28" font-family="'Gill Sans',Calibri,sans-serif" font-size="9.5" text-anchor="middle">Organizzazione</text>
+  <text x="52" y="90" fill="#2C3C28" font-family="'Gill Sans',Calibri,sans-serif" font-size="9.5" text-anchor="middle">dello Stato</text>
+</g>
+<g class="l2-destra theme-node" id="t-destra-1" onclick="showInfo('destra',1)" style="display:none;cursor:pointer">
+  <rect x="4" y="128" width="96" height="40" rx="5" fill="#EEF5EC" stroke="#4A6741" stroke-width="1.2"/>
+  <text x="52" y="144" fill="#2C3C28" font-family="'Gill Sans',Calibri,sans-serif" font-size="9.5" text-anchor="middle">Scelte</text>
+  <text x="52" y="158" fill="#2C3C28" font-family="'Gill Sans',Calibri,sans-serif" font-size="9.5" text-anchor="middle">economiche</text>
+</g>
+<g class="l2-destra theme-node" id="t-destra-2" onclick="showInfo('destra',2)" style="display:none;cursor:pointer">
+  <rect x="4" y="196" width="96" height="40" rx="5" fill="#EEF5EC" stroke="#4A6741" stroke-width="1.2"/>
+  <text x="52" y="211" fill="#2C3C28" font-family="'Gill Sans',Calibri,sans-serif" font-size="9.5" text-anchor="middle">Questione meridionale</text>
+  <text x="52" y="225" fill="#2C3C28" font-family="'Gill Sans',Calibri,sans-serif" font-size="9.5" text-anchor="middle">e brigantaggio</text>
+</g>
+<g class="l2-destra theme-node" id="t-destra-3" onclick="showInfo('destra',3)" style="display:none;cursor:pointer">
+  <rect x="4" y="264" width="96" height="40" rx="5" fill="#EEF5EC" stroke="#4A6741" stroke-width="1.2"/>
+  <text x="52" y="280" fill="#2C3C28" font-family="'Gill Sans',Calibri,sans-serif" font-size="9.5" text-anchor="middle">Questione</text>
+  <text x="52" y="294" fill="#2C3C28" font-family="'Gill Sans',Calibri,sans-serif" font-size="9.5" text-anchor="middle">romana</text>
+</g>
+
+<!-- ===================== L2: SINISTRA themes ===================== -->
+<g class="l2-sinistra theme-node" id="t-sinistra-0" onclick="showInfo('sinistra',0)" style="display:none;cursor:pointer">
+  <rect x="800" y="38" width="96" height="40" rx="5" fill="#EEF3F9" stroke="#5B7FA6" stroke-width="1.2"/>
+  <text x="848" y="54" fill="#1C2C3C" font-family="'Gill Sans',Calibri,sans-serif" font-size="9.5" text-anchor="middle">Rivoluzione</text>
+  <text x="848" y="68" fill="#1C2C3C" font-family="'Gill Sans',Calibri,sans-serif" font-size="9.5" text-anchor="middle">parlamentare</text>
+</g>
+<g class="l2-sinistra theme-node" id="t-sinistra-1" onclick="showInfo('sinistra',1)" style="display:none;cursor:pointer">
+  <rect x="800" y="96" width="96" height="40" rx="5" fill="#EEF3F9" stroke="#5B7FA6" stroke-width="1.2"/>
+  <text x="848" y="112" fill="#1C2C3C" font-family="'Gill Sans',Calibri,sans-serif" font-size="9.5" text-anchor="middle">Riforme</text>
+  <text x="848" y="126" fill="#1C2C3C" font-family="'Gill Sans',Calibri,sans-serif" font-size="9.5" text-anchor="middle">sociali</text>
+</g>
+<g class="l2-sinistra theme-node" id="t-sinistra-2" onclick="showInfo('sinistra',2)" style="display:none;cursor:pointer">
+  <rect x="800" y="154" width="96" height="40" rx="5" fill="#EEF3F9" stroke="#5B7FA6" stroke-width="1.2"/>
+  <text x="848" y="169" fill="#1C2C3C" font-family="'Gill Sans',Calibri,sans-serif" font-size="9.5" text-anchor="middle">Protezionismo e</text>
+  <text x="848" y="183" fill="#1C2C3C" font-family="'Gill Sans',Calibri,sans-serif" font-size="9.5" text-anchor="middle">decollo industriale</text>
+</g>
+<g class="l2-sinistra theme-node" id="t-sinistra-3" onclick="showInfo('sinistra',3)" style="display:none;cursor:pointer">
+  <rect x="800" y="212" width="96" height="40" rx="5" fill="#EEF3F9" stroke="#5B7FA6" stroke-width="1.2"/>
+  <text x="848" y="227" fill="#1C2C3C" font-family="'Gill Sans',Calibri,sans-serif" font-size="9.5" text-anchor="middle">Colonialismo e</text>
+  <text x="848" y="241" fill="#1C2C3C" font-family="'Gill Sans',Calibri,sans-serif" font-size="9.5" text-anchor="middle">Triplice Alleanza</text>
+</g>
+<g class="l2-sinistra theme-node" id="t-sinistra-4" onclick="showInfo('sinistra',4)" style="display:none;cursor:pointer">
+  <rect x="800" y="270" width="96" height="40" rx="5" fill="#EEF3F9" stroke="#5B7FA6" stroke-width="1.2"/>
+  <text x="848" y="286" fill="#1C2C3C" font-family="'Gill Sans',Calibri,sans-serif" font-size="9.5" text-anchor="middle">Il</text>
+  <text x="848" y="300" fill="#1C2C3C" font-family="'Gill Sans',Calibri,sans-serif" font-size="9.5" text-anchor="middle">trasformismo</text>
+</g>
+
+<!-- ===================== L2: CRISPINA themes ===================== -->
+<g class="l2-crispi theme-node" id="t-crispi-0" onclick="showInfo('crispi',0)" style="display:none;cursor:pointer">
+  <rect x="800" y="370" width="96" height="40" rx="5" fill="#FAF0E8" stroke="#8B5E3C" stroke-width="1.2"/>
+  <text x="848" y="386" fill="#3C1C08" font-family="'Gill Sans',Calibri,sans-serif" font-size="9.5" text-anchor="middle">Democrazia</text>
+  <text x="848" y="400" fill="#3C1C08" font-family="'Gill Sans',Calibri,sans-serif" font-size="9.5" text-anchor="middle">autoritaria</text>
+</g>
+<g class="l2-crispi theme-node" id="t-crispi-1" onclick="showInfo('crispi',1)" style="display:none;cursor:pointer">
+  <rect x="800" y="438" width="96" height="40" rx="5" fill="#FAF0E8" stroke="#8B5E3C" stroke-width="1.2"/>
+  <text x="848" y="454" fill="#3C1C08" font-family="'Gill Sans',Calibri,sans-serif" font-size="9.5" text-anchor="middle">Riformismo</text>
+  <text x="848" y="468" fill="#3C1C08" font-family="'Gill Sans',Calibri,sans-serif" font-size="9.5" text-anchor="middle">e repressione</text>
+</g>
+<g class="l2-crispi theme-node" id="t-crispi-2" onclick="showInfo('crispi',2)" style="display:none;cursor:pointer">
+  <rect x="800" y="506" width="96" height="40" rx="5" fill="#FAF0E8" stroke="#8B5E3C" stroke-width="1.2"/>
+  <text x="848" y="521" fill="#3C1C08" font-family="'Gill Sans',Calibri,sans-serif" font-size="9.5" text-anchor="middle">Colonialismo</text>
+  <text x="848" y="535" fill="#3C1C08" font-family="'Gill Sans',Calibri,sans-serif" font-size="9.5" text-anchor="middle">e Adua</text>
+</g>
+
+<!-- ===================== L2: CRISI themes ===================== -->
+<g class="l2-crisi theme-node" id="t-crisi-0" onclick="showInfo('crisi',0)" style="display:none;cursor:pointer">
+  <rect x="4" y="354" width="96" height="40" rx="5" fill="#FDF0EC" stroke="#7A2E1A" stroke-width="1.2"/>
+  <text x="52" y="369" fill="#3C0C04" font-family="'Gill Sans',Calibri,sans-serif" font-size="9.5" text-anchor="middle">Crisi economica e</text>
+  <text x="52" y="383" fill="#3C0C04" font-family="'Gill Sans',Calibri,sans-serif" font-size="9.5" text-anchor="middle">Banca Romana</text>
+</g>
+<g class="l2-crisi theme-node" id="t-crisi-1" onclick="showInfo('crisi',1)" style="display:none;cursor:pointer">
+  <rect x="4" y="412" width="96" height="40" rx="5" fill="#FDF0EC" stroke="#7A2E1A" stroke-width="1.2"/>
+  <text x="52" y="427" fill="#3C0C04" font-family="'Gill Sans',Calibri,sans-serif" font-size="9.5" text-anchor="middle">Tensioni sociali</text>
+  <text x="52" y="441" fill="#3C0C04" font-family="'Gill Sans',Calibri,sans-serif" font-size="9.5" text-anchor="middle">e repressione</text>
+</g>
+<g class="l2-crisi theme-node" id="t-crisi-2" onclick="showInfo('crisi',2)" style="display:none;cursor:pointer">
+  <rect x="4" y="470" width="96" height="40" rx="5" fill="#FDF0EC" stroke="#7A2E1A" stroke-width="1.2"/>
+  <text x="52" y="485" fill="#3C0C04" font-family="'Gill Sans',Calibri,sans-serif" font-size="9.5" text-anchor="middle">Fatti di Milano</text>
+  <text x="52" y="499" fill="#3C0C04" font-family="'Gill Sans',Calibri,sans-serif" font-size="9.5" text-anchor="middle">1898</text>
+</g>
+<g class="l2-crisi theme-node" id="t-crisi-3" onclick="showInfo('crisi',3)" style="display:none;cursor:pointer">
+  <rect x="4" y="528" width="96" height="40" rx="5" fill="#FDF0EC" stroke="#7A2E1A" stroke-width="1.2"/>
+  <text x="52" y="543" fill="#3C0C04" font-family="'Gill Sans',Calibri,sans-serif" font-size="9.5" text-anchor="middle">Leggi Pelloux</text>
+  <text x="52" y="557" fill="#3C0C04" font-family="'Gill Sans',Calibri,sans-serif" font-size="9.5" text-anchor="middle">e Sonnino</text>
+</g>
+<g class="l2-crisi theme-node" id="t-crisi-4" onclick="showInfo('crisi',4)" style="display:none;cursor:pointer">
+  <rect x="4" y="586" width="96" height="40" rx="5" fill="#FDF0EC" stroke="#7A2E1A" stroke-width="1.2"/>
+  <text x="52" y="601" fill="#3C0C04" font-family="'Gill Sans',Calibri,sans-serif" font-size="9.5" text-anchor="middle">Umberto I e</text>
+  <text x="52" y="615" fill="#3C0C04" font-family="'Gill Sans',Calibri,sans-serif" font-size="9.5" text-anchor="middle">elezioni 1900</text>
+</g>
+
+</svg>
+</div>
+
+<div class="info-panel" id="infoPanel">
+  <button class="close-info" onclick="closeInfo()">✕ chiudi</button>
+  <div class="info-period" id="infoPeriod"></div>
+  <div class="info-theme" id="infoTheme"></div>
+  <div class="info-text" id="infoText"></div>
+</div>
+
+<div class="legend">Clicca un nodo di periodo per mostrare i temi · Clicca un tema per leggere la descrizione</div>
+
+<script>
+const PERIODS = {
+  destra:   { label: 'Destra storica · 1861–1876', color: '#4A6741' },
+  sinistra: { label: 'Sinistra storica · 1876–1887', color: '#5B7FA6' },
+  crispi:   { label: 'Età crispina · 1887–1896', color: '#8B5E3C' },
+  crisi:    { label: 'Crisi di fine secolo · 1896–1900', color: '#7A2E1A' }
+};
+
+const INFO = {
+  destra: [
+    {
+      theme: 'L\'organizzazione dello Stato unitario',
+      text: 'Come governare un territorio diviso fino a ieri in sette entità politiche diverse? La Destra scelse il centralismo sul modello francese: estese gli ordinamenti piemontesi all\'intera penisola per decreto, affidò le province a prefetti di nomina governativa, unificò codici, moneta e legge elettorale. Fu la "piemontesizzazione" — una scelta rapida ed efficace, ma non priva di costi per le autonomie locali e le tradizioni giuridiche preesistenti.'
+    },
+    {
+      theme: 'Le scelte economiche',
+      text: 'Il liberismo della Destra non era solo un\'ideologia: era anche una risposta all\'emergenza. Il nuovo Stato aveva ereditato un debito enorme e non disponeva di capitali adeguati. La strada scelta fu il rigore: mercato nazionale unificato, investimenti nelle ferrovie, tassazione pesante sulle imposte indirette. Il provvedimento più impopolare fu la tassa sul macinato (1868). Nel 1875 il pareggio di bilancio fu raggiunto — ma il paese che lo aveva finanziato era più povero e più diseguale.'
+    },
+    {
+      theme: 'La questione meridionale e il brigantaggio',
+      text: 'Il brigantaggio che esplose nel Mezzogiorno tra il 1861 e il 1865 non fu semplice criminalità: fu una guerra civile e sociale alimentata dalla delusione delle aspettative contadine, dall\'imposizione di tasse e leva militare, dal sostegno borbonico e pontificio alle bande. Lo Stato rispose con fino a 120.000 soldati e la legge Pica (1863), che sospese le garanzie costituzionali nelle province colpite. La vittoria militare non toccò nulla di ciò che aveva prodotto il fenomeno.'
+    },
+    {
+      theme: 'La questione romana',
+      text: 'Roma era il nodo che nessuna soluzione poteva sciogliere con facilità. Pio IX non riconosceva il nuovo Stato, respingeva il principio cavouriano di separazione tra Stato e Chiesa e godeva della protezione militare francese. Due tentativi garibaldini fallirono (Aspromonte 1862, Mentana 1867). Fu la guerra franco-prussiana del 1870 a risolvere la questione: il ritiro delle truppe francesi aprì la strada alla Breccia di Porta Pia (20 settembre 1870). La Legge delle Guarentigie (1871) non fu accettata da Pio IX, che promulgò il Non expedit (1874).'
+    }
+  ],
+  sinistra: [
+    {
+      theme: 'La "rivoluzione parlamentare" del 1876',
+      text: 'Il 18 marzo 1876 un gruppo di deputati della Destra votò contro il proprio governo sulla questione della nazionalizzazione delle ferrovie, provocando la caduta di Minghetti. Vittorio Emanuele II affidò l\'incarico ad Agostino Depretis. Le elezioni del novembre confermarono il ribaltamento con una schiacciante vittoria della Sinistra. Per la prima volta dall\'unificazione, la classe dirigente che aveva costruito lo Stato cedeva il potere a un\'altra.'
+    },
+    {
+      theme: 'Le riforme sociali',
+      text: 'Il programma riformatore della Sinistra puntava ad allargare le basi sociali dello Stato. La legge Coppino (1877) estese l\'obbligo scolastico e laicizzò la scuola elementare. La riforma elettorale del 1882 triplicò il corpo elettorale (dal 2% al 7% della popolazione), introducendo l\'alfabetismo come criterio alternativo al censo. Il Codice Zanardelli (1889) abolì la pena di morte e depenalizzò lo sciopero. Furono avviate le prime misure di legislazione sociale: assicurazione infortuni, divieto del lavoro minorile sotto i nove anni.'
+    },
+    {
+      theme: 'Protezionismo e decollo industriale',
+      text: 'Abbandonato il liberismo della Destra, la Sinistra introdusse forti dazi doganali (1878, poi 1887), proteggendo l\'industria tessile e siderurgica del Nord e la produzione cerealicola. Lo Stato divenne il principale finanziatore dell\'industria nazionale attraverso commesse pubbliche su larga scala, soprattutto per ferrovie e cantieristica militare. Nacquero le Acciaierie di Terni (1884), l\'Ansaldo di Genova, la Breda di Milano (1886). Si posero le basi del futuro "triangolo industriale" settentrionale.'
+    },
+    {
+      theme: 'Il colonialismo e la Triplice Alleanza',
+      text: 'Lo "schiaffo di Tunisi" del 1881 — la Francia occupò la Tunisia, area di naturale espansione italiana — spinse l\'Italia verso un clamoroso riposizionamento: nel 1882 fu siglata la Triplice Alleanza con Germania e Austria-Ungheria. La penetrazione coloniale iniziò in sordina: la baia di Assab (1882), poi Massaua (1885). Nel gennaio 1887 il massacro di Dogali — circa 500 soldati italiani uccisi dalle truppe del ras Alula — segnò il primo grave insuccesso dell\'avventura africana.'
+    },
+    {
+      theme: 'Il trasformismo',
+      text: 'A partire dalla fine degli anni Settanta Depretis smise di cercare maggioranze fondate su programmi condivisi e cominciò a costruirle attraverso accordi personali e scambi di favori con singoli deputati. L\'obiettivo dichiarato era isolare le estreme; il risultato fu lo svuotamento delle distinzioni ideologiche tra Destra e Sinistra. Il trasformismo ritardò la formazione di partiti moderni, favorì il clientelismo e la corruzione, e generò quella sfiducia nelle istituzioni che avrebbe alimentato la domanda di un "uomo forte".'
+    }
+  ],
+  crispi: [
+    {
+      theme: 'Crispi e la democrazia autoritaria',
+      text: 'Ex mazziniano, ex esule, veterano dei Mille: Francesco Crispi portava con sé una biografia risorgimentale che usò come legittimazione per un progetto di governo che con quegli ideali aveva poco a che fare. Il suo modello era Bismarck: uno Stato forte, un esecutivo accentrato, uno sviluppo nazionale guidato dall\'alto. Gli storici hanno chiamato la sua visione "democrazia autoritaria" — un ossimoro che descrive bene la contraddizione fondamentale del personaggio: voleva allargare le basi dello Stato controllando le conseguenze di questo allargamento.'
+    },
+    {
+      theme: 'Riformismo e repressione',
+      text: 'Sul fronte delle riforme, Crispi lasciò tracce durature: riforma amministrativa (1888), Codice Zanardelli (1889), legislazione sociale, riforma delle Opere pie. Ma governò anche con metodi contraddittori: concentrò il potere su di sé, emarginò le opposizioni, proclamò lo stato d\'assedio contro i Fasci siciliani (1893–94), inviò 30.000 soldati in Sicilia, istituì tribunali militari, arrivò a sciogliere il Partito Socialista. Era lo stesso uomo che aveva firmato il Codice Zanardelli.'
+    },
+    {
+      theme: 'Il colonialismo crispino e la disfatta di Adua',
+      text: 'Crispi rilanciò con aggressività l\'espansione in Africa. Il Trattato di Uccialli (1889) con il negus Menelik conteneva una fatale ambiguità: la versione italiana sanciva un protettorato sull\'Etiopia, quella in amarico no. Nel 1890 fu proclamata la Colonia Eritrea. Quando Menelik contestò il trattato, Crispi ricorse alla forza. Il 1° marzo 1896, nella conca di Adua, l\'esercito italiano fu travolto da un\'armata etiope di oltre 70.000 uomini: quasi 6.000 morti, una delle sconfitte più pesanti mai inflitte da forze africane a un esercito coloniale europeo. Crispi fu costretto a dimettersi.'
+    }
+  ],
+  crisi: [
+    {
+      theme: 'La crisi economica e lo scandalo della Banca Romana',
+      text: 'La crisi degli anni Novanta era il prodotto di scelte accumulate: crollo dei prezzi agricoli, guerra doganale con la Francia che rovinò le esportazioni meridionali, rincaro del pane. Nel 1893 esplose lo scandalo della Banca Romana: l\'istituto aveva stampato illegalmente enormi quantità di cartamoneta e finanziato politici per comprarsi protezione. Il coinvolgimento di Crispi e Giolitti trasformò lo scandalo bancario in crisi politica. Le conseguenze costruttive: nel 1894 fu fondata la Banca d\'Italia come istituto unico di emissione.'
+    },
+    {
+      theme: 'Le tensioni sociali e la repressione',
+      text: 'Negli anni precedenti erano nati i primi movimenti organizzati: leghe contadine, sindacati, e nel 1892 il Partito Socialista Italiano. I Fasci siciliani (1893–94) avevano già mostrato l\'esplosività della situazione nel Mezzogiorno, repressa da Crispi con lo stato d\'assedio. La crisi del pane del 1898 — cattivi raccolti e blocco delle esportazioni americane di grano — provocò la "protesta dello stomaco": manifestazioni spontanee dettate dalla fame che si diffusero da Sud verso Nord.'
+    },
+    {
+      theme: 'I Fatti di Milano del 1898 e l\'eccidio di Bava Beccaris',
+      text: 'A Milano, dove le manifestazioni erano più intense, il governo Di Rudinì proclamò lo stato d\'assedio e affidò i pieni poteri al generale Fiorenzo Bava Beccaris. Tra il 6 e il 9 maggio 1898 Bava Beccaris ordinò all\'esercito di usare i cannoni contro la folla disarmata: decine di morti, centinaia di feriti. Seguirono arresti di massa: il socialista Filippo Turati fu condannato a dodici anni. Umberto I non punì Bava Beccaris, ma lo decorò con la medaglia d\'oro al valor militare.'
+    },
+    {
+      theme: 'Le tentazioni autoritarie: le leggi Pelloux e Sonnino',
+      text: 'Di fronte all\'avanzata delle forze popolari, la classe dirigente conservatrice elaborò un progetto di involuzione istituzionale. Sonnino, con l\'articolo "Torniamo allo Statuto" (1897), proponeva di far dipendere il governo unicamente dalla fiducia del Re, svuotando il Parlamento. Il generale Pelloux presentò nel 1899 un pacchetto di norme liberticide. L\'opposizione — socialisti, repubblicani, radicali e liberali di Zanardelli e Giolitti — rispose con l\'ostruzionismo. Nel febbraio 1900 la Corte di Cassazione annullò il decreto di Pelloux dichiarandolo incostituzionale.'
+    },
+    {
+      theme: 'L\'assassinio di Umberto I e le elezioni del 1900',
+      text: 'Le elezioni del giugno 1900 segnarono una forte avanzata dei liberal-democratici e dei socialisti, costringendo Pelloux alle dimissioni. Il 29 luglio 1900 l\'anarchico Gaetano Bresci, rientrato appositamente dagli Stati Uniti, uccise Umberto I a Monza per vendicare i morti di Milano. Il nuovo re Vittorio Emanuele III prese atto della sconfitta conservatrice e affidò il governo a Zanardelli e Giolitti, aprendo la stagione che avrebbe dovuto rispondere alle domande che la crisi di fine secolo aveva reso impossibile ignorare.'
+    }
+  ]
+};
+
+const openPeriods = {};
+let currentKey = null;
+
+function togglePeriod(p) {
+  const wasOpen = openPeriods[p];
+  openPeriods[p] = !wasOpen;
+
+  const cls = 'l2-' + p;
+  document.querySelectorAll('.' + cls).forEach(el => {
+    el.style.display = openPeriods[p] ? '' : 'none';
+  });
+
+  const rect = document.getElementById('rect-' + p);
+  if (rect) rect.style.opacity = openPeriods[p] ? '0.75' : '1';
+
+  if (!openPeriods[p]) closeInfo();
+}
+
+function showInfo(period, idx) {
+  const d = INFO[period][idx];
+  const per = PERIODS[period];
+  const panel = document.getElementById('infoPanel');
+
+  const periodEl = document.getElementById('infoPeriod');
+  periodEl.textContent = per.label;
+  periodEl.style.color = per.color;
+
+  document.getElementById('infoTheme').textContent = d.theme;
+  document.getElementById('infoTheme').style.color = per.color;
+
+  const border = {
+    destra: '4px solid #4A6741',
+    sinistra: '4px solid #5B7FA6',
+    crispi: '4px solid #8B5E3C',
+    crisi: '4px solid #7A2E1A'
+  };
+  panel.style.borderLeft = border[period];
+
+  document.getElementById('infoText').textContent = d.text;
+  panel.classList.add('show');
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  currentKey = period + '-' + idx;
+}
+
+function closeInfo() {
+  document.getElementById('infoPanel').classList.remove('show');
+  currentKey = null;
+}
+</script>
+</body>
+</html>
