@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Glossario — Termini e concetti</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Georgia, 'Times New Roman', serif; background: #FAF7F2; color: #2C2C2A; min-height: 100vh; }
+
+  .header { background: #2C2C2A; padding: 1.4rem 2.5rem; border-bottom: 4px solid #8B7355; }
+  .header-title { font-size: 1.15rem; font-weight: normal; color: #F0EBE0; }
+  .header-title em { color: #C2A882; font-style: italic; }
+  .header-sub { font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif; font-size: 0.78rem; color: #888070; margin-top: 0.35rem; }
+
+  .instructions { background: #F5F0E8; border-bottom: 1px solid #D4C9B8; padding: 0.7rem 2.5rem; font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif; font-size: 0.8rem; color: #5C4A2A; line-height: 1.55; }
+  .instructions strong { color: #2C2C2A; }
+
+  .dashboard { background: #FFFDF8; border-bottom: 1px solid #D4C9B8; padding: 0.65rem 2.5rem; display: flex; align-items: center; gap: 2rem; flex-wrap: wrap; }
+  .dash-item { display: flex; align-items: center; gap: 0.5rem; font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif; font-size: 12px; }
+  .dash-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-yes { background: #4A6741; } .dot-part { background: #C2A882; } .dot-no { background: #7A2E1A; } .dot-open { background: #D4C9B8; }
+  .dash-count { font-weight: 600; color: #2C2C2A; }
+  .dash-label { color: #888070; }
+  .prog-wrap { flex: 1; min-width: 140px; display: flex; align-items: center; gap: 0.5rem; }
+  .prog-track { flex: 1; height: 4px; background: #E8E0D2; border-radius: 2px; overflow: hidden; display: flex; }
+  .prog-seg-yes { background: #4A6741; height: 100%; transition: width 0.4s; }
+  .prog-seg-part { background: #C2A882; height: 100%; transition: width 0.4s; }
+  .prog-seg-no { background: #7A2E1A; height: 100%; transition: width 0.4s; }
+  .prog-label { font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif; font-size: 11px; color: #888070; white-space: nowrap; }
+
+  .q-list { padding: 1.5rem 2.5rem 1rem; }
+
+  .q-item { background: #FFFDF8; border: 1.5px solid #C8BBA8; border-radius: 6px; overflow: hidden; margin-bottom: 0.65rem; }
+  .q-item.state-yes { border-left: 5px solid #4A6741; }
+  .q-item.state-part { border-left: 5px solid #C2A882; }
+  .q-item.state-no { border-left: 5px solid #7A2E1A; }
+
+  .q-head { display: flex; align-items: center; gap: 0.75rem; padding: 0.85rem 1.1rem; cursor: pointer; transition: background 0.15s; }
+  .q-head:hover { background: #F5F0E8; }
+
+  .q-num { font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif; font-size: 10px; letter-spacing: 1.5px; color: #fff; background: #8B7355; padding: 2px 7px; border-radius: 3px; flex-shrink: 0; min-width: 28px; text-align: center; }
+  .q-term { font-size: 0.95rem; color: #2C2C2A; flex: 1; font-style: italic; }
+  .q-arrow { font-size: 0.75rem; color: #C8BBA8; flex-shrink: 0; transition: transform 0.2s; }
+  .q-item.open .q-arrow { transform: rotate(90deg); }
+
+  .q-answer { display: none; border-top: 1px solid #E8E0D2; animation: fadeIn 0.2s ease; }
+  .q-item.open .q-answer { display: block; }
+
+  .q-answer-text { padding: 0.9rem 1.1rem 0.75rem; font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif; font-size: 0.84rem; color: #2C2C2A; line-height: 1.72; background: #F7F4EF; border-left: 3px solid #8B7355; margin: 0.75rem 1.1rem 0; border-radius: 0 4px 4px 0; }
+
+  .q-eval { display: flex; gap: 0.5rem; padding: 0.75rem 1.1rem 0.9rem; flex-wrap: wrap; align-items: center; }
+  .eval-label { font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: #B0A090; margin-right: 0.25rem; }
+  .eval-btn { font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif; font-size: 11.5px; padding: 5px 14px; border-radius: 20px; border: 1.5px solid; cursor: pointer; transition: all 0.18s; background: transparent; display: flex; align-items: center; gap: 5px; }
+  .btn-yes { border-color: #4A6741; color: #4A6741; } .btn-yes:hover, .btn-yes.active { background: #4A6741; color: #fff; }
+  .btn-part { border-color: #C2A882; color: #8B6A3A; } .btn-part:hover, .btn-part.active { background: #C2A882; color: #fff; }
+  .btn-no { border-color: #7A2E1A; color: #7A2E1A; } .btn-no:hover, .btn-no.active { background: #7A2E1A; color: #fff; }
+
+  .reset-wrap { padding: 0 2.5rem 2rem; display: flex; justify-content: flex-end; }
+  .reset-btn { font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif; font-size: 12px; padding: 6px 16px; border-radius: 4px; border: 1.5px solid #C8BBA8; background: transparent; color: #888070; cursor: pointer; transition: all 0.18s; }
+  .reset-btn:hover { border-color: #8B7355; color: #5C4A2A; background: #F5F0E8; }
+
+  @keyframes fadeIn { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:translateY(0); } }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-title"><em>Glossario</em> — Termini e concetti chiave</div>
+  <div class="header-sub">L'Italia dopo l'unità (1861–1900) · 18 voci</div>
+</div>
+
+<div class="instructions">
+  <strong>Come usare questo glossario.</strong> Leggi il termine e prova a formulare mentalmente la definizione. Poi clicca per aprire la scheda e confrontarti con il testo. Indica quindi il tuo grado di padronanza con i tre pulsanti.
+</div>
+
+<div class="dashboard">
+  <div class="dash-item"><div class="dash-dot dot-yes"></div><span class="dash-count" id="cnt-yes">0</span><span class="dash-label">saputa</span></div>
+  <div class="dash-item"><div class="dash-dot dot-part"></div><span class="dash-count" id="cnt-part">0</span><span class="dash-label">parziale</span></div>
+  <div class="dash-item"><div class="dash-dot dot-no"></div><span class="dash-count" id="cnt-no">0</span><span class="dash-label">da rivedere</span></div>
+  <div class="dash-item"><div class="dash-dot dot-open"></div><span class="dash-count" id="cnt-open">18</span><span class="dash-label">da fare</span></div>
+  <div class="prog-wrap">
+    <div class="prog-track">
+      <div class="prog-seg-yes" id="seg-yes" style="width:0%"></div>
+      <div class="prog-seg-part" id="seg-part" style="width:0%"></div>
+      <div class="prog-seg-no" id="seg-no" style="width:0%"></div>
+    </div>
+    <div class="prog-label" id="prog-label">0 / 18</div>
+  </div>
+</div>
+
+<div class="q-list" id="qList"></div>
+
+<div class="reset-wrap">
+  <button class="reset-btn" onclick="resetAll()">↺ Azzera autovalutazioni</button>
+</div>
+
+<script>
+const ITEMS = [
+  {
+    term: 'Liberalismo conservatore',
+    def: 'Corrente del pensiero liberale ottocentesco che privilegia la libertà rispetto all\'uguaglianza e affida il governo a un\'élite illuminata. In Italia è la cultura politica della Destra storica, erede di Cavour: fedeltà alla monarchia costituzionale, laicità dello Stato, liberismo economico come motore della modernizzazione. Il progresso deve venire dall\'alto attraverso riforme graduali, senza cedere né alle pressioni reazionarie né ai sussulti rivoluzionari. Qualsiasi intervento redistributivo dello Stato è escluso in linea di principio. La democrazia di massa è, nella migliore delle ipotesi, un obiettivo lontano; nella peggiore, un pericolo.'
+  },
+  {
+    term: 'Liberalismo progressista',
+    def: 'Corrente del liberalismo ottocentesco che punta ad allargare le basi sociali dello Stato e a coinvolgere i ceti popolari nella vita politica, pur restando nell\'orizzonte monarchico e parlamentare. In Italia è la cultura politica della Sinistra storica: anticlericalismo radicato, abbandono del liberismo in favore del protezionismo, riformismo graduale. I suoi leader (Depretis, Crispi, Zanardelli) provenivano quasi tutti dalla tradizione del Partito d\'Azione — ex mazziniani e garibaldini — che avevano dovuto convertirsi alla monarchia sabauda per arrivare al governo. Nessuno dei due liberalismi — conservatore e progressista — mette in discussione la proprietà privata o l\'esclusione delle classi subalterne dal governo effettivo.'
+  },
+  {
+    term: 'Piemontesizzazione',
+    def: 'Termine usato dai contemporanei per indicare l\'estensione forzata degli ordinamenti sabaudi all\'intera penisola, operata dalla Destra storica spesso per decreto e senza discussione parlamentare. Nel 1865 furono emanati codice civile, codice di procedura civile, codice di commercio e di navigazione — tutti di impianto piemontese — applicati uniformemente a territori con tradizioni giuridiche profondamente diverse. Le province furono affidate a prefetti di nomina governativa, in larga parte di estrazione settentrionale. Non era solo una questione di orgoglio ferito: era il segnale che il nuovo Stato aveva scelto l\'uniformità sulla diversità, la rapidità sul consenso, la solidità amministrativa sulla rappresentanza.'
+  },
+  {
+    term: 'Manutengolismo',
+    def: 'Nel contesto del brigantaggio meridionale (1861–1870), il termine indica la fitta rete di complicità civili che garantiva alle bande armate informazioni, cibo, armi e coperture. Non era semplice omertà popolare: era un sistema di potere locale costruito da notabili, clero, proprietari terrieri ostili al nuovo ordine. I notabili usavano i briganti per mantenere il proprio potere locale, vendicarsi di nemici personali, lucrare sulle estorsioni. Il manutengolismo fu uno degli obiettivi principali della legge Pica del 1863, che istituì il domicilio coatto per i sospetti: solo nel primo mese di applicazione circa mille persone furono confinate nelle isole toscane.'
+  },
+  {
+    term: 'Meridionalismo',
+    def: 'Filone di pensiero politico e intellettuale nato dalla presa d\'atto del fallimento della repressione del brigantaggio: la vittoria militare aveva eliminato la minaccia eversiva ma non toccato nulla di ciò che l\'aveva prodotta. Attraverso le inchieste e gli scritti di Pasquale Villari, Leopoldo Franchetti, Sidney Sonnino, Giustino Fortunato e Francesco Saverio Nitti, il meridionalismo denunciò come l\'unità non avesse sanato il divario tra le due Italie, ma lo avesse cristallizzato. Fortunato dimostrò che il divario non era una condizione transitoria ma una struttura profonda che le politiche liberali stavano consolidando; Nitti documentò statisticamente come i trasferimenti fiscali avvenissero prevalentemente dal Sud al Nord.'
+  },
+  {
+    term: 'Trasformismo',
+    def: 'Pratica di governo inaugurata da Depretis a partire dalla fine degli anni Settanta: costruire maggioranze parlamentari non attraverso programmi condivisi ma attraverso accordi personali e scambi di favori con singoli deputati. La fedeltà del deputato veniva ripagata con finanziamenti, appalti, trasferimenti. Gramsci lo definì come il meccanismo attraverso cui la classe dirigente moderata assorbiva le personalità più dinamiche dell\'opposizione, svuotandola della sua funzione critica. Produsse: ritardo nella formazione di partiti moderni, clientelismo endemico, sfiducia nelle istituzioni, domanda di un "uomo forte". Il termine è sopravvissuto al suo inventore come categoria interpretativa stabile della storia politica italiana.'
+  },
+  {
+    term: 'Liberismo',
+    def: 'Dottrina economica che affida al mercato la regolazione dell\'economia, limitando al minimo l\'intervento dello Stato. È la politica economica della Destra storica: abolizione dei dazi interni, estensione delle tariffe piemontesi (tra le più basse d\'Europa) all\'intera penisola, rigore fiscale. Favorì l\'esportazione dei prodotti agricoli italiani verso i mercati europei, ma espose le deboli manifatture meridionali — fino ad allora protette dai dazi borbonici — alla concorrenza delle industrie francesi e inglesi, producendo una crisi rapida e per molte di esse definitiva. Il liberismo della Destra non era solo un\'ideologia: era anche una risposta pragmatica all\'emergenza del debito pubblico ereditato dagli Stati preunitari.'
+  },
+  {
+    term: 'Protezionismo',
+    def: 'Politica economica che difende la produzione nazionale dalla concorrenza straniera attraverso dazi doganali e intervento statale. La Sinistra storica lo adottò in due fasi: una prima tariffa moderata nel 1878 e una rigidissima tariffa generale nel 1887 (forti dazi su manufatti stranieri, grano e zucchero). Lo Stato divenne il principale finanziatore e committente dell\'industria nazionale, concedendo esenzioni fiscali, contributi a fondo perduto e commesse pubbliche. Favorì il decollo industriale del Nord (Acciaierie di Terni, Ansaldo, Breda, Edison) ma scatenò la guerra doganale con la Francia (1888), rovinò le esportazioni meridionali e consolidò il latifondo liberando i grandi proprietari dalla pressione del mercato.'
+  },
+  {
+    term: 'Banca mista',
+    def: 'Istituto bancario privato che combina l\'attività di raccolta del risparmio (tipica delle banche commerciali) con il finanziamento a lungo termine delle imprese industriali (tipica delle banche d\'investimento). In Italia le banche miste nacquero come conseguenza costruttiva dello scandalo della Banca Romana del 1893: i fallimenti che seguirono lo scandalo resero inevitabile una riforma radicale del sistema creditizio. Parallelamente alla fondazione della Banca d\'Italia come istituto unico di emissione (1894), fu incoraggiata la nascita della Banca Commerciale Italiana e del Credito Italiano, che avrebbero avuto un ruolo decisivo nel finanziare il decollo industriale del primo Novecento.'
+  },
+  {
+    term: 'Corso forzoso',
+    def: 'Misura d\'emergenza con cui la cartamoneta diventa inconvertibile in oro o argento e la sua circolazione obbligatoria. Fu introdotto in Italia nel 1866 a seguito della crisi finanziaria innescata dai costi della Terza guerra d\'indipendenza: lo Stato non disponeva delle riserve auree necessarie per garantire la convertibilità. La forte inflazione che ne seguì colpì soprattutto i ceti più deboli, che non avevano risparmi o attività reali con cui difendersi. Era una misura che si sommava a una pressione fiscale già insostenibile per larghi strati della popolazione, e contribuì ad alimentare il malcontento meridionale che sfociò nel brigantaggio.'
+  },
+  {
+    term: 'Capitalismo assistito',
+    def: 'Modello economico in cui lo Stato non si limita a difendere il mercato interno con dazi doganali, ma diventa il principale finanziatore e committente dell\'industria nazionale, concedendo esenzioni fiscali, sussidi a fondo perduto e commesse pubbliche su larga scala. Il termine descrive il sistema che si consolidò sotto la Sinistra storica: un\'alleanza organica tra classe politica, grande industria e proprietà terriera in cui lo Stato smise di arbitrare l\'economia e cominciò a finanziarla. Produsse colossi industriali (Terni, Ansaldo, Breda) che non avrebbero potuto sopravvivere senza la committenza pubblica, e una commistione tra potere politico e grandi interessi economici destinata a durare ben oltre il periodo liberale.'
+  },
+  {
+    term: 'Democrazia autoritaria',
+    def: 'Formula ossimorica usata dagli storici per descrivere la visione politica di Francesco Crispi: un sistema che cercava di espandere le basi sociali dello Stato e al tempo stesso di controllarne le conseguenze. Crispi credeva genuinamente di allargare le basi dello Stato, modernizzare il paese, riscattare il Mezzogiorno; il suo modello era Bismarck. La contraddizione strutturale è che voleva più cittadini ma cittadini gestibili: quando riformismo e controllo entrarono in collisione — come accadde con i Fasci siciliani, repressi con lo stato d\'assedio e trentamila soldati — scelse il controllo. Era lo stesso uomo che aveva firmato il Codice Zanardelli: la contraddizione non era accidentale ma strutturale.'
+  },
+  {
+    term: 'Irredentismo',
+    def: 'Movimento politico che rivendicava l\'annessione all\'Italia dei territori abitati da popolazioni di lingua e cultura italiana ma ancora sotto sovranità straniera — le cosiddette "terre irredente": Trentino, Trieste, Istria, rimasti austriaci dopo l\'unificazione. Il termine deriva da "Italia irredenta" (non ancora redenta). L\'irredentismo costituiva una tensione permanente nella politica estera italiana, in contraddizione con la Triplice Alleanza del 1882: unendosi a Vienna, l\'Italia doveva tacitamente rinunciare alle rivendicazioni su Trento e Trieste. Il giovane triestino Guglielmo Oberdan fu condannato a morte nel 1882 per aver progettato un attentato contro l\'imperatore Francesco Giuseppe, diventando un martire dell\'irredentismo.'
+  },
+  {
+    term: 'Stato d\'eccezione',
+    def: 'Situazione giuridica in cui il governo sospende temporaneamente le garanzie costituzionali ordinarie in un\'area o per una categoria di reati, applicando procedure straordinarie (tribunali militari, arresti preventivi, esilio coatto). Nel periodo liberale italiano lo stato d\'eccezione fu applicato in più occasioni: con la legge Pica del 1863 per il brigantaggio meridionale, con Crispi contro i Fasci siciliani nel 1893-94, con Pelloux a Milano nel 1898. Il paradosso è che lo stato d\'eccezione era una misura costituzionalmente dubbia in uno Stato che si fondava sulla tutela delle libertà individuali: rivela il confine poroso tra Stato liberale e autoritarismo quando il sistema politico si sente minacciato.'
+  },
+  {
+    term: 'Non expedit',
+    def: 'Espressione latina ("non conviene", "non è opportuno") con cui Pio IX nel 1874 vietò ai cattolici italiani di partecipare alle elezioni e alla vita politica dello Stato italiano, in risposta alla Breccia di Porta Pia e al rifiuto della Legge delle Guarentigie. Le conseguenze politiche furono più pesanti di quanto il governo avesse previsto: l\'astensione delle masse cattoliche impedì la formazione di un grande partito conservatore popolare — quella forza che in altri paesi europei avrebbe bilanciato le spinte democratiche e socialiste garantendo un\'alternanza fisiologica. Il vuoto fu riempito dal trasformismo. Il paradosso era stridente: lo Stato liberale si ritrovava a funzionare peggio proprio perché la Chiesa si rifiutava di giocare il suo ruolo nel sistema.'
+  },
+  {
+    term: 'Grande emigrazione',
+    def: 'Fenomeno di massa che esplose tra gli anni Ottanta dell\'Ottocento e i primi del Novecento: prima dal Nord, poi in massa dal Mezzogiorno, centinaia di migliaia di italiani lasciarono il paese diretti principalmente verso le Americhe. Fu anche la risposta di contadini impoveriti a un sistema economico che li aveva protetti meno di quanto non avesse protetto chi possedeva già qualcosa: la svolta protezionistica del 1887 aveva accelerato l\'industrializzazione del Nord-Ovest condannando il Mezzogiorno a una crisi agricola senza uscita, mentre la guerra doganale con la Francia rovinava le esportazioni meridionali. La classe dirigente aveva immaginato le colonie come valvola di sfogo per questa emigrazione, ma Adua chiuse quella prospettiva.'
+  },
+  {
+    term: 'Ostruzionismo',
+    def: 'Tecnica parlamentare con cui l\'opposizione impedisce l\'approvazione di un provvedimento non attraverso la maggioranza dei voti, ma attraverso il prolungamento illimitato del dibattito: discorsi lunghissimi, interruzioni sistematiche, richieste continue di voto per appello nominale. In Italia fu usata per la prima volta nel 1899 contro le "leggi liberticide" di Pelloux, da una coalizione inedita di socialisti, repubblicani, radicali e liberali di Zanardelli e Giolitti. Costrinse Pelloux a tentare di promulgare le leggi per decreto regio — tentativo che la Corte di Cassazione dichiarò incostituzionale nel febbraio 1900. Fu una vittoria istituzionale significativa: dimostrò che il sistema parlamentare poteva correggere se stesso anche senza ricorrere alle piazze.'
+  },
+  {
+    term: 'Grande Depressione (ottocentesca)',
+    def: 'Crisi economica internazionale che investì l\'Europa a partire dagli anni Settanta dell\'Ottocento, innescata dall\'arrivo sui mercati europei di enormi quantità di cereali a basso costo provenienti dagli Stati Uniti e dalla Russia, resi competitivi dai progressi della navigazione a vapore. Il crollo dei prezzi agricoli colpì duramente economie che su quei prezzi si reggevano, e spinse verso una convergenza di interessi: industriali del Nord che chiedevano dazi per proteggere le nascenti fabbriche, e grandi proprietari terrieri che volevano protezione per arginare il crollo del prezzo del grano. La risposta politica fu il protezionismo del 1878 e del 1887. Non va confusa con la Grande Depressione del 1929, che è un fenomeno del Novecento.'
+  }
+];
+
+const TOTAL = ITEMS.length;
+const states = {};
+ITEMS.forEach((_, i) => states['q'+i] = null);
+
+function build() {
+  const list = document.getElementById('qList');
+  ITEMS.forEach((item, i) => {
+    const id = 'q' + i;
+    const div = document.createElement('div');
+    div.className = 'q-item';
+    div.id = id;
+    div.innerHTML = `
+      <div class="q-head" onclick="toggleQ('${id}')">
+        <div class="q-num">${i+1}</div>
+        <div class="q-term">${item.term}</div>
+        <div class="q-arrow">▶</div>
+      </div>
+      <div class="q-answer">
+        <div class="q-answer-text">${item.def}</div>
+        <div class="q-eval">
+          <span class="eval-label">Lo so?</span>
+          <button class="eval-btn btn-yes"  onclick="setEval('${id}','yes',event)">✓ Sì, lo so</button>
+          <button class="eval-btn btn-part" onclick="setEval('${id}','part',event)">◑ Solo in parte</button>
+          <button class="eval-btn btn-no"   onclick="setEval('${id}','no',event)">✗ Da rivedere</button>
+        </div>
+      </div>`;
+    list.appendChild(div);
+  });
+}
+
+function toggleQ(id) { document.getElementById(id).classList.toggle('open'); }
+
+function setEval(id, val, e) {
+  e.stopPropagation();
+  states[id] = val;
+  const item = document.getElementById(id);
+  item.classList.remove('state-yes','state-part','state-no');
+  item.classList.add('state-' + val);
+  item.querySelectorAll('.eval-btn').forEach(b => b.classList.remove('active'));
+  item.querySelector('.btn-' + val).classList.add('active');
+  updateDashboard();
+}
+
+function updateDashboard() {
+  const c = { yes:0, part:0, no:0, open:0 };
+  Object.values(states).forEach(s => s ? c[s]++ : c.open++);
+  const done = c.yes + c.part + c.no;
+  document.getElementById('cnt-yes').textContent  = c.yes;
+  document.getElementById('cnt-part').textContent = c.part;
+  document.getElementById('cnt-no').textContent   = c.no;
+  document.getElementById('cnt-open').textContent = c.open;
+  document.getElementById('prog-label').textContent = done + ' / ' + TOTAL;
+  document.getElementById('seg-yes').style.width  = (c.yes/TOTAL*100)+'%';
+  document.getElementById('seg-part').style.width = (c.part/TOTAL*100)+'%';
+  document.getElementById('seg-no').style.width   = (c.no/TOTAL*100)+'%';
+}
+
+function resetAll() {
+  Object.keys(states).forEach(id => {
+    states[id] = null;
+    const item = document.getElementById(id);
+    item.classList.remove('state-yes','state-part','state-no','open');
+    item.querySelectorAll('.eval-btn').forEach(b => b.classList.remove('active'));
+  });
+  updateDashboard();
+}
+
+build();
+updateDashboard();
+</script>
+</body>
+</html>
