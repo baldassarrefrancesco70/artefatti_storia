@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Glossario — Personaggi</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Georgia, 'Times New Roman', serif; background: #FAF7F2; color: #2C2C2A; min-height: 100vh; }
+
+  .header { background: #2C2C2A; padding: 1.4rem 2.5rem; border-bottom: 4px solid #8B7355; }
+  .header-title { font-size: 1.15rem; font-weight: normal; color: #F0EBE0; }
+  .header-title em { color: #C2A882; font-style: italic; }
+  .header-sub { font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif; font-size: 0.78rem; color: #888070; margin-top: 0.35rem; }
+
+  .instructions { background: #F5F0E8; border-bottom: 1px solid #D4C9B8; padding: 0.7rem 2.5rem; font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif; font-size: 0.8rem; color: #5C4A2A; line-height: 1.55; }
+  .instructions strong { color: #2C2C2A; }
+
+  .dashboard { background: #FFFDF8; border-bottom: 1px solid #D4C9B8; padding: 0.65rem 2.5rem; display: flex; align-items: center; gap: 2rem; flex-wrap: wrap; }
+  .dash-item { display: flex; align-items: center; gap: 0.5rem; font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif; font-size: 12px; }
+  .dash-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-yes { background: #4A6741; } .dot-part { background: #C2A882; } .dot-no { background: #7A2E1A; } .dot-open { background: #D4C9B8; }
+  .dash-count { font-weight: 600; color: #2C2C2A; }
+  .dash-label { color: #888070; }
+  .prog-wrap { flex: 1; min-width: 140px; display: flex; align-items: center; gap: 0.5rem; }
+  .prog-track { flex: 1; height: 4px; background: #E8E0D2; border-radius: 2px; overflow: hidden; display: flex; }
+  .prog-seg-yes { background: #4A6741; height: 100%; transition: width 0.4s; }
+  .prog-seg-part { background: #C2A882; height: 100%; transition: width 0.4s; }
+  .prog-seg-no { background: #7A2E1A; height: 100%; transition: width 0.4s; }
+  .prog-label { font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif; font-size: 11px; color: #888070; white-space: nowrap; }
+
+  .q-list { padding: 1.5rem 2.5rem 1rem; }
+
+  .q-item { background: #FFFDF8; border: 1.5px solid #C8BBA8; border-radius: 6px; overflow: hidden; margin-bottom: 0.65rem; }
+  .q-item.state-yes { border-left: 5px solid #4A6741; }
+  .q-item.state-part { border-left: 5px solid #C2A882; }
+  .q-item.state-no { border-left: 5px solid #7A2E1A; }
+
+  .q-head { display: flex; align-items: center; gap: 0.75rem; padding: 0.85rem 1.1rem; cursor: pointer; transition: background 0.15s; }
+  .q-head:hover { background: #F5F0E8; }
+
+  .q-num { font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif; font-size: 10px; letter-spacing: 1.5px; color: #fff; background: #8B7355; padding: 2px 7px; border-radius: 3px; flex-shrink: 0; min-width: 28px; text-align: center; }
+  .q-term { font-size: 0.95rem; color: #2C2C2A; flex: 1; }
+  .q-role { font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif; font-size: 11px; color: #888070; font-style: italic; flex-shrink: 0; }
+  .q-arrow { font-size: 0.75rem; color: #C8BBA8; flex-shrink: 0; transition: transform 0.2s; margin-left: 0.5rem; }
+  .q-item.open .q-arrow { transform: rotate(90deg); }
+
+  .q-answer { display: none; border-top: 1px solid #E8E0D2; animation: fadeIn 0.2s ease; }
+  .q-item.open .q-answer { display: block; }
+
+  .q-answer-text { padding: 0.9rem 1.1rem 0.75rem; font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif; font-size: 0.84rem; color: #2C2C2A; line-height: 1.72; background: #F7F4EF; border-left: 3px solid #8B7355; margin: 0.75rem 1.1rem 0; border-radius: 0 4px 4px 0; }
+
+  .q-eval { display: flex; gap: 0.5rem; padding: 0.75rem 1.1rem 0.9rem; flex-wrap: wrap; align-items: center; }
+  .eval-label { font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: #B0A090; margin-right: 0.25rem; }
+  .eval-btn { font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif; font-size: 11.5px; padding: 5px 14px; border-radius: 20px; border: 1.5px solid; cursor: pointer; transition: all 0.18s; background: transparent; display: flex; align-items: center; gap: 5px; }
+  .btn-yes { border-color: #4A6741; color: #4A6741; } .btn-yes:hover, .btn-yes.active { background: #4A6741; color: #fff; }
+  .btn-part { border-color: #C2A882; color: #8B6A3A; } .btn-part:hover, .btn-part.active { background: #C2A882; color: #fff; }
+  .btn-no { border-color: #7A2E1A; color: #7A2E1A; } .btn-no:hover, .btn-no.active { background: #7A2E1A; color: #fff; }
+
+  .reset-wrap { padding: 0 2.5rem 2rem; display: flex; justify-content: flex-end; }
+  .reset-btn { font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif; font-size: 12px; padding: 6px 16px; border-radius: 4px; border: 1.5px solid #C8BBA8; background: transparent; color: #888070; cursor: pointer; transition: all 0.18s; }
+  .reset-btn:hover { border-color: #8B7355; color: #5C4A2A; background: #F5F0E8; }
+
+  @keyframes fadeIn { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:translateY(0); } }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-title"><em>Glossario</em> — Personaggi chiave</div>
+  <div class="header-sub">L'Italia dopo l'unità (1861–1900) · 16 voci</div>
+</div>
+
+<div class="instructions">
+  <strong>Come usare questo glossario.</strong> Leggi il nome e prova a ricordare chi era, in quale periodo agì e quale fu il suo ruolo nella storia dell'Italia post-unitaria. Poi clicca per aprire la scheda e confrontarti con il testo.
+</div>
+
+<div class="dashboard">
+  <div class="dash-item"><div class="dash-dot dot-yes"></div><span class="dash-count" id="cnt-yes">0</span><span class="dash-label">saputa</span></div>
+  <div class="dash-item"><div class="dash-dot dot-part"></div><span class="dash-count" id="cnt-part">0</span><span class="dash-label">parziale</span></div>
+  <div class="dash-item"><div class="dash-dot dot-no"></div><span class="dash-count" id="cnt-no">0</span><span class="dash-label">da rivedere</span></div>
+  <div class="dash-item"><div class="dash-dot dot-open"></div><span class="dash-count" id="cnt-open">16</span><span class="dash-label">da fare</span></div>
+  <div class="prog-wrap">
+    <div class="prog-track">
+      <div class="prog-seg-yes" id="seg-yes" style="width:0%"></div>
+      <div class="prog-seg-part" id="seg-part" style="width:0%"></div>
+      <div class="prog-seg-no" id="seg-no" style="width:0%"></div>
+    </div>
+    <div class="prog-label" id="prog-label">0 / 16</div>
+  </div>
+</div>
+
+<div class="q-list" id="qList"></div>
+
+<div class="reset-wrap">
+  <button class="reset-btn" onclick="resetAll()">↺ Azzera autovalutazioni</button>
+</div>
+
+<script>
+const ITEMS = [
+  {
+    name: 'Camillo Benso, conte di Cavour',
+    role: 'Presidente del Consiglio del Piemonte, artefice dell\'unificazione',
+    def: 'Principale artefice dell\'unificazione italiana, morì nel giugno 1861 pochi mesi dopo la proclamazione del Regno. La sua eredità politica fu il modello di riferimento della Destra storica: liberalismo conservatore, laicità dello Stato ("Libera Chiesa in libero Stato"), liberoscambismo, convinzione che la modernizzazione dovesse venire dall\'alto attraverso riforme graduali. Il suo metodo — costruire alleanze trasversali eliminando le ali estreme, come nel "Connubio" del 1852 — anticipò il trasformismo di Depretis. La Destra si considerava la sua erede legittima; in realtà anche Depretis ne rivendicava il metodo, se non gli ideali.'
+  },
+  {
+    name: 'Quintino Sella',
+    role: 'Ministro delle Finanze della Destra storica',
+    def: 'Figura centrale della politica economica della Destra storica, fu il principale artefice della politica di "economie fino all\'osso" che portò al pareggio di bilancio nel 1875. Introdusse la tassa sul macinato nel 1868 — il provvedimento fiscale più impopolare dell\'epoca — come parte di una strategia di risanamento che privilegiava il rigore sull\'equità distributiva. Il pareggio di bilancio fu un risultato che in pochi avrebbero scommesso raggiungibile nel 1861; il paese che lo finanziò era però un paese più povero, più diseguale e più arrabbiato di quanto le cifre del bilancio lasciassero intendere.'
+  },
+  {
+    name: 'Marco Minghetti',
+    role: 'Presidente del Consiglio, ultimo governo della Destra storica',
+    def: 'Esponente dell\'ala emiliano-settentrionale della Destra storica, rappresentava gli interessi di una borghesia agricola più moderna e mostrava una certa apertura a un limitato ruolo arbitrale dello Stato nell\'economia. Come presidente del Consiglio propose la nazionalizzazione delle ferrovie, ritenendole un asset strategico da sottrarre alla gestione privata. La proposta spaccò la sua maggioranza: un gruppo di deputati della Destra, legati agli interessi dei concessionari privati, votò contro il governo convergendo con l\'opposizione di Sinistra. Minghetti si dimise il 18 marzo 1876: cadde l\'ultimo governo della Destra e si aprì la strada alla "rivoluzione parlamentare".'
+  },
+  {
+    name: 'Agostino Depretis',
+    role: 'Presidente del Consiglio, Sinistra storica (1876–1887)',
+    def: 'Governò l\'Italia quasi ininterrottamente dal 1876 fino alla morte nel 1887, diventando il simbolo e l\'inventore del trasformismo. Lombardo di nascita, costruì la sua maggioranza parlamentare non attraverso programmi condivisi ma attraverso accordi personali e scambi di favori con singoli deputati. I governi trasformisti produssero riforme reali — legge Coppino, riforma elettorale del 1882, abolizione della tassa sul macinato — ma al costo di un clientelismo endemico e di una sfiducia crescente nelle istituzioni. Antonio Gramsci ne avrebbe descritto il metodo come l\'assorbimento progressivo delle personalità più dinamiche dell\'opposizione, svuotandola della sua funzione critica.'
+  },
+  {
+    name: 'Francesco Crispi',
+    role: 'Presidente del Consiglio (1887–1891 e 1893–1896)',
+    def: 'Ex mazziniano, ex esule, veterano della Spedizione dei Mille: portava con sé una biografia risorgimentale che usò come legittimazione per un progetto di governo che con quegli ideali aveva poco a che fare. Primo presidente del Consiglio di origini meridionali, governò con la "democrazia autoritaria" ispirata al modello bismarckiano: Stato forte, esecutivo accentrato, riformismo dall\'alto. Lasciò riforme reali (Codice Zanardelli, riforma amministrativa, legislazione sociale) ma represse i Fasci siciliani con lo stato d\'assedio e sciolse il Partito Socialista. Fu costretto a dimettersi dopo la disfatta di Adua del 1° marzo 1896, chiudendo per sempre la sua carriera politica.'
+  },
+  {
+    name: 'Giuseppe Garibaldi',
+    role: 'Generale e leader democratico del Risorgimento',
+    def: 'Incarnazione della tradizione democratica risorgimentale, guidò la Spedizione dei Mille del 1860 conquistando il Regno delle Due Sicilie. Dopo l\'unificazione tentò due volte di risolvere con la forza la questione romana: nel 1862 fu fermato sull\'Aspromonte dall\'esercito italiano, ferito e arrestato; nel 1867 fu sconfitto a Mentana da un corpo di spedizione francese. La sua figura rappresenta la tensione irrisolta tra il progetto democratico-popolare del Risorgimento e la realtà del nuovo Stato moderato: la "consegna" del Sud a Vittorio Emanuele II nel 1860 fu un atto unilaterale che deluse profondamente le aspettative dei democratici.'
+  },
+  {
+    name: 'Pio IX (Giovanni Maria Mastai Ferretti)',
+    role: 'Papa (1846–1878)',
+    def: 'Il più lungo pontificato della storia moderna coincise con il processo di unificazione italiana. Rifiutò ogni dialogo con il nuovo Stato, considerò il re d\'Italia un usurpatore e aveva già formalizzato la propria intransigenza nel Sillabo del 1864 — documento in cui la Chiesa condannava la modernità, il liberalismo e il principio di separazione tra potere spirituale e temporale. Dopo la Breccia di Porta Pia del 1870 si proclamò prigioniero politico nei palazzi vaticani e nel 1874 promulgò il Non expedit, vietando ai cattolici la partecipazione alla vita politica italiana. Le sue posizioni intransigenti impedirono qualsiasi conciliazione e condizionarono la vita politica italiana per decenni.'
+  },
+  {
+    name: 'Leone XIII (Vincenzo Gioacchino Pecci)',
+    role: 'Papa (1878–1903)',
+    def: 'Successore di Pio IX, avviò una parziale apertura della Chiesa alla modernità mantenendo tuttavia le posizioni sull\'inaccettabilità dell\'occupazione di Roma. La sua enciclica Rerum Novarum del 1891 mobilitò la Chiesa sulla questione sociale — salari giusti, diritti dei lavoratori, critica tanto del socialismo quanto del liberismo sfrenato — ponendo le basi per un movimento cattolico organizzato. Fu una svolta parziale: il rientro dei cattolici nella vita politica italiana rimase a lungo un progetto incompiuto, ma la Rerum Novarum anticipò quella che sarebbe diventata la dottrina sociale della Chiesa e aprì la strada ai movimenti cattolici del Novecento.'
+  },
+  {
+    name: 'Carmine Crocco',
+    role: 'Capobanda, brigantaggio lucano (1861–1865)',
+    def: 'Contadino lucano diventato la figura più importante del brigantaggio meridionale. Arrivò a comandare un vero esercito a cavallo di migliaia di uomini, operando tra Basilicata e Campania con una capacità organizzativa che stupì gli stessi generali inviati a combatterlo. La sua figura incarna la complessità del brigantaggio: non criminalità ordinaria ma guerra civile e sociale, alimentata dalla delusione delle aspettative contadine, dalla miseria strutturale e dal sostegno borbonico e pontificio. La sua cattura e la distruzione delle grandi bande entro il 1865 segnò la fine della fase acuta del brigantaggio, senza però risolvere nulla delle cause che lo avevano prodotto.'
+  },
+  {
+    name: 'Giuseppe Pica',
+    role: 'Deputato, proponente della legge sul brigantaggio (1863)',
+    def: 'Deputato abruzzese che nel 1863 propose la legge d\'emergenza che porta il suo nome. La legge Pica sospendeva le garanzie costituzionali nelle province dichiarate "in stato di brigantaggio", trasferiva la giurisdizione ai tribunali militari stabilendo la fucilazione per chi veniva catturato con le armi in mano, e istituiva il domicilio coatto per i sospetti manutengoli. Fu il primo caso nella storia dell\'Italia unita di sospensione delle garanzie costituzionali in un\'area geografica definita: uno stato d\'eccezione regolamentato che paradossalmente garantì per la prima volta agli accusati il diritto a un processo (su circa 11.000 deferite nel biennio 1864-65, oltre 6.000 furono assolte).'
+  },
+  {
+    name: 'Giuseppe Zanardelli',
+    role: 'Ministro della Giustizia, poi Presidente del Consiglio',
+    def: 'Bresciano, esponente dell\'ala liberal-democratica della Sinistra storica. Come ministro della Giustizia sotto Crispi firmò il Codice Zanardelli del 1889, uno dei codici penali più avanzati d\'Europa: abolì la pena di morte, depenalizzò lo sciopero riconoscendone la liceità, attenuò le pene per i reati contro la proprietà. Durante la crisi di fine secolo guidò insieme a Giolitti l\'opposizione alle leggi liberticide di Pelloux, ricorrendo all\'ostruzionismo parlamentare. Dopo le elezioni del 1900 divenne presidente del Consiglio, aprendo con Giolitti la stagione che avrebbe dovuto rispondere alle domande che la crisi di fine secolo aveva reso impossibile ignorare.'
+  },
+  {
+    name: 'Sidney Sonnino',
+    role: 'Economista, politico conservatore, meridionalista',
+    def: 'Figura complessa: nel 1876, insieme a Leopoldo Franchetti, condusse la celebre inchiesta sulle condizioni politiche e amministrative della Sicilia, documentando con precisione impietosa gli effetti devastanti del liberismo sul Mezzogiorno. L\'inchiesta fu letta, discussa e sostanzialmente ignorata dalla classe politica. Vent\'anni dopo, nel 1897, pubblicò l\'articolo "Torniamo allo Statuto" sulla Nuova Antologia, proponendo di ripristinare una lettura dello Statuto Albertino in cui il governo dipendesse unicamente dal Re e non dal Parlamento — un progetto di involuzione istituzionale per neutralizzare l\'avanzata delle forze popolari. La stessa persona che aveva diagnosticato il problema del Sud teorizzò la soluzione autoritaria alla crisi politica.'
+  },
+  {
+    name: 'Leopoldo Franchetti',
+    role: 'Ricercatore sociale, meridionalista',
+    def: 'Con Sidney Sonnino condusse nel 1876 l\'inchiesta sulle condizioni politiche e amministrative della Sicilia, pubblicata in due volumi. Franchetti si occupò della parte politica e sociale: documentò il dominio della mafia, la violenza strutturale, il ruolo dei notabili nel controllo del territorio, l\'assenza di qualsiasi forma di autogoverno locale. Mostrò come il liberismo stesse accelerando la marginalizzazione economica del Sud invece di integrarlo nel mercato nazionale. L\'inchiesta fu un lavoro pionieristico di sociologia politica, che costruì la "questione meridionale" come problema politico nazionale proprio mentre le politiche che la producevano erano ancora in corso.'
+  },
+  {
+    name: 'Giustino Fortunato',
+    role: 'Storico e politico meridionalista',
+    def: 'Meridionale lui stesso e deputato della Destra, dedicò decenni a dimostrare che il divario tra Nord e Sud non era una condizione transitoria destinata a riassorbirsi con lo sviluppo, ma una struttura profonda che le politiche liberali stavano cristallizzando. La sua posizione era scomoda perché non si prestava a soluzioni semplici: il Sud non era arretrato per colpa dell\'unificazione, ma l\'unificazione così com\'era stata fatta non lo stava aiutando a uscire dall\'arretratezza. Era una diagnosi che richiedeva terapie graduali, costose e politicamente impopolari — esattamente il tipo di terapie che il sistema trasformista era strutturalmente incapace di produrre.'
+  },
+  {
+    name: 'Menelik II',
+    role: 'Imperatore d\'Etiopia (negus)',
+    def: 'Imperatore d\'Etiopia, riuscì a unificare sotto la propria guida una coalizione di signori regionali in conflitto tra loro e a costruire un esercito moderno, in parte armato con forniture europee. Contestò formalmente il Trattato di Uccialli del 1889 — la cui versione italiana sanciva un protettorato italiano sull\'Etiopia che la versione amarica non prevedeva — e guidò personalmente l\'armata etiope nella battaglia di Adua del 1° marzo 1896, infliggendo all\'esercito italiano una delle sconfitte più pesanti mai subite da un esercito coloniale europeo. Il 26 ottobre 1896 l\'Italia firmò la pace riconoscendo formalmente la piena indipendenza dell\'Etiopia. Adua divenne un simbolo in tutto il continente africano.'
+  },
+  {
+    name: 'Gaetano Bresci',
+    role: 'Anarchico, regicida',
+    def: 'Anarchico di origine pratese, emigrato negli Stati Uniti dove aveva aderito a circoli anarchici. Rientrò appositamente in Italia e il 29 luglio 1900 uccise Umberto I a Monza, dichiarando di voler vendicare i morti di Milano del 1898. La decorazione di Bava Beccaris con la medaglia d\'oro da parte di Umberto I aveva reso il re simbolicamente corresponsabile della repressione dei manifestanti affamati. L\'assassinio ebbe conseguenze politiche paradossalmente opposte a quelle attese: il nuovo re Vittorio Emanuele III, invece di rispondere con un inasprimento autoritario, prese atto della sconfitta conservatrice e affidò il governo a Zanardelli e Giolitti, aprendo la stagione giolittiana.'
+  }
+];
+
+const TOTAL = ITEMS.length;
+const states = {};
+ITEMS.forEach((_, i) => states['q'+i] = null);
+
+function build() {
+  const list = document.getElementById('qList');
+  ITEMS.forEach((item, i) => {
+    const id = 'q' + i;
+    const div = document.createElement('div');
+    div.className = 'q-item';
+    div.id = id;
+    div.innerHTML = `
+      <div class="q-head" onclick="toggleQ('${id}')">
+        <div class="q-num">${i+1}</div>
+        <div class="q-term">${item.name}</div>
+        <div class="q-role">${item.role}</div>
+        <div class="q-arrow">▶</div>
+      </div>
+      <div class="q-answer">
+        <div class="q-answer-text">${item.def}</div>
+        <div class="q-eval">
+          <span class="eval-label">Lo so?</span>
+          <button class="eval-btn btn-yes"  onclick="setEval('${id}','yes',event)">✓ Sì, lo so</button>
+          <button class="eval-btn btn-part" onclick="setEval('${id}','part',event)">◑ Solo in parte</button>
+          <button class="eval-btn btn-no"   onclick="setEval('${id}','no',event)">✗ Da rivedere</button>
+        </div>
+      </div>`;
+    list.appendChild(div);
+  });
+}
+
+function toggleQ(id) { document.getElementById(id).classList.toggle('open'); }
+
+function setEval(id, val, e) {
+  e.stopPropagation();
+  states[id] = val;
+  const item = document.getElementById(id);
+  item.classList.remove('state-yes','state-part','state-no');
+  item.classList.add('state-' + val);
+  item.querySelectorAll('.eval-btn').forEach(b => b.classList.remove('active'));
+  item.querySelector('.btn-' + val).classList.add('active');
+  updateDashboard();
+}
+
+function updateDashboard() {
+  const c = { yes:0, part:0, no:0, open:0 };
+  Object.values(states).forEach(s => s ? c[s]++ : c.open++);
+  const done = c.yes + c.part + c.no;
+  document.getElementById('cnt-yes').textContent  = c.yes;
+  document.getElementById('cnt-part').textContent = c.part;
+  document.getElementById('cnt-no').textContent   = c.no;
+  document.getElementById('cnt-open').textContent = c.open;
+  document.getElementById('prog-label').textContent = done + ' / ' + TOTAL;
+  document.getElementById('seg-yes').style.width  = (c.yes/TOTAL*100)+'%';
+  document.getElementById('seg-part').style.width = (c.part/TOTAL*100)+'%';
+  document.getElementById('seg-no').style.width   = (c.no/TOTAL*100)+'%';
+}
+
+function resetAll() {
+  Object.keys(states).forEach(id => {
+    states[id] = null;
+    const item = document.getElementById(id);
+    item.classList.remove('state-yes','state-part','state-no','open');
+    item.querySelectorAll('.eval-btn').forEach(b => b.classList.remove('active'));
+  });
+  updateDashboard();
+}
+
+build();
+updateDashboard();
+</script>
+</body>
+</html>
