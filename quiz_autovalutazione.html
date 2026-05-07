@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz di autovalutazione — L'Italia dopo l'unità</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    background: #FAF7F2;
+    color: #2C2C2A;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: #2C2C2A;
+    padding: 1.4rem 2.5rem;
+    border-bottom: 4px solid #8B7355;
+  }
+  .header-title {
+    font-size: 1.15rem;
+    font-weight: normal;
+    color: #F0EBE0;
+  }
+  .header-title em { color: #C2A882; font-style: italic; }
+  .header-sub {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    font-size: 0.78rem;
+    color: #888070;
+    margin-top: 0.35rem;
+  }
+
+  /* ── SECTION TABS ── */
+  .sec-nav {
+    background: #FFFDF8;
+    border-bottom: 1px solid #D4C9B8;
+    display: flex;
+    padding: 0 2rem;
+    overflow-x: auto;
+  }
+  .sec-btn {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    font-size: 12px;
+    padding: 0.8rem 1.1rem;
+    border: none;
+    border-bottom: 3px solid transparent;
+    background: transparent;
+    color: #888070;
+    cursor: pointer;
+    transition: all 0.18s;
+    white-space: nowrap;
+    line-height: 1.3;
+    text-align: left;
+  }
+  .sec-btn:hover { color: #2C2C2A; }
+  .sec-btn.active { color: #2C2C2A; font-weight: 600; }
+  .sec-btn .sn { display: block; font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; opacity: 0.55; margin-bottom: 2px; }
+  .sec-btn.done .sn::after { content: ' ✓'; color: #4A6741; font-style: normal; }
+
+  /* ── PROGRESS BAR ── */
+  .prog-wrap {
+    background: #FFFDF8;
+    padding: 0.5rem 2rem;
+    border-bottom: 1px solid #E8E0D2;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .prog-label {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    font-size: 11px;
+    color: #888070;
+    white-space: nowrap;
+  }
+  .prog-track {
+    flex: 1;
+    height: 4px;
+    background: #E8E0D2;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .prog-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: #8B7355;
+    transition: width 0.4s ease;
+  }
+  .prog-count {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    font-size: 11px;
+    color: #8B7355;
+    white-space: nowrap;
+    min-width: 40px;
+    text-align: right;
+  }
+
+  /* ── SECTION PANEL ── */
+  .section { display: none; padding: 1.75rem 2.5rem; }
+  .section.active { display: block; }
+
+  .sec-head {
+    margin-bottom: 1.4rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #E8E0D2;
+  }
+  .sec-badge {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #fff;
+    padding: 3px 9px;
+    border-radius: 3px;
+    margin-bottom: 0.5rem;
+    display: inline-block;
+  }
+  .sec-title {
+    font-size: 1.1rem;
+    font-weight: normal;
+    color: #2C2C2A;
+    line-height: 1.35;
+    margin-bottom: 0.3rem;
+  }
+  .sec-period {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    font-size: 0.8rem;
+    color: #888070;
+  }
+
+  /* ── QUESTION BLOCK ── */
+  .q-block {
+    background: #FFFDF8;
+    border: 1.5px solid #C8BBA8;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+  }
+  .q-block.answered { border-color: #A0A0A0; }
+
+  .q-head {
+    padding: 0.85rem 1.1rem 0.7rem;
+    border-bottom: 1px solid #E8E0D2;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  .q-num {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #fff;
+    padding: 2px 7px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .q-type-badge {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    font-size: 9px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #888070;
+    border: 1px solid #D4C9B8;
+    border-radius: 3px;
+    padding: 1px 6px;
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+  .q-text {
+    font-size: 0.92rem;
+    color: #2C2C2A;
+    line-height: 1.5;
+    flex: 1;
+  }
+
+  .q-options {
+    padding: 0.75rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .opt-btn {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    font-size: 0.84rem;
+    padding: 0.55rem 0.9rem;
+    border-radius: 4px;
+    border: 1.5px solid #C8BBA8;
+    background: #FAF7F2;
+    color: #2C2C2A;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.15s;
+    line-height: 1.45;
+  }
+  .opt-btn:hover:not(:disabled) { border-color: #8B7355; background: #F5F0E8; }
+  .opt-btn:disabled { cursor: default; }
+  .opt-btn.correct { background: #EAF0E8; border-color: #4A6741; color: #1E3420; }
+  .opt-btn.wrong   { background: #FDF0EC; border-color: #7A2E1A; color: #7A2E1A; text-decoration: line-through; }
+  .opt-btn.missed  { background: #EAF0E8; border-color: #4A6741; color: #1E3420; opacity: 0.8; }
+
+  .q-feedback {
+    display: none;
+    margin: 0 1.1rem 0.85rem;
+    padding: 0.65rem 0.9rem;
+    border-radius: 0 4px 4px 0;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    font-size: 0.8rem;
+    line-height: 1.65;
+    animation: fadeIn 0.22s ease;
+  }
+  .q-feedback.show { display: block; }
+  .q-feedback.fb-correct { background: #EAF0E8; border-left: 3px solid #4A6741; color: #1E3420; }
+  .q-feedback.fb-wrong   { background: #FDF0EC; border-left: 3px solid #7A2E1A; color: #5C1A0A; }
+
+  /* ── SECTION SCORE ── */
+  .sec-score {
+    display: none;
+    margin-top: 1.25rem;
+    padding: 1.1rem 1.4rem;
+    border-radius: 6px;
+    border: 1.5px solid #C8BBA8;
+    animation: fadeIn 0.3s ease;
+  }
+  .sec-score.show { display: block; }
+
+  .score-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.7rem;
+  }
+  .score-num {
+    font-family: Georgia, serif;
+    font-size: 1.8rem;
+    font-weight: normal;
+    line-height: 1;
+  }
+  .score-label {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    font-size: 0.83rem;
+    color: #5C4A2A;
+    line-height: 1.45;
+  }
+  .score-msg {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    font-size: 0.82rem;
+    color: #5C4A2A;
+    line-height: 1.65;
+    font-style: italic;
+    border-top: 1px solid #E8E0D2;
+    padding-top: 0.6rem;
+  }
+
+  .next-sec-btn {
+    margin-top: 0.75rem;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    font-size: 12px;
+    padding: 7px 18px;
+    border-radius: 4px;
+    border: 1.5px solid #8B7355;
+    background: #8B7355;
+    color: #FAF7F2;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .next-sec-btn:hover { background: #6A5540; border-color: #6A5540; }
+
+  /* ── FINAL RESULTS ── */
+  #finalSection {
+    padding: 2rem 2.5rem;
+  }
+  .final-head {
+    background: #2C2C2A;
+    border-radius: 6px;
+    padding: 1.4rem 1.75rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  .final-total {
+    font-family: Georgia, serif;
+    font-size: 3rem;
+    color: #C2A882;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  .final-total span {
+    font-size: 1.1rem;
+    color: #888070;
+  }
+  .final-msg-wrap { flex: 1; }
+  .final-msg-title {
+    font-size: 1rem;
+    color: #F0EBE0;
+    font-weight: normal;
+    margin-bottom: 0.4rem;
+    line-height: 1.35;
+  }
+  .final-msg-text {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    font-size: 0.82rem;
+    color: #888070;
+    line-height: 1.6;
+  }
+
+  .breakdown-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+  .bk-card {
+    background: #FFFDF8;
+    border: 1.5px solid #C8BBA8;
+    border-radius: 5px;
+    padding: 0.85rem 1rem;
+  }
+  .bk-period {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #888070;
+    margin-bottom: 0.3rem;
+  }
+  .bk-score {
+    font-family: Georgia, serif;
+    font-size: 1.3rem;
+    margin-bottom: 0.3rem;
+  }
+  .bk-bar-track {
+    height: 4px;
+    background: #E8E0D2;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .bk-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.6s ease;
+  }
+
+  .restart-btn {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    font-size: 12px;
+    padding: 7px 18px;
+    border-radius: 4px;
+    border: 1.5px solid #8B7355;
+    background: transparent;
+    color: #8B7355;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .restart-btn:hover { background: #8B7355; color: #FAF7F2; }
+
+  @keyframes fadeIn {
+    from { opacity:0; transform:translateY(-4px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-title"><em>Quiz di autovalutazione</em> — L'Italia dopo l'unità (1861–1900)</div>
+  <div class="header-sub">20 domande in quattro sezioni · Fattuali, di comprensione, interpretative</div>
+</div>
+
+<div class="sec-nav" id="secNav">
+  <button class="sec-btn active" id="sBtn0" onclick="goSection(0)"><span class="sn">Sezione 1</span>Destra storica</button>
+  <button class="sec-btn" id="sBtn1" onclick="goSection(1)"><span class="sn">Sezione 2</span>Sinistra storica</button>
+  <button class="sec-btn" id="sBtn2" onclick="goSection(2)"><span class="sn">Sezione 3</span>Età crispina</button>
+  <button class="sec-btn" id="sBtn3" onclick="goSection(3)"><span class="sn">Sezione 4</span>Crisi di fine secolo</button>
+</div>
+
+<div class="prog-wrap">
+  <div class="prog-label">Progressione</div>
+  <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  <div class="prog-count" id="progCount">0 / 20</div>
+</div>
+
+<div id="quizBody"></div>
+<div id="finalSection" style="display:none"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════════════
+//  DATA
+// ══════════════════════════════════════════════════════════════════
+const SECTIONS = [
+  {
+    id: 0,
+    title: 'La Destra storica',
+    period: '1861 – 1876',
+    color: '#4A6741',
+    questions: [
+      {
+        type: 'fattuale',
+        text: 'In quale anno la Destra storica raggiunse il pareggio di bilancio, obiettivo perseguito per l\'intera durata del suo governo?',
+        opts: ['1868','1871','1875','1878'],
+        correct: 2,
+        feedCorrect: 'Corretto. Il pareggio fu raggiunto nel 1875, al termine di una politica di rigore fiscale che includeva la tassa sul macinato e pesanti imposte indirette. Era un risultato che in pochi avrebbero scommesso raggiungibile nel 1861.',
+        feedWrong: 'La risposta si trova nella sezione «Le scelte economiche». Il pareggio fu raggiunto nel 1875, frutto della politica di "economie fino all\'osso" perseguita dal ministro Quintino Sella.'
+      },
+      {
+        type: 'fattuale',
+        text: 'Come si chiama il provvedimento legislativo del 1863 che sospese le garanzie costituzionali nelle province meridionali colpite dal brigantaggio e trasferì i processi ai tribunali militari?',
+        opts: ['Legge Casati','Legge delle Guarentigie','Legge Pica','Codice Zanardelli'],
+        correct: 2,
+        feedCorrect: 'Corretto. La legge Pica del 1863, proposta dal deputato abruzzese Giuseppe Pica, istituì lo stato d\'eccezione nelle province dichiarate "in stato di brigantaggio", stabilì la fucilazione per chi era catturato con le armi e il domicilio coatto per i sospetti manutengoli.',
+        feedWrong: 'La risposta si trova nella sezione «La questione meridionale e il brigantaggio» e nel focus «Il brigantaggio». La legge Pica (1863) fu il principale strumento legislativo della repressione.'
+      },
+      {
+        type: 'comprensione',
+        text: 'Perché la vendita dei beni ecclesiastici — che avrebbe dovuto favorire la piccola proprietà rurale — finì invece per arricchire i grandi latifondisti?',
+        opts: [
+          'Perché i contadini si rifiutarono di acquistare terre della Chiesa',
+          'Perché le modalità di vendita prevedevano lotti spesso troppo grandi per le possibilità dei contadini poveri',
+          'Perché il governo destinò i proventi esclusivamente al debito pubblico',
+          'Perché i beni ecclesiastici erano situati prevalentemente al Nord'
+        ],
+        correct: 1,
+        feedCorrect: 'Corretto. Le terre furono vendute in lotti spesso troppo grandi per le possibilità economiche dei contadini poveri, che non avevano accesso al credito. Il risultato fu che finirono quasi interamente nelle mani della borghesia agraria e dei grandi latifondisti, accentuando le disuguaglianze.',
+        feedWrong: 'La risposta si trova nella sezione «Le scelte economiche». Il meccanismo era semplice: chi non aveva capitali non poteva partecipare alle aste, e i lotti erano troppo grandi per i piccoli acquirenti.'
+      },
+      {
+        type: 'comprensione',
+        text: 'Quale evento internazionale rese possibile la Breccia di Porta Pia del 20 settembre 1870?',
+        opts: [
+          'La vittoria italiana nella Terza guerra d\'indipendenza',
+          'La guerra franco-prussiana e la conseguente ritirata delle truppe francesi da Roma',
+          'La morte di Pio IX e l\'elezione di un nuovo Papa favorevole all\'Italia',
+          'Un accordo segreto tra Cavour e Napoleone III'
+        ],
+        correct: 1,
+        feedCorrect: 'Corretto. A sciogliere il nodo non fu nessuna iniziativa italiana, ma la guerra franco-prussiana del 1870: la disastrosa sconfitta di Napoleone III a Sedan costrinse la Francia a richiamare le proprie truppe da Roma, togliendo la protezione militare che aveva reso impossibile ogni azione italiana.',
+        feedWrong: 'La risposta si trova nella sezione «La questione romana». Cavour era morto nel 1861; Pio IX non cambiò mai posizione. Fu la guerra franco-prussiana a eliminare la protezione francese al Papa.'
+      },
+      {
+        type: 'interpretativa',
+        text: 'La Destra storica limitò il suffragio a circa il 2% della popolazione selezionata per censo e istruzione. Come si può interpretare questa scelta alla luce della sua cultura politica?',
+        opts: [
+          'Come una misura temporanea in attesa che l\'istruzione si diffondesse',
+          'Come un errore tattico che le costò la sconfitta del 1876',
+          'Come una scelta coerente con la visione liberale conservatrice: il potere doveva essere gestito da chi aveva i mezzi e la formazione per esercitarlo responsabilmente',
+          'Come una concessione alla pressione dei proprietari terrieri meridionali'
+        ],
+        correct: 2,
+        feedCorrect: 'Corretto. Per la Destra il suffragio ristretto non era un\'anomalia da correggere ma una scelta coerente con il proprio "etico pedagogismo": la convinzione che il compito della classe dirigente fosse educare e guidare le masse, non rappresentarle. La democrazia di massa era, nella migliore delle ipotesi, un obiettivo lontano.',
+        feedWrong: 'La risposta si trova nella sezione «La Destra storica». Il suffragio ristretto non era una misura temporanea né un errore: era la traduzione istituzionale di una precisa visione del mondo liberale conservatrice.'
+      }
+    ]
+  },
+  {
+    id: 1,
+    title: 'La Sinistra storica',
+    period: '1876 – 1887',
+    color: '#5B7FA6',
+    questions: [
+      {
+        type: 'fattuale',
+        text: 'Cosa scatenò la caduta dell\'ultimo governo della Destra storica nel 1876, aprendo la strada alla "rivoluzione parlamentare"?',
+        opts: [
+          'Una sconfitta militare nella guerra franco-prussiana',
+          'Il voto contrario di alcuni deputati della Destra sulla questione della nazionalizzazione delle ferrovie',
+          'Le dimissioni del re Vittorio Emanuele II',
+          'Un accordo segreto tra Depretis e i democratici radicali'
+        ],
+        correct: 1,
+        feedCorrect: 'Corretto. Il presidente del Consiglio Minghetti aveva proposto di nazionalizzare le ferrovie. Un gruppo di deputati della Destra, legati agli interessi dei concessionari privati, votò contro il proprio governo convergendo con l\'opposizione di Sinistra. Minghetti fu messo in minoranza e si dimise.',
+        feedWrong: 'La risposta si trova nella sezione «La "rivoluzione parlamentare" del 1876». La causa scatenante fu apparentemente tecnica: la questione ferroviaria, che nascondeva però profondi conflitti di interesse.'
+      },
+      {
+        type: 'fattuale',
+        text: 'Quale provvedimento della Sinistra storica triplicò il corpo elettorale italiano, portandolo dal 2% a circa il 7% della popolazione?',
+        opts: [
+          'La legge Coppino del 1877',
+          'La riforma elettorale del 1882',
+          'Il Codice Zanardelli del 1889',
+          'La legge Casati del 1859'
+        ],
+        correct: 1,
+        feedCorrect: 'Corretto. La riforma elettorale del 1882 abbassò l\'età minima da 25 a 21 anni, dimezzò il limite di censo e introdusse l\'alfabetismo come criterio alternativo al reddito. Il corpo elettorale passò dal 2% a circa il 7% della popolazione — un passo avanti reale, ma lontanissimo dal suffragio universale.',
+        feedWrong: 'La risposta si trova nella sezione «Le riforme della Sinistra storica». La legge Coppino riguardava l\'istruzione; il Codice Zanardelli il diritto penale. Fu la riforma elettorale del 1882 ad allargare il suffragio.'
+      },
+      {
+        type: 'comprensione',
+        text: 'Perché il protezionismo del 1887 danneggiò le esportazioni agricole meridionali, pur essendo presentato come una politica di difesa dell\'economia nazionale?',
+        opts: [
+          'Perché escludeva esplicitamente i prodotti agricoli dalla protezione doganale',
+          'Perché scatenò una guerra doganale con la Francia, che chiuse i mercati transalpini alle esportazioni meridionali — vino, agrumi, olio',
+          'Perché alzò i prezzi delle materie prime necessarie all\'agricoltura meridionale',
+          'Perché ridusse i sussidi statali alle cooperative agricole del Sud'
+        ],
+        correct: 1,
+        feedCorrect: 'Corretto. I dazi italiani scatenarono ritorsioni commerciali francesi, aprendo nel 1888 una guerra doganale che chiuse i mercati d\'oltralpe alle esportazioni meridionali. Il paradosso era stridente: la politica protezionistica colpiva duramente proprio il Mezzogiorno, le cui esportazioni agricole erano tra le più dipendenti dal mercato francese.',
+        feedWrong: 'La risposta si trova nelle sezioni «Protezionismo e decollo industriale» e «I costi sociali». Le ritorsioni francesi erano la conseguenza diretta dei dazi italiani — un meccanismo che i contemporanei avrebbero potuto prevedere.'
+      },
+      {
+        type: 'comprensione',
+        text: 'Che cos\'è il "trasformismo" e quale problema strutturale del sistema politico italiano intendeva risolvere?',
+        opts: [
+          'La trasformazione ideologica della Sinistra dalla tradizione repubblicana alla monarchia',
+          'La pratica di costruire maggioranze parlamentari attraverso accordi personali e scambi di favori con singoli deputati, in un sistema privo di partiti organizzati e con un elettorato ristrettissimo',
+          'La politica di modernizzazione industriale attraverso il protezionismo statale',
+          'Il processo di piemontesizzazione dell\'amministrazione pubblica italiana'
+        ],
+        correct: 1,
+        feedCorrect: 'Corretto. Depretis smise di cercare maggioranze fondate su programmi condivisi e cominciò a costruirle attraverso accordi personali. Era una risposta razionale — forse inevitabile — a un sistema in cui votava il 2% della popolazione, i partiti non esistevano e le fratture regionali erano profondissime. Ma i suoi costi furono reali: clientelismo, sfiducia nelle istituzioni, domanda di un "uomo forte".',
+        feedWrong: 'La risposta si trova nel focus «Il trasformismo». Il termine descrive una pratica politica specifica, non un cambiamento ideologico o economico. Gramsci lo definì come il meccanismo con cui la classe dirigente moderata cooptava l\'opposizione svuotandola della sua funzione.'
+      },
+      {
+        type: 'interpretativa',
+        text: 'Lo "schiaffo di Tunisi" del 1881 spinse l\'Italia verso la Triplice Alleanza con Germania e Austria-Ungheria. Quale contraddizione conteneva questa scelta per il nazionalismo italiano?',
+        opts: [
+          'L\'Italia si alleava con due paesi protestanti, in contrasto con la sua tradizione cattolica',
+          'L\'alleanza con Vienna comportava la rinuncia alle rivendicazioni irredentiste su Trento e Trieste, territori che molti italiani consideravano parte della patria non ancora redenta',
+          'La Germania era nemica storica dell\'Italia dal Risorgimento',
+          'L\'alleanza escludeva l\'Italia dalle spartizioni coloniali africane'
+        ],
+        correct: 1,
+        feedCorrect: 'Corretto. Unendosi a Vienna, l\'Italia dovette tacitamente rinunciare alle rivendicazioni irredentiste su Trento e Trieste, suscitando lo sdegno dei radicali e dei repubblicani. Il giovane irredentista triestino Guglielmo Oberdan fu condannato a morte nel 1882 per aver progettato un attentato contro Francesco Giuseppe: il prezzo umano della contraddizione.',
+        feedWrong: 'La risposta si trova nella sezione «Il colonialismo e la Triplice Alleanza». La contraddizione fondamentale era territoriale: Trento e Trieste erano "terre irredente" amministrate dall\'Austria, che ora diventava alleata.'
+      }
+    ]
+  },
+  {
+    id: 2,
+    title: 'L\'età crispina',
+    period: '1887 – 1896',
+    color: '#8B5E3C',
+    questions: [
+      {
+        type: 'fattuale',
+        text: 'Quale provvedimento legislativo del 1889, promulgato durante il governo Crispi, abolì la pena di morte in tutto il Regno d\'Italia e depenalizzò lo sciopero?',
+        opts: [
+          'La legge Pica','La riforma delle Opere pie','Il Codice Zanardelli','La legge Coppino'
+        ],
+        correct: 2,
+        feedCorrect: 'Corretto. Il Codice Zanardelli del 1889 — promulgato per iniziativa del ministro della Giustizia Giuseppe Zanardelli — fu uno dei codici penali più avanzati d\'Europa: abolì la pena di morte, depenalizzò lo sciopero riconoscendone la liceità, e attenuò le pene per i reati contro la proprietà.',
+        feedWrong: 'La risposta si trova nella sezione «L\'età crispina» e in «Le riforme della Sinistra storica». Il Codice Zanardelli era il codice penale. La legge Pica riguardava il brigantaggio; la legge Coppino l\'istruzione.'
+      },
+      {
+        type: 'fattuale',
+        text: 'Quale ambiguità conteneva il Trattato di Uccialli del 1889 tra Italia ed Etiopia, e quali conseguenze ebbe?',
+        opts: [
+          'L\'accordo non era stato ratificato dal Parlamento italiano, rendendolo giuridicamente nullo',
+          'La versione italiana sanciva un protettorato sull\'Etiopia, quella in lingua amarica no: Menelik lo contestò, portando al conflitto culminato ad Adua',
+          'Il trattato fissava confini territoriali che l\'Etiopia non aveva mai accettato',
+          'L\'accordo era stato firmato senza l\'autorizzazione del re Umberto I'
+        ],
+        correct: 1,
+        feedCorrect: 'Corretto. La versione italiana dell\'articolo 17 del Trattato di Uccialli stabiliva che l\'Etiopia dovesse avvalersi dell\'Italia per le sue relazioni con le potenze estere — un protettorato. La versione amarica usava una formulazione facoltativa. Menelik non aveva alcuna intenzione di cedere sovranità e contestò formalmente il trattato.',
+        feedWrong: 'La risposta si trova nella sezione «Il colonialismo e la Triplice Alleanza» e nel focus «Adua». L\'ambiguità era linguistica: la parola chiave aveva significato diverso nelle due versioni del testo.'
+      },
+      {
+        type: 'comprensione',
+        text: 'Come si spiega la contraddizione tra il riformismo di Crispi — Codice Zanardelli, riforma amministrativa, legislazione sociale — e la sua repressione dei Fasci siciliani nel 1893–94?',
+        opts: [
+          'I Fasci siciliani erano guidati da anarchici che minacciavano l\'ordine pubblico, non da lavoratori che rivendicavano diritti',
+          'Crispi era convinto che l\'ordine fosse il presupposto della libertà: uno Stato debole non poteva permettersi riforme. Quando riformismo e controllo entrarono in collisione, scelse il controllo',
+          'La repressione fu decisa dal re Umberto I contro la volontà di Crispi',
+          'I Fasci siciliani avevano abbandonato le rivendicazioni sociali per obiettivi politici eversivi'
+        ],
+        correct: 1,
+        feedCorrect: 'Corretto. Gli storici hanno chiamato "democrazia autoritaria" la visione di Crispi: un sistema che cercava di espandere le basi dello Stato e al tempo stesso di controllarne le conseguenze. Quando le due cose entrarono in collisione, come accadde con i Fasci siciliani, scelse il controllo sulla modernizzazione. Era una contraddizione strutturale, non una deviazione accidentale.',
+        feedWrong: 'La risposta si trova nella sezione «L\'età crispina». La chiave interpretativa è la formula "democrazia autoritaria": Crispi voleva più cittadini, ma cittadini gestibili. I Fasci siciliani rappresentavano una domanda politica che il suo sistema non poteva contenere senza reprimerla.'
+      },
+      {
+        type: 'comprensione',
+        text: 'Quali conseguenze ebbe la disfatta di Adua per la politica italiana e per l\'Etiopia?',
+        opts: [
+          'Per l\'Italia: dimissioni di Crispi e riconoscimento dell\'indipendenza etiope. Per l\'Etiopia: indebolimento di Menelik di fronte ai signori regionali',
+          'Per l\'Italia: dimissioni di Crispi, fine della carriera politica, riconoscimento dell\'indipendenza etiope. Per l\'Etiopia: Adua divenne un simbolo di resistenza al colonialismo europeo',
+          'Per l\'Italia: cambio di governo ma continuazione della politica coloniale. Per l\'Etiopia: occupazione parziale dell\'Eritrea',
+          'Per l\'Italia: intervento internazionale della Gran Bretagna a mediare la pace. Per l\'Etiopia: protettorato britannico'
+        ],
+        correct: 1,
+        feedCorrect: 'Corretto. Per l\'Italia: Crispi fu costretto a dimettersi; il 26 ottobre 1896 l\'Italia riconobbe formalmente la piena indipendenza dell\'Etiopia. Per l\'Etiopia: Adua divenne un simbolo che si diffuse in tutto il continente africano e nei Caraibi, alimentando la speranza che il dominio europeo non fosse invincibile.',
+        feedWrong: 'La risposta si trova nel focus «Adua» e nella sezione «L\'età crispina». Le conseguenze furono immediate e di lungo periodo: Crispi cadde, l\'Italia riconobbe l\'indipendenza etiopica, e Adua acquisì un significato simbolico che andava ben oltre le vicende italiane.'
+      },
+      {
+        type: 'interpretativa',
+        text: 'Crispi prendeva Bismarck come modello esplicito. Quale aspetto del "sistema bismarckiano" lo attraeva e perché poteva sembrare un\'alternativa al liberalismo parlamentare classico?',
+        opts: [
+          'La politica di alleanze militari che garantiva sicurezza agli Stati più deboli',
+          'La capacità di guidare uno sviluppo industriale accelerato e costruire una politica sociale, mantenendo però il controllo sull\'esecutivo senza cedere reale sovranità al parlamento',
+          'Il suffragio universale maschile che dava legittimità popolare all\'esecutivo forte',
+          'La politica coloniale aggressiva che aveva reso la Germania una grande potenza'
+        ],
+        correct: 1,
+        feedCorrect: 'Corretto. Il sistema bismarckiano offriva un\'alternativa al liberalismo parlamentare classico: uno Stato forte e centralizzato, capace di guidare lo sviluppo industriale e costruire una politica sociale paternalistica, ma senza cedere reale sovranità al parlamento. Per Crispi, che percepiva lo Stato italiano come fragile, questo era il modello per dare stabilità a un sistema che il trasformismo aveva indebolito.',
+        feedWrong: 'La risposta si trova nella sezione «Prerequisiti» e in «L\'età crispina». Bismarck attirava Crispi non per la sua politica coloniale né per il suffragio, ma per la combinazione di riformismo sociale e controllo autoritario dell\'esecutivo: lo Stato forte come condizione delle riforme.'
+      }
+    ]
+  },
+  {
+    id: 3,
+    title: 'La crisi di fine secolo',
+    period: '1896 – 1900',
+    color: '#7A2E1A',
+    questions: [
+      {
+        type: 'fattuale',
+        text: 'Lo scandalo della Banca Romana del 1893 aveva al suo centro una grave irregolarità tecnica. Di cosa si trattava?',
+        opts: [
+          'La banca aveva concesso prestiti a tassi usurai a contadini meridionali',
+          'La banca aveva stampato illegalmente enormi quantità di banconote, duplicando alcune serie di numerazione, e aveva concesso prestiti occulti a politici e giornalisti',
+          'La banca aveva investito i depositi dei correntisti in titoli coloniali privi di valore',
+          'La banca aveva trasferito riserve auree all\'estero in modo fraudolento'
+        ],
+        correct: 1,
+        feedCorrect: 'Corretto. La Banca Romana aveva stampato illegalmente un\'enorme quantità di banconote, duplicando addirittura alcune serie di numerazione per non lasciare tracce contabili, e aveva sistematicamente concesso prestiti occulti a politici e giornalisti per comprarsi protezione e silenzio. Era un sistema di corruzione organizzata che coinvolgeva i livelli più alti della classe dirigente.',
+        feedWrong: 'La risposta si trova nel focus «Lo scandalo della Banca Romana». L\'irregolarità era duplice: emissione illegale di cartamoneta e finanziamento occulto di esponenti politici per coprire le irregolarità.'
+      },
+      {
+        type: 'fattuale',
+        text: 'Chi ordinò l\'uso dei cannoni contro la folla a Milano nel maggio 1898, e come reagì il re Umberto I?',
+        opts: [
+          'Il generale Pelloux; Umberto I aprì un\'inchiesta parlamentare',
+          'Il generale Bava Beccaris; Umberto I lo decorò con la medaglia d\'oro al valor militare',
+          'Il generale Cialdini; Umberto I lo congedò per eccesso di violenza',
+          'Il generale La Marmora; Umberto I si dimise per protesta'
+        ],
+        correct: 1,
+        feedCorrect: 'Corretto. Il generale Fiorenzo Bava Beccaris ordinò all\'esercito di usare i cannoni contro la folla disarmata tra il 6 e il 9 maggio 1898. Umberto I non solo non lo punì, ma lo decorò con la medaglia d\'oro al valor militare — un gesto che sarebbe rimasto come simbolo della connivenza tra monarchia e repressione, e che fu esplicitamente invocato dall\'anarchico Gaetano Bresci al momento dell\'assassinio del re nel 1900.',
+        feedWrong: 'La risposta si trova nella sezione «Le conseguenze sociali» e «I Fatti di Milano del 1898». La decisione di Umberto I di decorare Bava Beccaris fu una delle cause dirette del regicidio del 1900.'
+      },
+      {
+        type: 'comprensione',
+        text: 'Cosa propose Sidney Sonnino nell\'articolo "Torniamo allo Statuto" del 1897 e perché rappresentava un progetto di involuzione istituzionale?',
+        opts: [
+          'Propose di tornare al liberismo economico della Destra storica, abbandonando il protezionismo',
+          'Propose di ripristinare una lettura rigorosa dello Statuto Albertino in cui il governo dipendesse unicamente dalla fiducia del Re, svuotando la Camera dei deputati delle sue prerogative',
+          'Propose di riformare lo Statuto Albertino introducendo il suffragio universale maschile',
+          'Propose di sciogliere il Parlamento e governare per decreto regio fino a nuove elezioni'
+        ],
+        correct: 1,
+        feedCorrect: 'Corretto. Sonnino proponeva di ripristinare la lettera originale dello Statuto Albertino: il governo non doveva dipendere dalla fiducia del Parlamento ma unicamente da quella del Re. Era il tentativo di neutralizzare per via istituzionale l\'avanzata delle forze popolari, svuotando la Camera delle sue prerogative senza formalmente abolirla.',
+        feedWrong: 'La risposta si trova nella sezione «La risposta politica e la fine della crisi». "Torniamo allo Statuto" non era una proposta riformatrice ma conservatrice: voleva ridurre il ruolo del Parlamento tornando a una monarchia costituzionale più vicina all\'assolutismo.'
+      },
+      {
+        type: 'comprensione',
+        text: 'Come riuscì l\'opposizione parlamentare a bloccare le leggi liberticide di Pelloux nel 1899?',
+        opts: [
+          'Presentò un ricorso alla Corte di Cassazione che le dichiarò immediatamente incostituzionali',
+          'Organizzò manifestazioni di piazza che costrinsero Pelloux a ritirare i provvedimenti',
+          'Ricorse all\'ostruzionismo: discorsi lunghissimi, interruzioni sistematiche, richieste continue di voto per appello nominale, rendendo impossibile il normale svolgimento dei lavori',
+          'Ottenne l\'intervento del re Umberto I che negò la firma ai decreti'
+        ],
+        correct: 2,
+        feedCorrect: 'Corretto. Socialisti, repubblicani, radicali e liberali di Zanardelli e Giolitti si unirono e ricorsero per la prima volta alla tecnica dell\'ostruzionismo parlamentare. Fu un successo: Pelloux fu costretto a cercare una via alternativa — il decreto regio — che nel febbraio 1900 la Corte di Cassazione dichiarò incostituzionale.',
+        feedWrong: 'La risposta si trova nella sezione «La risposta politica e la fine della crisi». L\'ostruzionismo fu la tecnica; la sentenza della Cassazione fu la conseguenza del tentativo di Pelloux di aggirare il blocco parlamentare.'
+      },
+      {
+        type: 'interpretativa',
+        text: 'L\'anarchico Gaetano Bresci dichiarò di aver ucciso Umberto I per vendicare i morti di Milano del 1898. In che senso l\'assassinio può essere letto come la conseguenza logica di scelte politiche precise?',
+        opts: [
+          'L\'assassinio dimostra che il movimento anarchico era organizzato a livello internazionale contro le monarchie europee',
+          'La decorazione di Bava Beccaris da parte di Umberto I aveva trasformato la repressione in un atto di cui la monarchia si assumeva la responsabilità simbolica: Bresci rispose con la stessa logica della violenza come atto politico',
+          'Bresci era un agente provocatore dei socialisti che volevano destabilizzare il sistema monarchico',
+          'L\'assassinio fu una conseguenza della crisi economica, non delle scelte politiche della monarchia'
+        ],
+        correct: 1,
+        feedCorrect: 'Corretto. Decorando Bava Beccaris, Umberto I aveva reso la monarchia solidale con la repressione dei manifestanti affamati. Bresci — rientrato appositamente dagli Stati Uniti — agì con la logica dell\'atto politico: non un omicidio casuale ma la risposta deliberata a ciò che il re aveva scelto di fare. Il nuovo re Vittorio Emanuele III, presa nota della sconfitta conservatrice, affidò il governo a Zanardelli e Giolitti.',
+        feedWrong: 'La risposta si trova nella sezione «La risposta politica e la fine della crisi». Bresci si dichiarò esplicitamente "vendicatore dei morti di Milano". La decorazione di Bava Beccaris non era un atto neutro: rendeva il re corresponsabile della repressione.'
+      }
+    ]
+  }
+];
+
+const COLORS = ['#4A6741','#5B7FA6','#8B5E3C','#7A2E1A'];
+
+// ══════════════════════════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════════════════════════
+const state = {
+  currentSection: 0,
+  answers: Array(4).fill(null).map(() => Array(5).fill(null)), // null = unanswered
+  sectionDone: [false,false,false,false]
+};
+
+// ══════════════════════════════════════════════════════════════════
+//  BUILD UI
+// ══════════════════════════════════════════════════════════════════
+function buildAll() {
+  const body = document.getElementById('quizBody');
+  body.innerHTML = '';
+
+  SECTIONS.forEach((sec, si) => {
+    const div = document.createElement('div');
+    div.className = 'section' + (si === 0 ? ' active' : '');
+    div.id = 'sec' + si;
+
+    div.innerHTML = `
+      <div class="sec-head">
+        <div class="sec-badge" style="background:${sec.color}">Sezione ${si+1}</div>
+        <div class="sec-title">${sec.title}</div>
+        <div class="sec-period">${sec.period}</div>
+      </div>
+      ${sec.questions.map((q, qi) => buildQuestion(si, qi, q, sec.color)).join('')}
+      <div class="sec-score" id="score${si}"></div>
+    `;
+    body.appendChild(div);
+  });
+}
+
+function buildQuestion(si, qi, q, color) {
+  const typeLabel = { fattuale: 'Fattuale', comprensione: 'Comprensione', interpretativa: 'Interpretativa' };
+  const opts = q.opts.map((opt, oi) =>
+    `<button class="opt-btn" id="opt${si}_${qi}_${oi}" onclick="answer(${si},${qi},${oi})">${String.fromCharCode(65+oi)}. ${opt}</button>`
+  ).join('');
+
+  return `
+    <div class="q-block" id="qblock${si}_${qi}">
+      <div class="q-head">
+        <div class="q-num" style="background:${color}">D${qi+1}</div>
+        <div class="q-type-badge">${typeLabel[q.type]}</div>
+        <div class="q-text">${q.text}</div>
+      </div>
+      <div class="q-options">${opts}</div>
+      <div class="q-feedback" id="fb${si}_${qi}"></div>
+    </div>
+  `;
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  ANSWER LOGIC
+// ══════════════════════════════════════════════════════════════════
+function answer(si, qi, oi) {
+  if (state.answers[si][qi] !== null) return; // already answered
+
+  const q = SECTIONS[si].questions[qi];
+  const isCorrect = oi === q.correct;
+  state.answers[si][qi] = isCorrect ? 1 : 0;
+
+  // Disable all options
+  for (let i = 0; i < 4; i++) {
+    const btn = document.getElementById(`opt${si}_${qi}_${i}`);
+    btn.disabled = true;
+    if (i === q.correct) btn.classList.add('correct');
+    else if (i === oi && !isCorrect) btn.classList.add('wrong');
+  }
+
+  // Show feedback
+  const fb = document.getElementById(`fb${si}_${qi}`);
+  fb.textContent = isCorrect ? '✓ ' + q.feedCorrect : '✗ ' + q.feedWrong;
+  fb.className = 'q-feedback show ' + (isCorrect ? 'fb-correct' : 'fb-wrong');
+
+  updateProgress();
+  checkSectionComplete(si);
+}
+
+function checkSectionComplete(si) {
+  const all = state.answers[si].every(a => a !== null);
+  if (!all || state.sectionDone[si]) return;
+  state.sectionDone[si] = true;
+
+  // Mark tab as done
+  document.getElementById('sBtn' + si).classList.add('done');
+
+  // Show section score
+  const correct = state.answers[si].filter(a => a === 1).length;
+  const total = 5;
+  const pct = (correct / total) * 100;
+  const scoreDiv = document.getElementById('score' + si);
+
+  const msg = correct === 5
+    ? 'Risultato perfetto. Hai padronanza completa di questa sezione.'
+    : correct >= 4
+    ? 'Ottimo risultato. Rileggi le domande sbagliate per consolidare i punti ancora incerti.'
+    : correct >= 3
+    ? 'Risultato sufficiente. Ripassa le parti del capitolo indicate nei feedback delle risposte errate.'
+    : correct >= 2
+    ? 'Risultato insufficiente. Ti conviene rileggere questa sezione del capitolo prima di proseguire.'
+    : 'Questa sezione richiede uno studio più approfondito. Rileggi il capitolo e riprova.';
+
+  scoreDiv.innerHTML = `
+    <div class="score-row">
+      <div class="score-num" style="color:${COLORS[si]}">${correct}<span style="font-size:1rem;color:#888070"> / ${total}</span></div>
+      <div class="score-label">risposte corrette<br>in questa sezione</div>
+    </div>
+    <div class="score-msg">${msg}</div>
+    ${si < 3 ? `<button class="next-sec-btn" onclick="goSection(${si+1})">Sezione successiva →</button>` : `<button class="next-sec-btn" onclick="showFinal()">Vedi risultato complessivo →</button>`}
+  `;
+  scoreDiv.classList.add('show');
+  scoreDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  NAVIGATION
+// ══════════════════════════════════════════════════════════════════
+let currentSec = 0;
+
+function goSection(idx) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.sec-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec' + idx).classList.add('active');
+  document.getElementById('sBtn' + idx).classList.add('active');
+  currentSec = idx;
+  window.scrollTo(0,0);
+}
+
+function updateProgress() {
+  const answered = state.answers.flat().filter(a => a !== null).length;
+  const total = 20;
+  document.getElementById('progFill').style.width = (answered / total * 100) + '%';
+  document.getElementById('progCount').textContent = answered + ' / ' + total;
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  FINAL RESULTS
+// ══════════════════════════════════════════════════════════════════
+function showFinal() {
+  document.getElementById('quizBody').style.display = 'none';
+  document.querySelectorAll('.sec-btn').forEach(b => b.style.pointerEvents = 'none');
+
+  const totCorrect = state.answers.flat().filter(a => a === 1).length;
+  const pct = totCorrect / 20;
+
+  let finalMsg, finalTitle;
+  if (totCorrect >= 18) {
+    finalTitle = 'Ottima padronanza del capitolo';
+    finalMsg = 'Hai risposto correttamente a quasi tutte le domande, compresi i quesiti interpretativi. Sei in grado di muoverti con sicurezza tra fatti, cause e categorie concettuali.';
+  } else if (totCorrect >= 15) {
+    finalTitle = 'Buona preparazione complessiva';
+    finalMsg = 'Il capitolo è sostanzialmente acquisito. Rileggi le sezioni in cui hai risposto meno bene, con attenzione ai meccanismi causali e alle interpretazioni storiografiche.';
+  } else if (totCorrect >= 12) {
+    finalTitle = 'Preparazione sufficiente, con lacune';
+    finalMsg = 'Hai compreso le linee generali, ma alcuni nodi restano incerti. Ripassa il testo seguendo i riferimenti nei feedback delle risposte errate.';
+  } else if (totCorrect >= 8) {
+    finalTitle = 'Preparazione insufficiente';
+    finalMsg = 'Il capitolo richiede una rilettura più attenta. Parti dalle sezioni con il punteggio più basso e segnati i concetti che non hai riconosciuto.';
+  } else {
+    finalTitle = 'Questo capitolo richiede uno studio approfondito';
+    finalMsg = 'Il numero di risposte errate suggerisce che il capitolo non è ancora acquisito. Riparti dalla lettura sistematica prima di riprovare il quiz.';
+  }
+
+  const bySection = SECTIONS.map((sec, si) => {
+    const c = state.answers[si].filter(a => a === 1).length;
+    return { title: sec.title, period: sec.period, color: sec.color, correct: c };
+  });
+
+  const final = document.getElementById('finalSection');
+  final.style.display = 'block';
+  final.innerHTML = `
+    <div class="final-head">
+      <div class="final-total">${totCorrect}<span> / 20</span></div>
+      <div class="final-msg-wrap">
+        <div class="final-msg-title">${finalTitle}</div>
+        <div class="final-msg-text">${finalMsg}</div>
+      </div>
+    </div>
+    <div class="breakdown-grid">
+      ${bySection.map(s => `
+        <div class="bk-card">
+          <div class="bk-period" style="color:${s.color}">${s.title}</div>
+          <div class="bk-score" style="color:${s.color}">${s.correct} <span style="font-size:0.85rem;color:#888070">/ 5</span></div>
+          <div class="bk-bar-track">
+            <div class="bk-bar-fill" style="background:${s.color};width:${s.correct/5*100}%"></div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+    <button class="restart-btn" onclick="restart()">Ricomincia il quiz</button>
+  `;
+
+  final.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  // animate bars
+  setTimeout(() => {
+    document.querySelectorAll('.bk-bar-fill').forEach((bar, i) => {
+      bar.style.transitionDelay = (i * 0.15) + 's';
+    });
+  }, 100);
+}
+
+function restart() {
+  state.answers = Array(4).fill(null).map(() => Array(5).fill(null));
+  state.sectionDone = [false,false,false,false];
+  document.getElementById('finalSection').style.display = 'none';
+  document.getElementById('quizBody').style.display = '';
+  document.querySelectorAll('.sec-btn').forEach(b => {
+    b.style.pointerEvents = '';
+    b.classList.remove('done');
+  });
+  buildAll();
+  goSection(0);
+  updateProgress();
+}
+
+// ── INIT ──
+buildAll();
+updateProgress();
+</script>
+</body>
+</html>
