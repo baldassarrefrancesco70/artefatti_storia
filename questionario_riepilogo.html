@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Questionario di riepilogo — L'Italia dopo l'unità</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    background: #FAF7F2;
+    color: #2C2C2A;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: #2C2C2A;
+    padding: 1.4rem 2.5rem;
+    border-bottom: 4px solid #8B7355;
+  }
+  .header-title {
+    font-size: 1.15rem;
+    font-weight: normal;
+    color: #F0EBE0;
+  }
+  .header-title em { color: #C2A882; font-style: italic; }
+  .header-sub {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    font-size: 0.78rem;
+    color: #888070;
+    margin-top: 0.35rem;
+  }
+
+  /* ── INSTRUCTIONS ── */
+  .instructions {
+    background: #F5F0E8;
+    border-bottom: 1px solid #D4C9B8;
+    padding: 0.7rem 2.5rem;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    font-size: 0.8rem;
+    color: #5C4A2A;
+    line-height: 1.55;
+  }
+  .instructions strong { color: #2C2C2A; }
+
+  /* ── PROGRESS DASHBOARD ── */
+  .dashboard {
+    background: #FFFDF8;
+    border-bottom: 1px solid #D4C9B8;
+    padding: 0.65rem 2.5rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+  .dash-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    font-size: 12px;
+  }
+  .dash-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+  .dot-yes    { background: #4A6741; }
+  .dot-part   { background: #C2A882; }
+  .dot-no     { background: #7A2E1A; }
+  .dot-open   { background: #D4C9B8; }
+  .dash-count { font-weight: 600; color: #2C2C2A; }
+  .dash-label { color: #888070; }
+
+  .prog-wrap {
+    flex: 1;
+    min-width: 140px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .prog-track {
+    flex: 1;
+    height: 4px;
+    background: #E8E0D2;
+    border-radius: 2px;
+    overflow: hidden;
+    display: flex;
+    gap: 0;
+  }
+  .prog-seg-yes  { background: #4A6741; height: 100%; transition: width 0.4s; }
+  .prog-seg-part { background: #C2A882; height: 100%; transition: width 0.4s; }
+  .prog-seg-no   { background: #7A2E1A; height: 100%; transition: width 0.4s; }
+  .prog-label {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    font-size: 11px;
+    color: #888070;
+    white-space: nowrap;
+  }
+
+  /* ── SECTION LABELS ── */
+  .section-label {
+    margin: 1.5rem 2.5rem 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .sl-badge {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #fff;
+    padding: 3px 9px;
+    border-radius: 3px;
+  }
+  .sl-title {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #888070;
+  }
+  .sl-line { flex: 1; height: 1px; background: #E8E0D2; }
+
+  /* ── QUESTION LIST ── */
+  .q-list {
+    padding: 0 2.5rem 2rem;
+  }
+
+  .q-item {
+    background: #FFFDF8;
+    border: 1.5px solid #C8BBA8;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 0.65rem;
+    transition: border-color 0.18s;
+  }
+
+  .q-item.state-yes  { border-left: 5px solid #4A6741; }
+  .q-item.state-part { border-left: 5px solid #C2A882; }
+  .q-item.state-no   { border-left: 5px solid #7A2E1A; }
+
+  .q-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.85rem 1.1rem;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .q-head:hover { background: #F5F0E8; }
+
+  .q-num {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    color: #fff;
+    padding: 2px 7px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    min-width: 32px;
+    text-align: center;
+  }
+
+  .q-text {
+    font-size: 0.92rem;
+    color: #2C2C2A;
+    line-height: 1.5;
+    flex: 1;
+  }
+
+  .q-arrow {
+    font-size: 0.75rem;
+    color: #C8BBA8;
+    flex-shrink: 0;
+    margin-top: 3px;
+    transition: transform 0.2s;
+  }
+  .q-item.open .q-arrow { transform: rotate(90deg); }
+
+  /* ── ANSWER PANEL ── */
+  .q-answer {
+    display: none;
+    border-top: 1px solid #E8E0D2;
+    animation: fadeIn 0.2s ease;
+  }
+  .q-item.open .q-answer { display: block; }
+
+  .q-answer-text {
+    padding: 0.9rem 1.1rem 0.75rem 1.1rem;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    font-size: 0.84rem;
+    color: #2C2C2A;
+    line-height: 1.72;
+    background: #F7F4EF;
+    border-left: 3px solid #8B7355;
+    margin: 0.75rem 1.1rem 0;
+    border-radius: 0 4px 4px 0;
+  }
+
+  /* ── SELF-EVAL BUTTONS ── */
+  .q-eval {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.75rem 1.1rem 0.9rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .eval-label {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #B0A090;
+    margin-right: 0.25rem;
+  }
+
+  .eval-btn {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    font-size: 11.5px;
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 1.5px solid;
+    cursor: pointer;
+    transition: all 0.18s;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .eval-btn .check { font-size: 10px; }
+
+  .btn-yes  { border-color: #4A6741; color: #4A6741; }
+  .btn-yes:hover, .btn-yes.active  { background: #4A6741; color: #fff; }
+
+  .btn-part { border-color: #C2A882; color: #8B6A3A; }
+  .btn-part:hover, .btn-part.active { background: #C2A882; color: #fff; }
+
+  .btn-no   { border-color: #7A2E1A; color: #7A2E1A; }
+  .btn-no:hover, .btn-no.active   { background: #7A2E1A; color: #fff; }
+
+  /* ── RESET BUTTON ── */
+  .reset-wrap {
+    padding: 0 2.5rem 2rem;
+    display: flex;
+    justify-content: flex-end;
+  }
+  .reset-btn {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    font-size: 12px;
+    padding: 6px 16px;
+    border-radius: 4px;
+    border: 1.5px solid #C8BBA8;
+    background: transparent;
+    color: #888070;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .reset-btn:hover { border-color: #8B7355; color: #5C4A2A; background: #F5F0E8; }
+
+  @keyframes fadeIn {
+    from { opacity:0; transform:translateY(-4px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-title"><em>Questionario di riepilogo</em> — L'Italia dopo l'unità (1861–1900)</div>
+  <div class="header-sub">20 domande aperte sull'intero capitolo · Risposta sintetica ricavata dal testo</div>
+</div>
+
+<div class="instructions">
+  <strong>Come usare questo questionario.</strong> Leggi la domanda e formula mentalmente la tua risposta. Poi clicca per aprire la scheda e confrontarti con il testo. Infine indica quanto sei stato preciso usando i tre pulsanti di autovalutazione: le domande si colorano di conseguenza e il pannello in alto tiene traccia del tuo avanzamento.
+</div>
+
+<div class="dashboard" id="dashboard">
+  <div class="dash-item">
+    <div class="dash-dot dot-yes"></div>
+    <span class="dash-count" id="cnt-yes">0</span>
+    <span class="dash-label">saputa</span>
+  </div>
+  <div class="dash-item">
+    <div class="dash-dot dot-part"></div>
+    <span class="dash-count" id="cnt-part">0</span>
+    <span class="dash-label">parziale</span>
+  </div>
+  <div class="dash-item">
+    <div class="dash-dot dot-no"></div>
+    <span class="dash-count" id="cnt-no">0</span>
+    <span class="dash-label">da rivedere</span>
+  </div>
+  <div class="dash-item">
+    <div class="dash-dot dot-open"></div>
+    <span class="dash-count" id="cnt-open">20</span>
+    <span class="dash-label">da fare</span>
+  </div>
+  <div class="prog-wrap">
+    <div class="prog-track">
+      <div class="prog-seg-yes"  id="seg-yes"  style="width:0%"></div>
+      <div class="prog-seg-part" id="seg-part" style="width:0%"></div>
+      <div class="prog-seg-no"   id="seg-no"   style="width:0%"></div>
+    </div>
+    <div class="prog-label" id="prog-label">0 / 25</div>
+  </div>
+</div>
+
+<div class="q-list" id="qList"></div>
+
+<div class="reset-wrap">
+  <button class="reset-btn" onclick="resetAll()">↺ Azzera autovalutazioni</button>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════════
+//  DATA
+// ══════════════════════════════════════════════════════════════════
+const SECTIONS = [
+  {
+    title: 'I problemi dell\'Italia post-unitaria',
+    color: '#5B4A3A',
+    questions: [
+      {
+        q: 'Che cos\'è lo Statuto Albertino, perché si chiama costituzione "ottriata" e come diventa la legge fondamentale del nuovo Stato italiano?',
+        a: 'Lo Statuto Albertino fu concesso unilateralmente da Carlo Alberto di Savoia nel 1848 come risposta alle pressioni rivoluzionarie: si chiama "ottriato" (dal francese <em>octroyé</em>) perché non nacque da un\'assemblea costituente eletta dal popolo ma fu accordato dal sovrano. Era una costituzione flessibile — modificabile senza procedure speciali — che disegnava una monarchia costituzionale in cui il re manteneva poteri considerevoli, mentre il governo rispondeva progressivamente al parlamento più che alla corona. Non essendo mai stato abrogato, diventò automaticamente la carta costituzionale di tutta la penisola al momento dell\'unificazione nel 1861.'
+      },
+      {
+        q: 'Quali erano i cinque problemi strutturali che il nuovo Stato italiano ereditava al momento dell\'unificazione?',
+        a: 'I cinque problemi erano: il primo di natura geografica e politica — l\'incompletezza territoriale (Veneto, Trentino, Roma ancora fuori) e la frattura con la Chiesa; il secondo amministrativo e culturale — come governare un paese che fino a ieri era diviso in sette Stati con leggi, monete e tradizioni diverse; il terzo economico — debito pubblico enorme, paese prevalentemente agricolo con solo 1.800 km di ferrovie contro i 10.000 della Francia; il quarto culturale in senso stretto — analfabetismo all\'78% e non più del 2% della popolazione che usava l\'italiano come lingua quotidiana; il quinto il divario strutturale tra Nord e Sud, con l\'agricoltura dominata al Sud dal latifondo, infrastrutture quasi inesistenti e tassi di analfabetismo superiori al 90%.'
+      },
+      {
+        q: 'Che cosa si intende per "paese legale" contrapposto a "paese reale" e perché questa tensione è strutturale nel sistema politico liberale italiano?',
+        a: 'Il "paese legale" è l\'Italia rappresentata nelle istituzioni: il parlamento, la burocrazia, la classe dirigente che governa. Il "paese reale" è la maggioranza della popolazione — contadini, lavoratori, meridionali — che non si riconosce in quelle istituzioni o non vi ha accesso, spesso per la ristrettezza del suffragio (limitato a circa il 2% della popolazione, selezionata per censo e istruzione). La tensione è strutturale perché il Risorgimento era stato vinto dai moderati, che avevano escluso la tradizione democratica di Mazzini e Garibaldi: il paese legale riflette quella vittoria, mentre il paese reale porta in sé la sconfitta di un\'altra visione dell\'Italia. È una tensione che riemerge ogni volta che il sistema politico è messo sotto pressione.'
+      }
+    ]
+  },
+  {
+    title: 'La Destra storica (1861–1876)',
+    color: '#4A6741',
+    questions: [
+      {
+        q: 'Qual era la cultura politica della Destra storica e in che senso si considerava erede di Cavour?',
+        a: 'La Destra storica si fondava sui capisaldi del liberalismo conservatore: fedeltà alla monarchia costituzionale sabauda, laicità dello Stato (il motto cavouriano "Libera Chiesa in libero Stato" restava il punto di riferimento), e liberismo economico come motore della modernizzazione. Privilegiava la libertà rispetto all\'uguaglianza: qualsiasi intervento redistributivo dello Stato era escluso in linea di principio. Il progresso doveva venire dall\'alto, guidato da un\'élite illuminata, in un atteggiamento di "etico pedagogismo" — la convinzione che il compito della classe dirigente fosse educare e guidare le masse, non rappresentarle. Si considerava l\'erede legittima di Cavour perché ne condivideva il metodo: riforme graduali, senza cedere né alle pressioni reazionarie né ai sussulti rivoluzionari.'
+      },
+      {
+        q: 'Che cosa fu la "piemontesizzazione" e quali costi politici e istituzionali produsse?',
+        a: 'Con "piemontesizzazione" i contemporanei indicavano l\'estensione forzata degli ordinamenti sabaudi all\'intera penisola, spesso per decreto e senza discussione parlamentare. Nel 1865 furono emanati il codice civile, il codice di procedura civile, quello commerciale e quello di navigazione — tutti di impianto piemontese — applicati uniformemente a territori con tradizioni giuridiche secolari e profondamente diverse. Le province furono affidate a prefetti di nomina governativa, in larga parte di estrazione settentrionale, e i sindaci non venivano eletti ma nominati dall\'alto. Il costo fu che le comunità locali non si auto-governavano, venivano governate: il nuovo Stato aveva scelto l\'uniformità sulla diversità, la rapidità sul consenso, la solidità amministrativa sulla rappresentanza.'
+      },
+      {
+        q: 'Che cos\'era il brigantaggio meridionale, chi lo componeva e quali forze esterne lo sostenevano?',
+        a: 'Il brigantaggio che esplose nel Mezzogiorno tra il 1861 e il 1865 non fu semplice criminalità: fu una guerra civile e di guerriglia rurale alimentata da frustrazioni profonde. Le bande erano eterogenee — contadini poveri, ex soldati borbonici sbandati, renitenti alla leva, delinquenti comuni — in prevalenza giovani tra i venti e i trent\'anni, guidati da figure carismatiche come Carmine Crocco, Pasquale Romano, Michele Caruso. Il fenomeno fu sistematicamente finanziato dall\'esterno: Francesco II di Borbone in esilio e lo Stato Pontificio incoraggiarono le bande per destabilizzare il regno liberale, mentre il manutengolismo — una fitta rete di complicità civili offerta da notabili, clero e proprietari locali — garantiva alle bande rifornimenti, informazioni e coperture.'
+      },
+      {
+        q: 'Che cosa stabiliva la legge Pica del 1863 e perché rappresenta un caso paradigmatico di "stato d\'eccezione"?',
+        a: 'La legge Pica dell\'agosto 1863 sospendeva le garanzie costituzionali nelle province dichiarate "in stato di brigantaggio" e trasferiva la giurisdizione ai tribunali militari, stabilendo la fucilazione per chi veniva catturato con le armi in mano. Istituiva il domicilio coatto per i sospetti manutengoli — nel solo primo mese circa mille persone furono confinate nelle isole toscane — e codificava sconti di pena per chi tradiva i compagni. È paradigmatica come "stato d\'eccezione" perché sospende le garanzie ordinarie in un\'area geografica definita per motivi di sicurezza: paradossalmente la legge garantì per la prima volta agli accusati il diritto a un processo (su 11.000 deferite nel biennio 1864-65, oltre 6.000 furono assolte), ma non impedì abusi sistematici e vendette personali mascherate da repressione.'
+      },
+      {
+        q: 'Come si risolse la questione romana e quale fu la risposta di Pio IX alla Legge delle Guarentigie?',
+        a: 'La questione romana non si risolse per iniziativa italiana ma per un terremoto geopolitico europeo: la guerra franco-prussiana del 1870, con la sconfitta di Napoleone III a Sedan, costrinse la Francia a richiamare le proprie truppe da Roma, togliendo la protezione militare che aveva finora bloccato ogni azione italiana. Il 20 settembre 1870 l\'artiglieria italiana aprì un varco nelle mura — la Breccia di Porta Pia — e Roma diventò capitale nel 1871. Il Parlamento approvò la Legge delle Guarentigie, che riconosceva al Papa autonomia spirituale, extraterritorialità dei palazzi vaticani e libertà di comunicazione diplomatica. Pio IX la respinse categoricamente, si proclamò prigioniero politico, e nel 1874 promulgò il Non expedit: i cattolici non dovevano partecipare alle elezioni né alla vita politica dello Stato italiano.'
+      }
+    ]
+  },
+  {
+    title: 'La Sinistra storica (1876–1887)',
+    color: '#5B7FA6',
+    questions: [
+      {
+        q: 'Che cosa fu la "rivoluzione parlamentare" del 1876 e perché il termine è al tempo stesso appropriato e fuorviante?',
+        a: 'Il 18 marzo 1876 un gruppo di deputati della Destra votò contro il proprio governo sulla questione della nazionalizzazione delle ferrovie, mettendo in minoranza Minghetti che si dimise. Vittorio Emanuele II affidò l\'incarico ad Agostino Depretis, e le elezioni del novembre confermarono la vittoria della Sinistra con un ribaltamento netto. Il termine "rivoluzione" è appropriato perché per la prima volta dall\'unificazione la classe dirigente che aveva costruito lo Stato cedeva il potere a un\'altra; è fuorviante perché non fu una rivoluzione nel senso eversivo — fu un cambio di maggioranza parlamentare ottenuto senza elezioni né sommosse, attraverso il meccanismo ordinario del voto di fiducia, in un sistema ancora lontano dalla democrazia di massa.'
+      },
+      {
+        q: 'Che cos\'è il trasformismo, quale logica lo produceva e quali furono le sue conseguenze di lungo periodo?',
+        a: 'Il trasformismo è la pratica di costruire maggioranze parlamentari non attraverso programmi condivisi ma attraverso accordi personali e scambi di favori con singoli deputati: la fedeltà del deputato veniva ripagata dall\'esecutivo con finanziamenti, appalti, trasferimenti. Depretis ne fece un sistema di governo permanente a partire dagli anni Settanta. La logica che lo produceva era strutturale: in un sistema in cui votava il 2% della popolazione, i partiti nel senso moderno non esistevano e le fratture regionali erano profondissime. Le conseguenze di lungo periodo furono: ritardo nella formazione di partiti moderni, annacquamento dei programmi riformatori, clientelismo endemico, sfiducia nelle istituzioni, e quella domanda di un "uomo forte" che Crispi avrebbe incarnato per primo.'
+      },
+      {
+        q: 'Quali furono le principali riforme sociali e istituzionali della Sinistra storica?',
+        a: 'Le riforme più significative furono: la legge Coppino del 1877, che elevò l\'obbligo scolastico ai nove anni, rese la scuola elementare gratuita e laica; la riforma elettorale del 1882, che triplicò il corpo elettorale dal 2% al 7% della popolazione introducendo l\'alfabetismo come criterio alternativo al censo; l\'abolizione della tassa sul macinato, avviata nel 1879 e completata nel 1884; il Codice Zanardelli del 1889, che abolì la pena di morte, depenalizzò lo sciopero e attenuò le pene per i reati contro la proprietà; la riforma amministrativa del 1888, che rese elettiva la carica di sindaco nei capoluoghi; e le prime misure di legislazione sociale — Cassa Nazionale per gli infortuni (1883), divieto di lavoro minorile sotto i nove anni (1886), leggi sull\'igiene pubblica (1888-90).'
+      },
+      {
+        q: 'Che cosa fu il protezionismo del 1887, chi difendeva e chi danneggiava?',
+        a: 'Con la tariffa generale protezionistica del 1887 furono introdotti forti dazi sui manufatti stranieri (in particolare siderurgici e cotonieri) e sul grano. Era il "patto ferro e grano": proteggeva simultaneamente l\'industria pesante del Nord e la produzione granaria dei latifondisti meridionali. Favorì la nascita di grandi poli industriali (Acciaierie di Terni, Ansaldo, Breda, Edison) e pose le basi del "triangolo industriale" settentrionale. Ma i dazi scatenarono ritorsioni francesi: la guerra doganale del 1888 chiuse i mercati transalpini alle esportazioni meridionali, rovinando vino, agrumi e olio del Sud. Il dazio sul grano salvò i bilanci dei grandi proprietari ma scaricò il costo sui consumatori più poveri attraverso il rincaro del pane, e tolse ai latifondisti la pressione del mercato che li avrebbe costretti a modernizzarsi.'
+      }
+    ]
+  },
+  {
+    title: 'L\'età crispina (1887–1896)',
+    color: '#8B5E3C',
+    questions: [
+      {
+        q: 'Che cosa si intende per "democrazia autoritaria" crispina e in che cosa consiste la contraddizione strutturale di Crispi?',
+        a: 'La formula "democrazia autoritaria" descrive la visione di Crispi: un sistema che cercava di espandere le basi sociali dello Stato e al tempo stesso di controllarne le conseguenze. Crispi credeva genuinamente di allargare le basi dello Stato, modernizzare il paese, riscattare il Mezzogiorno attraverso un\'azione energica; il suo modello era Bismarck — uno Stato forte, un esecutivo accentrato. La contraddizione strutturale è che Crispi voleva più cittadini ma cittadini gestibili: quando riformismo e controllo entrarono in collisione — come accadde con i Fasci siciliani, repressi con lo stato d\'assedio e trentamila soldati — scelse il controllo. Era lo stesso uomo che aveva firmato il Codice Zanardelli. La contraddizione non era accidentale: era la logica conseguenza di un sistema che non poteva permettersi le sue stesse riforme.'
+      },
+      {
+        q: 'Quali riforme concrete lasciò l\'età crispina e come si conciliano con i metodi autoritari del governo?',
+        a: 'L\'azione riformatrice crispina lasciò tracce durature: la riforma amministrativa del 1888 estese il principio elettivo alla carica di sindaco in tutti i capoluoghi di provincia; il Codice Zanardelli del 1889 abolì la pena di morte, depenalizzò lo sciopero e attenuò le pene per i reati contro la proprietà; in campo sociale Crispi introdusse tutele per la maternità delle lavoratrici, estese le coperture per gli infortuni, varò leggi organiche per l\'igiene e la sanità pubblica; con la riforma delle Opere pie trasformò gli enti religiosi dediti alla carità in istituzioni pubbliche. Non si conciliano: Crispi era convinto che l\'ordine fosse il presupposto della libertà, che senza uno Stato forte non ci fossero riforme possibili. Le riforme erano reali ma il loro contesto era un governo che nel frattempo emarginava le opposizioni e scioglieva il Partito Socialista.'
+      },
+      {
+        q: 'Quale ambiguità conteneva il Trattato di Uccialli del 1889 e come portò alla battaglia di Adua?',
+        a: 'Il Trattato di Uccialli, stipulato da Crispi con il negus Menelik II nel 1889, conteneva una fatale ambiguità linguistica: la versione italiana sanciva un vero e proprio protettorato italiano sull\'Etiopia (l\'articolo 17 stabiliva che l\'Etiopia dovesse avvalersi dell\'Italia per le sue relazioni con le potenze estere); quella in lingua amarica usava una formulazione facoltativa che non prevedeva alcun protettorato. Menelik non aveva alcuna intenzione di cedere sovranità: quando contestò formalmente il trattato e lo revocò, Crispi decise di ricorrere alla forza, nutrito dal pregiudizio coloniale che considerava gli eserciti africani nemici di seconda categoria. Il 1° marzo 1896 l\'esercito italiano di circa 16.000 uomini si scontrò con un\'armata etiope di oltre 70.000 effettivi: fu una disfatta catastrofica, tra 4.000 e 6.000 morti italiani.'
+      },
+      {
+        q: 'Qual fu il significato di Adua per l\'Italia e per l\'Etiopia, e perché la storiografia dice che Adua non fu l\'epilogo del colonialismo italiano?',
+        a: 'Per l\'Italia Adua fu un trauma: Crispi fu costretto a dimettersi, il 26 ottobre 1896 l\'Italia riconobbe formalmente la piena indipendenza dell\'Etiopia. Nella memoria popolare divenne un incubo; negli ambienti nazionalisti si sedimentò come un\'umiliazione da vendicare. Per l\'Etiopia fu qualcosa di più di una vittoria militare: Menelik II aveva sconfitto un esercito europeo in campo aperto, e la notizia si diffuse in tutto il continente africano alimentando la speranza che il dominio europeo non fosse invincibile. Adua non fu l\'epilogo perché il colonialismo italiano riprese: nel 1911-12 Giolitti conquistò la Libia; nel 1935-36 Mussolini conquistò l\'Etiopia con l\'uso sistematico di armi chimiche. Adua non fu la fine ma, in un senso tragico, il prologo.'
+      }
+    ]
+  },
+  {
+    title: 'La crisi di fine secolo (1896–1900)',
+    color: '#7A2E1A',
+    questions: [
+      {
+        q: 'Quali furono le radici economiche della crisi di fine secolo e come si intrecciarono con la crisi finanziaria della Banca Romana?',
+        a: 'La crisi economica era il prodotto di scelte accumulate: il crollo dei prezzi agricoli (la "Grande Depressione" portò sui mercati europei cereali americani e russi a basso costo), la guerra doganale con la Francia che rovinò le esportazioni meridionali, il dazio sul grano che scaricava il costo sui consumatori più poveri. A questa crisi reale si sovrappose nel 1893 lo scandalo della Banca Romana: l\'istituto aveva stampato illegalmente enormi quantità di banconote — duplicando alcune serie di numerazione — e concesso prestiti occulti a politici e giornalisti per comprarsi protezione. Il coinvolgimento di Crispi e Giolitti trasformò lo scandalo bancario in crisi politica. I fallimenti che seguirono costrinsero lo Stato a fondare nel 1894 la Banca d\'Italia come istituto unico di emissione.'
+      },
+      {
+        q: 'Che cosa furono i Fatti di Milano del 1898 e perché la reazione di Umberto I aggravò la crisi politica?',
+        a: 'La primavera del 1898 vide esplodere la "protesta dello stomaco": cattivi raccolti in tutta Europa e il blocco delle esportazioni di grano americano causarono un intollerabile rincaro del pane, con manifestazioni spontanee che partirono dal Sud e raggiunsero le città industriali del Nord. A Milano, dove le manifestazioni erano più intense, il governo proclamò lo stato d\'assedio e affidò i pieni poteri al generale Fiorenzo Bava Beccaris, che tra il 6 e il 9 maggio ordinò all\'esercito di usare i cannoni contro la folla disarmata: i morti furono decine, i feriti centinaia. Seguirono arresti di massa: Filippo Turati fu condannato a dodici anni. Umberto I aggravò la crisi non punendo Bava Beccaris, ma decorandolo con la medaglia d\'oro al valor militare — un gesto che sarebbe rimasto come simbolo della connivenza tra monarchia e repressione, e che l\'anarchico Bresci invocò esplicitamente al momento del regicidio del 1900.'
+      },
+      {
+        q: 'Che cosa propose Sonnino con "Torniamo allo Statuto" e in che senso era un progetto di involuzione istituzionale?',
+        a: 'Nell\'articolo pubblicato nel gennaio 1897 sulla Nuova Antologia, Sidney Sonnino proponeva di ripristinare una lettura rigorosa dello Statuto Albertino: il governo non doveva più dipendere dalla fiducia del Parlamento, ma unicamente da quella del Re. Era il tentativo di svuotare la Camera dei deputati delle sue prerogative, neutralizzando per via istituzionale l\'avanzata delle forze popolari e del Partito Socialista. Era un progetto di involuzione perché puntava a tornare a una monarchia costituzionale più vicina all\'assolutismo, riducendo il ruolo del parlamento senza formalmente abolirlo. Equivaleva al riconoscimento che il sistema liberale non si sentiva abbastanza sicuro di sé da affrontare la democrazia di massa a viso aperto.'
+      },
+      {
+        q: 'Come fu bloccato il progetto autoritario di Pelloux e quale fu la conclusione della crisi di fine secolo?',
+        a: 'Il generale Pelloux presentò nel 1899 un pacchetto di "leggi liberticide" per limitare libertà di stampa, di associazione e diritto di sciopero. L\'opposizione — socialisti, repubblicani, radicali uniti ai liberali di Zanardelli e Giolitti — ricorse per la prima volta alla tecnica dell\'ostruzionismo: discorsi lunghissimi, interruzioni sistematiche, richieste continue di voto per appello nominale. Pelloux tentò di aggirare il blocco promulgando le leggi per decreto regio, ma nel febbraio 1900 la Corte di Cassazione dichiarò il decreto incostituzionale. Le elezioni del giugno 1900 registrarono una forte avanzata delle forze progressiste, costringendo Pelloux alle dimissioni. Il 29 luglio 1900 Gaetano Bresci uccise Umberto I a Monza per vendicare i morti di Milano. Vittorio Emanuele III affidò il governo a Zanardelli e Giolitti, aprendo una stagione nuova.'
+      }
+    ]
+  },
+
+];
+
+// ══════════════════════════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════════════════════════
+const TOTAL = SECTIONS.reduce((s, sec) => s + sec.questions.length, 0);
+const states = {}; // qid -> 'yes'|'part'|'no'|null
+
+// ══════════════════════════════════════════════════════════════════
+//  BUILD
+// ══════════════════════════════════════════════════════════════════
+function build() {
+  const list = document.getElementById('qList');
+  list.innerHTML = '';
+  let globalIdx = 0;
+
+  SECTIONS.forEach(sec => {
+    // Section label
+    const label = document.createElement('div');
+    label.className = 'section-label';
+    label.innerHTML = `
+      <div class="sl-badge" style="background:${sec.color}">${sec.title.split('(')[0].trim()}</div>
+      <div class="sl-line"></div>
+    `;
+    list.appendChild(label);
+
+    sec.questions.forEach((q, qi) => {
+      const id = 'q' + globalIdx;
+      states[id] = null;
+
+      const item = document.createElement('div');
+      item.className = 'q-item';
+      item.id = id;
+
+      item.innerHTML = `
+        <div class="q-head" onclick="toggleQ('${id}')">
+          <div class="q-num" style="background:${sec.color}">${globalIdx + 1}</div>
+          <div class="q-text">${q.q}</div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-answer">
+          <div class="q-answer-text">${q.a}</div>
+          <div class="q-eval">
+            <span class="eval-label">Ho saputo rispondere?</span>
+            <button class="eval-btn btn-yes"  onclick="setEval('${id}','yes',event)"><span class="check">✓</span> Sì, l'ho saputa</button>
+            <button class="eval-btn btn-part" onclick="setEval('${id}','part',event)"><span class="check">◑</span> Solo in parte</button>
+            <button class="eval-btn btn-no"   onclick="setEval('${id}','no',event)"><span class="check">✗</span> No, da rivedere</button>
+          </div>
+        </div>
+      `;
+      list.appendChild(item);
+      globalIdx++;
+    });
+  });
+}
+
+function toggleQ(id) {
+  const item = document.getElementById(id);
+  item.classList.toggle('open');
+}
+
+function setEval(id, val, e) {
+  e.stopPropagation();
+  states[id] = val;
+
+  const item = document.getElementById(id);
+  item.classList.remove('state-yes','state-part','state-no');
+  item.classList.add('state-' + val);
+
+  // update button active states
+  item.querySelectorAll('.eval-btn').forEach(b => b.classList.remove('active'));
+  const map = { yes: 'btn-yes', part: 'btn-part', no: 'btn-no' };
+  item.querySelector('.' + map[val]).classList.add('active');
+
+  updateDashboard();
+}
+
+function updateDashboard() {
+  const counts = { yes: 0, part: 0, no: 0, open: 0 };
+  Object.values(states).forEach(s => {
+    if (s) counts[s]++;
+    else counts.open++;
+  });
+  const done = counts.yes + counts.part + counts.no;
+
+  document.getElementById('cnt-yes').textContent  = counts.yes;
+  document.getElementById('cnt-part').textContent = counts.part;
+  document.getElementById('cnt-no').textContent   = counts.no;
+  document.getElementById('cnt-open').textContent = counts.open;
+  document.getElementById('prog-label').textContent = done + ' / ' + TOTAL;
+
+  document.getElementById('seg-yes').style.width  = (counts.yes  / TOTAL * 100) + '%';
+  document.getElementById('seg-part').style.width = (counts.part / TOTAL * 100) + '%';
+  document.getElementById('seg-no').style.width   = (counts.no   / TOTAL * 100) + '%';
+}
+
+function resetAll() {
+  Object.keys(states).forEach(id => {
+    states[id] = null;
+    const item = document.getElementById(id);
+    item.classList.remove('state-yes','state-part','state-no','open');
+    item.querySelectorAll('.eval-btn').forEach(b => b.classList.remove('active'));
+  });
+  updateDashboard();
+}
+
+// ── INIT ──
+build();
+updateDashboard();
+</script>
+</body>
+</html>
