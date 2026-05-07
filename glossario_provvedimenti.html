@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Glossario — Provvedimenti</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Georgia, 'Times New Roman', serif; background: #FAF7F2; color: #2C2C2A; min-height: 100vh; }
+
+  .header { background: #2C2C2A; padding: 1.4rem 2.5rem; border-bottom: 4px solid #8B7355; }
+  .header-title { font-size: 1.15rem; font-weight: normal; color: #F0EBE0; }
+  .header-title em { color: #C2A882; font-style: italic; }
+  .header-sub { font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif; font-size: 0.78rem; color: #888070; margin-top: 0.35rem; }
+
+  .instructions { background: #F5F0E8; border-bottom: 1px solid #D4C9B8; padding: 0.7rem 2.5rem; font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif; font-size: 0.8rem; color: #5C4A2A; line-height: 1.55; }
+  .instructions strong { color: #2C2C2A; }
+
+  .dashboard { background: #FFFDF8; border-bottom: 1px solid #D4C9B8; padding: 0.65rem 2.5rem; display: flex; align-items: center; gap: 2rem; flex-wrap: wrap; }
+  .dash-item { display: flex; align-items: center; gap: 0.5rem; font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif; font-size: 12px; }
+  .dash-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-yes { background: #4A6741; } .dot-part { background: #C2A882; } .dot-no { background: #7A2E1A; } .dot-open { background: #D4C9B8; }
+  .dash-count { font-weight: 600; color: #2C2C2A; }
+  .dash-label { color: #888070; }
+  .prog-wrap { flex: 1; min-width: 140px; display: flex; align-items: center; gap: 0.5rem; }
+  .prog-track { flex: 1; height: 4px; background: #E8E0D2; border-radius: 2px; overflow: hidden; display: flex; }
+  .prog-seg-yes { background: #4A6741; height: 100%; transition: width 0.4s; }
+  .prog-seg-part { background: #C2A882; height: 100%; transition: width 0.4s; }
+  .prog-seg-no { background: #7A2E1A; height: 100%; transition: width 0.4s; }
+  .prog-label { font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif; font-size: 11px; color: #888070; white-space: nowrap; }
+
+  .q-list { padding: 1.5rem 2.5rem 1rem; }
+
+  .q-item { background: #FFFDF8; border: 1.5px solid #C8BBA8; border-radius: 6px; overflow: hidden; margin-bottom: 0.65rem; }
+  .q-item.state-yes { border-left: 5px solid #4A6741; }
+  .q-item.state-part { border-left: 5px solid #C2A882; }
+  .q-item.state-no { border-left: 5px solid #7A2E1A; }
+
+  .q-head { display: flex; align-items: center; gap: 0.75rem; padding: 0.85rem 1.1rem; cursor: pointer; transition: background 0.15s; }
+  .q-head:hover { background: #F5F0E8; }
+
+  .q-num { font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif; font-size: 10px; letter-spacing: 1.5px; color: #fff; background: #8B7355; padding: 2px 7px; border-radius: 3px; flex-shrink: 0; min-width: 28px; text-align: center; }
+  .q-term { font-size: 0.95rem; color: #2C2C2A; flex: 1; }
+  .q-year { font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif; font-size: 11px; color: #8B7355; font-weight: 600; flex-shrink: 0; letter-spacing: 0.5px; }
+  .q-arrow { font-size: 0.75rem; color: #C8BBA8; flex-shrink: 0; transition: transform 0.2s; margin-left: 0.5rem; }
+  .q-item.open .q-arrow { transform: rotate(90deg); }
+
+  .q-answer { display: none; border-top: 1px solid #E8E0D2; animation: fadeIn 0.2s ease; }
+  .q-item.open .q-answer { display: block; }
+
+  .q-answer-text { padding: 0.9rem 1.1rem 0.75rem; font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif; font-size: 0.84rem; color: #2C2C2A; line-height: 1.72; background: #F7F4EF; border-left: 3px solid #8B7355; margin: 0.75rem 1.1rem 0; border-radius: 0 4px 4px 0; }
+
+  .q-eval { display: flex; gap: 0.5rem; padding: 0.75rem 1.1rem 0.9rem; flex-wrap: wrap; align-items: center; }
+  .eval-label { font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: #B0A090; margin-right: 0.25rem; }
+  .eval-btn { font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif; font-size: 11.5px; padding: 5px 14px; border-radius: 20px; border: 1.5px solid; cursor: pointer; transition: all 0.18s; background: transparent; display: flex; align-items: center; gap: 5px; }
+  .btn-yes { border-color: #4A6741; color: #4A6741; } .btn-yes:hover, .btn-yes.active { background: #4A6741; color: #fff; }
+  .btn-part { border-color: #C2A882; color: #8B6A3A; } .btn-part:hover, .btn-part.active { background: #C2A882; color: #fff; }
+  .btn-no { border-color: #7A2E1A; color: #7A2E1A; } .btn-no:hover, .btn-no.active { background: #7A2E1A; color: #fff; }
+
+  .reset-wrap { padding: 0 2.5rem 2rem; display: flex; justify-content: flex-end; }
+  .reset-btn { font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif; font-size: 12px; padding: 6px 16px; border-radius: 4px; border: 1.5px solid #C8BBA8; background: transparent; color: #888070; cursor: pointer; transition: all 0.18s; }
+  .reset-btn:hover { border-color: #8B7355; color: #5C4A2A; background: #F5F0E8; }
+
+  @keyframes fadeIn { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:translateY(0); } }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-title"><em>Glossario</em> — Provvedimenti chiave</div>
+  <div class="header-sub">L'Italia dopo l'unità (1861–1900) · 15 voci in ordine cronologico</div>
+</div>
+
+<div class="instructions">
+  <strong>Come usare questo glossario.</strong> Leggi il nome del provvedimento e prova a ricordare quando fu emanato, da chi, con quale obiettivo e quali effetti produsse. Poi clicca per aprire la scheda e confrontarti con il testo.
+</div>
+
+<div class="dashboard">
+  <div class="dash-item"><div class="dash-dot dot-yes"></div><span class="dash-count" id="cnt-yes">0</span><span class="dash-label">saputa</span></div>
+  <div class="dash-item"><div class="dash-dot dot-part"></div><span class="dash-count" id="cnt-part">0</span><span class="dash-label">parziale</span></div>
+  <div class="dash-item"><div class="dash-dot dot-no"></div><span class="dash-count" id="cnt-no">0</span><span class="dash-label">da rivedere</span></div>
+  <div class="dash-item"><div class="dash-dot dot-open"></div><span class="dash-count" id="cnt-open">15</span><span class="dash-label">da fare</span></div>
+  <div class="prog-wrap">
+    <div class="prog-track">
+      <div class="prog-seg-yes" id="seg-yes" style="width:0%"></div>
+      <div class="prog-seg-part" id="seg-part" style="width:0%"></div>
+      <div class="prog-seg-no" id="seg-no" style="width:0%"></div>
+    </div>
+    <div class="prog-label" id="prog-label">0 / 15</div>
+  </div>
+</div>
+
+<div class="q-list" id="qList"></div>
+
+<div class="reset-wrap">
+  <button class="reset-btn" onclick="resetAll()">↺ Azzera autovalutazioni</button>
+</div>
+
+<script>
+const ITEMS = [
+  {
+    name: 'Statuto Albertino',
+    year: '1848',
+    def: 'Concesso da Carlo Alberto di Savoia nel 1848 come risposta alle pressioni rivoluzionarie, divenne la carta costituzionale di tutta l\'Italia unita senza mai essere abrogato. Si chiamava costituzione "ottriata" (concessa dal sovrano, non conquistata dal popolo). Era flessibile — modificabile senza procedure speciali — e disegnava una monarchia costituzionale in cui il re manteneva poteri considerevoli, mentre il governo rispondeva progressivamente al parlamento più che alla corona. La sua flessibilità ne facilitò l\'adattamento ma lo rendeva fragile come garanzia delle libertà: nel 1863 (legge Pica), nel 1898 (stato d\'assedio a Milano) e nel 1899 (decreto Pelloux) le sue garanzie furono aggirate o sospese.'
+  },
+  {
+    name: 'Legge Casati',
+    year: '1859, estesa al 1861',
+    def: 'Legge sull\'istruzione emanata dal Piemonte nel 1859 ed estesa all\'intera penisola con l\'unificazione. Stabilì l\'obbligo scolastico elementare e affidò allo Stato il controllo dell\'istruzione pubblica, riducendo il ruolo della Chiesa nell\'educazione. Fu la base su cui si costruì il sistema scolastico italiano unitario. Il nuovo Stato si rese visibile nella vita dei cittadini soprattutto attraverso due obblighi: l\'istruzione elementare (legge Casati) e la leva militare obbligatoria — due misure modernizzatrici in senso pieno, ma che nel Mezzogiorno, dove si sommavano a una miseria già strutturale, vennero vissute come imposizioni di uno Stato estraneo.'
+  },
+  {
+    name: 'Tassa sul macinato',
+    year: '1868',
+    def: 'Introdotta nel 1868 per iniziativa del ministro delle Finanze Quintino Sella come parte della politica di "economie fino all\'osso": un\'imposta sulla macinazione dei cereali che fece salire il prezzo del pane e della polenta — la base dell\'alimentazione popolare — scatenando sommosse in tutto il paese. Era socialmente iniqua perché colpiva i consumi piuttosto che i redditi, gravando in modo sproporzionato sui più poveri. Fu il provvedimento fiscale più impopolare della Destra storica e il simbolo del suo rigore fiscale. La Sinistra storica ne avviò l\'abolizione nel 1879, completandola nel 1884: fu presentata come il gesto politico che più di ogni altro segnava la discontinuità col regime precedente.'
+  },
+  {
+    name: 'Convenzione di settembre',
+    year: '1864',
+    def: 'Accordo segreto stipulato nel 1864 dal governo Minghetti con Napoleone III: l\'Italia si impegnava a rispettare i confini dello Stato Pontificio in cambio del ritiro delle truppe francesi da Roma entro due anni. A garanzia dell\'impegno, la capitale fu trasferita da Torino a Firenze nel 1865 — una mossa che provocò sanguinose proteste popolari a Torino, represse nel sangue, e costò le dimissioni al governo Minghetti. Era un compromesso fragile, che rimandava il problema della questione romana senza risolverlo: le truppe francesi non si ritirarono nei tempi previsti e la questione restò aperta fino al 1870.'
+  },
+  {
+    name: 'Legge Pica',
+    year: '1863',
+    def: 'Proposta dal deputato abruzzese Giuseppe Pica nell\'agosto 1863, sospendeva le garanzie costituzionali nelle province dichiarate "in stato di brigantaggio" e trasferiva la giurisdizione ai tribunali militari, stabilendo la fucilazione per chi veniva catturato con le armi in mano. Istituiva il domicilio coatto per i sospetti manutengoli — solo nel primo mese circa mille persone furono confinate nelle isole toscane — e codificava sconti di pena per chi tradiva i compagni. Paradossalmente, garantì per la prima volta agli accusati il diritto a un processo: su circa 11.000 persone deferite nel biennio 1864-65, oltre 6.000 furono assolte. Fu il primo caso nell\'Italia unita di sospensione delle garanzie costituzionali in un\'area geografica definita.'
+  },
+  {
+    name: 'Legge delle Guarentigie',
+    year: '1871',
+    def: 'Approvata dal Parlamento nel maggio 1871 per regolare unilateralmente i rapporti con la Santa Sede dopo la Breccia di Porta Pia: riconosceva al Papa piena autonomia spirituale, l\'extraterritorialità dei palazzi vaticani, lateranensi e di Castel Gandolfo, e la libertà di comunicazione diplomatica con tutti i paesi del mondo. Era un\'offerta generosa — ma Pio IX la respinse categoricamente, dichiarò l\'occupazione "ingiusta, violenta, nulla e invalida", si proclamò prigioniero politico e nel 1874 promulgò il Non expedit. La legge era unilaterale — non un trattato — e il Papa non aveva alcun obbligo di accettarla. Il conflitto rimase aperto fino ai Patti Lateranensi del 1929.'
+  },
+  {
+    name: 'Legge Coppino',
+    year: '1877',
+    def: 'Promossa dal ministro dell\'Istruzione Michele Coppino, elevò l\'obbligo scolastico fino ai nove anni di età, rese la scuola elementare gratuita e pienamente laica — riducendo il peso dell\'insegnamento religioso rispetto alla legge Casati — e introdusse sanzioni per i genitori inadempienti. Era il completamento logico di un percorso già avviato e aveva una funzione politica precisa: creare i cittadini alfabetizzati che la riforma elettorale del 1882 avrebbe chiamato a votare. Per la prima volta il diritto di voto avrebbe incluso l\'alfabetismo come criterio alternativo al censo: la legge Coppino e la riforma elettorale erano dunque due provvedimenti complementari.'
+  },
+  {
+    name: 'Riforma elettorale',
+    year: '1882',
+    def: 'Triplicò il corpo elettorale, portandolo dal 2% a circa il 7% della popolazione: l\'età minima fu abbassata da 25 a 21 anni, il limite di censo dimezzato, e per la prima volta l\'alfabetismo fu introdotto come criterio alternativo al reddito. Era una rottura simbolica con il principio censitario su cui la Destra aveva costruito il proprio sistema, anche se il suffragio universale restava ancora lontano. Chi decise di fermarsi al 7% non lo fece per mancanza di fantasia: lo fece perché un elettorato più largo avrebbe prodotto un Parlamento più difficile da gestire con gli strumenti del trasformismo. Era una contraddizione che il sistema portava dentro di sé e che non riuscì mai a risolvere.'
+  },
+  {
+    name: 'Tariffa protezionistica',
+    year: '1887',
+    def: 'La grande tariffa doganale del 1887 introdusse forti dazi sui manufatti stranieri (in particolare siderurgici e cotonieri) e sul grano e sullo zucchero. Era il "patto ferro e grano": proteggeva simultaneamente l\'industria pesante del Nord e la produzione granaria dei latifondisti meridionali. Favorì il decollo industriale (Acciaierie di Terni, Ansaldo, Breda, Edison) e pose le basi del triangolo industriale settentrionale. Ma scatenò la guerra doganale con la Francia (1888), che chiuse i mercati transalpini alle esportazioni meridionali, rovinando vino, agrumi e olio del Sud; fece salire il prezzo del pane scaricando i costi sui consumatori più poveri; e tolse ai latifondisti la pressione del mercato che li avrebbe costretti a modernizzarsi.'
+  },
+  {
+    name: 'Riforma amministrativa',
+    year: '1888',
+    def: 'Varata da Crispi nel 1888, estese il principio elettivo alla carica di sindaco in tutti i capoluoghi di provincia e nei comuni con più di diecimila abitanti, allargando contestualmente il diritto di voto amministrativo a chi pagava almeno cinque lire di imposte annue. Era un passo verso il decentramento che la Destra aveva sempre rifiutato, anche se i suoi effetti reali rimasero limitati. Insieme al Codice Zanardelli dell\'anno successivo, rappresentava la parte riformatrice del governo Crispi — in contraddizione con i suoi metodi autoritari, ma reale nel suo contenuto. Era anche un modo per sottrarre alla Chiesa l\'influenza capillare che esercitava attraverso le Opere pie, trasformate in istituzioni pubbliche di assistenza.'
+  },
+  {
+    name: 'Codice Zanardelli',
+    year: '1889',
+    def: 'Promulgato per iniziativa del ministro della Giustizia Giuseppe Zanardelli sotto il governo Crispi, fu uno dei codici penali più avanzati d\'Europa. Abolì la pena di morte in tutto il Regno d\'Italia — colmando la lacuna rimasta dopo l\'unificazione, quando la Toscana (che già l\'aveva abolita) aveva impedito l\'adozione di un codice unico nel 1865. Depenalizzò lo sciopero, riconoscendone la liceità come strumento di lotta sindacale. Attenuò le pene per i reati contro la proprietà. Era un risultato che i democratici risorgimentali avrebbero potuto rivendicare come proprio, se non fosse arrivato sotto un governo che nel frattempo stava sviluppando tendenze sempre più autoritarie.'
+  },
+  {
+    name: 'Trattato di Uccialli',
+    year: '1889',
+    def: 'Stipulato da Crispi con il negus Menelik II nel 1889, conteneva una fatale ambiguità linguistica nell\'articolo 17: la versione italiana stabiliva che l\'Etiopia dovesse avvalersi dell\'Italia per le sue relazioni con le potenze estere — un protettorato; la versione in lingua amarica usava una formulazione facoltativa che non prevedeva alcun protettorato. Menelik contestò formalmente il trattato e lo revocò nel 1893. Quando Crispi decise di ricorrere alla forza per imporre la versione italiana, nutrito dal pregiudizio coloniale che considerava gli eserciti africani nemici di seconda categoria, la conseguenza fu la battaglia di Adua del 1° marzo 1896 e la disfatta catastrofica dell\'esercito italiano.'
+  },
+  {
+    name: 'Fondazione della Banca d\'Italia',
+    year: '1894',
+    def: 'Conseguenza diretta dello scandalo della Banca Romana del 1893: i fallimenti bancari che seguirono lo scandalo resero inevitabile una riforma radicale del sistema creditizio. Nel 1894 fu fondata la Banca d\'Italia come istituto centrale unico per l\'emissione di cartamoneta, sottraendo quella funzione alla pluralità di istituti privati che l\'avevano gestita con troppa autonomia e troppo poco controllo. Parallelamente fu incoraggiata la nascita delle banche miste — la Banca Commerciale Italiana e il Credito Italiano — istituti privati pensati per convogliare il risparmio verso il finanziamento delle imprese. Queste banche avrebbero avuto un ruolo decisivo nel finanziare il decollo industriale del primo Novecento.'
+  },
+  {
+    name: 'Leggi Pelloux',
+    year: '1899',
+    def: 'Pacchetto di norme presentato in Parlamento dal generale Luigi Pelloux nel 1899, destinate a limitare drasticamente la libertà di stampa, di associazione, di insegnamento e il diritto di sciopero — le cosiddette "leggi liberticide". Quando l\'opposizione le bloccò con l\'ostruzionismo parlamentare, Pelloux tentò di aggirarle promulgandole per decreto regio. Nel febbraio 1900 la Corte di Cassazione dichiarò il decreto incostituzionale: fu una sconfitta su tutti i fronti. Le elezioni del giugno 1900 registrarono una forte avanzata delle forze progressiste, costringendo Pelloux alle dimissioni. Le leggi Pelloux rappresentano il punto più estremo del tentativo di involuzione istituzionale teorizzato da Sonnino con "Torniamo allo Statuto".'
+  },
+  {
+    name: 'Riforma delle Opere pie',
+    year: '1890',
+    def: 'Varata da Crispi nel 1890, trasformò gli enti religiosi dediti alla carità e all\'assistenza in Opere pie — istituzioni pubbliche di beneficenza poste sotto il controllo dello Stato. Era un atto di laicizzazione dell\'assistenza sociale: sottraeva alla Chiesa un settore in cui aveva esercitato un\'influenza capillare sulla società, sostituendo la carità religiosa con l\'assistenza pubblica statale. Si inseriva nella più ampia strategia crispina di ridurre l\'influenza ecclesiastica nella vita civile, coerentemente con la tradizione anticlericale della Sinistra storica. Era anche parte del più ampio programma di legislazione sociale degli anni Ottanta, che includeva le prime assicurazioni contro gli infortuni sul lavoro e il divieto di lavoro minorile.'
+  }
+];
+
+const TOTAL = ITEMS.length;
+const states = {};
+ITEMS.forEach((_, i) => states['q'+i] = null);
+
+function build() {
+  const list = document.getElementById('qList');
+  ITEMS.forEach((item, i) => {
+    const id = 'q' + i;
+    const div = document.createElement('div');
+    div.className = 'q-item';
+    div.id = id;
+    div.innerHTML = `
+      <div class="q-head" onclick="toggleQ('${id}')">
+        <div class="q-num">${i+1}</div>
+        <div class="q-term">${item.name}</div>
+        <div class="q-year">${item.year}</div>
+        <div class="q-arrow">▶</div>
+      </div>
+      <div class="q-answer">
+        <div class="q-answer-text">${item.def}</div>
+        <div class="q-eval">
+          <span class="eval-label">Lo so?</span>
+          <button class="eval-btn btn-yes"  onclick="setEval('${id}','yes',event)">✓ Sì, lo so</button>
+          <button class="eval-btn btn-part" onclick="setEval('${id}','part',event)">◑ Solo in parte</button>
+          <button class="eval-btn btn-no"   onclick="setEval('${id}','no',event)">✗ Da rivedere</button>
+        </div>
+      </div>`;
+    list.appendChild(div);
+  });
+}
+
+function toggleQ(id) { document.getElementById(id).classList.toggle('open'); }
+
+function setEval(id, val, e) {
+  e.stopPropagation();
+  states[id] = val;
+  const item = document.getElementById(id);
+  item.classList.remove('state-yes','state-part','state-no');
+  item.classList.add('state-' + val);
+  item.querySelectorAll('.eval-btn').forEach(b => b.classList.remove('active'));
+  item.querySelector('.btn-' + val).classList.add('active');
+  updateDashboard();
+}
+
+function updateDashboard() {
+  const c = { yes:0, part:0, no:0, open:0 };
+  Object.values(states).forEach(s => s ? c[s]++ : c.open++);
+  const done = c.yes + c.part + c.no;
+  document.getElementById('cnt-yes').textContent  = c.yes;
+  document.getElementById('cnt-part').textContent = c.part;
+  document.getElementById('cnt-no').textContent   = c.no;
+  document.getElementById('cnt-open').textContent = c.open;
+  document.getElementById('prog-label').textContent = done + ' / ' + TOTAL;
+  document.getElementById('seg-yes').style.width  = (c.yes/TOTAL*100)+'%';
+  document.getElementById('seg-part').style.width = (c.part/TOTAL*100)+'%';
+  document.getElementById('seg-no').style.width   = (c.no/TOTAL*100)+'%';
+}
+
+function resetAll() {
+  Object.keys(states).forEach(id => {
+    states[id] = null;
+    const item = document.getElementById(id);
+    item.classList.remove('state-yes','state-part','state-no','open');
+    item.querySelectorAll('.eval-btn').forEach(b => b.classList.remove('active'));
+  });
+  updateDashboard();
+}
+
+build();
+updateDashboard();
+</script>
+</body>
+</html>
