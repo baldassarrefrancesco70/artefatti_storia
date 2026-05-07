@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nodi storiografici controversi</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    background: #FAF7F2;
+    color: #2C2C2A;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: #2C2C2A;
+    padding: 1.4rem 2.5rem;
+    border-bottom: 4px solid #8B7355;
+  }
+  .header-title {
+    font-size: 1.15rem;
+    font-weight: normal;
+    color: #F0EBE0;
+  }
+  .header-title em { color: #C2A882; font-style: italic; }
+  .header-sub {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    font-size: 0.78rem;
+    color: #888070;
+    margin-top: 0.35rem;
+  }
+
+  /* ── EPISTEMOLOGY NOTICE ── */
+  .epist-bar {
+    background: #F5F0E8;
+    border-bottom: 1px solid #D4C9B8;
+    padding: 0.6rem 2.5rem;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    font-size: 0.8rem;
+    color: #5C4A2A;
+    line-height: 1.5;
+  }
+  .epist-bar strong { color: #2C2C2A; }
+
+  /* ── NODE TABS ── */
+  .node-nav {
+    background: #FFFDF8;
+    border-bottom: 1px solid #D4C9B8;
+    display: flex;
+    padding: 0 2rem;
+    overflow-x: auto;
+  }
+  .node-btn {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    font-size: 12px;
+    padding: 0.85rem 1.2rem;
+    border: none;
+    border-bottom: 3px solid transparent;
+    background: transparent;
+    color: #888070;
+    cursor: pointer;
+    transition: all 0.18s;
+    white-space: nowrap;
+    line-height: 1.3;
+    text-align: left;
+  }
+  .node-btn:hover { color: #2C2C2A; }
+  .node-btn.active {
+    color: #2C2C2A;
+    font-weight: 600;
+  }
+  .node-btn .nb-num {
+    display: block;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    opacity: 0.55;
+    margin-bottom: 2px;
+  }
+
+  .section { display: none; padding: 1.75rem 2.5rem; }
+  .section.active { display: block; }
+
+  /* ── NODE TITLE AREA ── */
+  .node-head {
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #E8E0D2;
+  }
+  .node-badge {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #fff;
+    padding: 3px 9px;
+    border-radius: 3px;
+    margin-bottom: 0.5rem;
+    display: inline-block;
+  }
+  .node-title {
+    font-size: 1.1rem;
+    color: #2C2C2A;
+    font-weight: normal;
+    line-height: 1.35;
+    margin-bottom: 0.45rem;
+  }
+  .node-intro {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    font-size: 0.83rem;
+    color: #5C4A2A;
+    line-height: 1.65;
+  }
+
+  /* ── POSITIONS GRID ── */
+  /* Equal columns, no visual hierarchy */
+  .positions-grid {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+  .positions-grid.two   { grid-template-columns: 1fr 1fr; }
+  .positions-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+
+  .pos-card {
+    background: #FFFDF8;
+    border: 1.5px solid #C8BBA8;
+    border-top: 4px solid;
+    border-radius: 0 0 6px 6px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .pos-card-head {
+    padding: 0.8rem 1rem 0.65rem;
+    border-bottom: 1px solid #E8E0D2;
+  }
+  .pos-label {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #2C2C2A;
+    line-height: 1.3;
+    margin-bottom: 0.3rem;
+  }
+  .pos-historians {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.3px;
+    color: #888070;
+    font-style: italic;
+  }
+
+  .pos-card-body {
+    padding: 0.8rem 1rem;
+    flex: 1;
+  }
+  .pos-args {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+  .pos-arg {
+    display: block;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    font-size: 0.82rem;
+    color: #2C2C2A;
+    line-height: 1.6;
+    padding-left: 1rem;
+    position: relative;
+  }
+  .pos-arg em { font-style: italic; display: inline; }
+  .arg-bullet {
+    display: block;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    position: absolute;
+    left: 0;
+    top: 8px;
+    background: currentColor;
+  }
+
+  .pos-card-foot {
+    padding: 0.55rem 1rem;
+    border-top: 1px solid #E8E0D2;
+    background: #F7F4EF;
+  }
+  .pos-limit {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    font-size: 0.78rem;
+    color: #888070;
+    line-height: 1.55;
+    font-style: italic;
+  }
+  .pos-limit::before {
+    content: 'Limite: ';
+    font-style: normal;
+    font-weight: 600;
+    color: #8B7355;
+  }
+
+  /* ── CONFRONTO LABEL ── */
+  .confront-label {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.75rem;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #888070;
+  }
+  .confront-line { flex: 1; height: 1px; background: #D4C9B8; }
+
+  /* ── SHARED GROUND ── */
+  .shared-box {
+    background: #F5F0E8;
+    border: 1.5px solid #C8BBA8;
+    border-left: 4px solid #8B7355;
+    border-radius: 0 5px 5px 0;
+    padding: 0.75rem 1.1rem;
+    margin-bottom: 1.25rem;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    font-size: 0.82rem;
+    color: #5C4A2A;
+    line-height: 1.65;
+  }
+  .shared-box strong {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #8B7355;
+    margin-bottom: 0.3rem;
+  }
+
+  /* ── OPEN QUESTION ── */
+  .open-q {
+    background: #2C2C2A;
+    border-radius: 6px;
+    padding: 1.1rem 1.4rem;
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  .open-q-mark {
+    font-family: Georgia, serif;
+    font-size: 2rem;
+    color: #8B7355;
+    line-height: 1;
+    flex-shrink: 0;
+    margin-top: -4px;
+  }
+  .open-q-body { flex: 1; }
+  .open-q-label {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #8B7355;
+    margin-bottom: 0.35rem;
+  }
+  .open-q-text {
+    font-family: Georgia, serif;
+    font-size: 0.92rem;
+    color: #F0EBE0;
+    line-height: 1.6;
+    font-style: italic;
+  }
+  .open-q-note {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    font-size: 0.76rem;
+    color: #888070;
+    margin-top: 0.5rem;
+    line-height: 1.5;
+  }
+
+  @keyframes fadeIn {
+    from { opacity:0; transform:translateY(-4px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+  .section.active { animation: fadeIn 0.22s ease; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-title"><em>Nodi storiografici controversi</em> — Confronto tra interpretazioni</div>
+  <div class="header-sub">Quattro questioni aperte · Posizioni diverse, argomenti diversi, nessuna risposta definitiva</div>
+</div>
+
+<div class="epist-bar">
+  <strong>Avvertenza metodologica.</strong> Le posizioni presentate qui non sono "giusta" contro "sbagliata": sono interpretazioni diverse degli stessi fatti, sostenute da storici seri con argomenti fondati. Leggerle significa allenarsi a pensare storicamente — distinguere i fatti dalle interpretazioni, valutare le prove, capire perché lo stesso evento possa essere letto in modi radicalmente diversi.
+</div>
+
+<div class="node-nav">
+  <button class="node-btn active" onclick="switchNode(0,this)">
+    <span class="nb-num">Nodo 1</span>La questione meridionale
+  </button>
+  <button class="node-btn" onclick="switchNode(1,this)">
+    <span class="nb-num">Nodo 2</span>Il trasformismo
+  </button>
+  <button class="node-btn" onclick="switchNode(2,this)">
+    <span class="nb-num">Nodo 3</span>Crispi
+  </button>
+  <button class="node-btn" onclick="switchNode(3,this)">
+    <span class="nb-num">Nodo 4</span>Il colonialismo italiano
+  </button>
+</div>
+
+<!-- ══ NODO 1 — QUESTIONE MERIDIONALE ══════════════════════════════════ -->
+<div class="section active" id="n0">
+  <div class="node-head">
+    <div class="node-badge" style="background:#5B4A3A">Nodo 1</div>
+    <div class="node-title">La questione meridionale: le politiche della Destra erano le uniche possibili?</div>
+    <div class="node-intro">La domanda più difficile non è se il divario tra Nord e Sud preesistesse all'unificazione — preesisteva, ed è un dato acquisito. La domanda è un'altra: le politiche adottate dalla classe dirigente liberale erano le uniche possibili, o furono scelte che aggravarono una situazione già difficile quando avrebbero potuto non farlo?</div>
+  </div>
+
+  <div class="confront-label">
+    <div class="confront-line"></div>
+    Posizioni a confronto
+    <div class="confront-line"></div>
+  </div>
+
+  <div class="positions-grid three">
+
+    <div class="pos-card" style="border-top-color:#4A6741">
+      <div class="pos-card-head">
+        <div class="pos-label">Le politiche erano necessarie</div>
+        <div class="pos-historians">Rosario Romeo (1959)</div>
+      </div>
+      <div class="pos-card-body">
+        <ul class="pos-args">
+          <li class="pos-arg"><div class="arg-bullet" style="color:#4A6741"></div>Il rigore fiscale e il liberismo erano necessari per accumulare il capitale che avrebbe finanziato l'industrializzazione successiva.</li>
+          <li class="pos-arg"><div class="arg-bullet" style="color:#4A6741"></div>Senza quel sacrificio iniziale, non ci sarebbe stato il decollo industriale del primo Novecento.</li>
+          <li class="pos-arg"><div class="arg-bullet" style="color:#4A6741"></div>Lo Stato era troppo fragile nel 1861 per permettersi politiche differenziate: la coesione era la priorità assoluta.</li>
+        </ul>
+      </div>
+      <div class="pos-card-foot">
+        <div class="pos-limit">La distribuzione dei costi fu socialmente iniqua e geograficamente squilibrata: Romeo riconosce i costi ma li considera inevitabili.</div>
+      </div>
+    </div>
+
+    <div class="pos-card" style="border-top-color:#7A2E1A">
+      <div class="pos-card-head">
+        <div class="pos-label">Le politiche aggravarono il divario: alternative esistevano</div>
+        <div class="pos-historians">Emilio Sereni · Leopoldo Franchetti · Sidney Sonnino · Giustino Fortunato</div>
+      </div>
+      <div class="pos-card-body">
+        <ul class="pos-args">
+          <li class="pos-arg"><div class="arg-bullet" style="color:#7A2E1A"></div>I costi dell'accumulazione furono distribuiti in modo socialmente iniquo e geograficamente squilibrato.</li>
+          <li class="pos-arg"><div class="arg-bullet" style="color:#7A2E1A"></div>Le conseguenze del liberismo sul Sud erano prevedibili, e in parte previste dai contemporanei (Franchetti e Sonnino le documentarono già nel 1876).</li>
+          <li class="pos-arg"><div class="arg-bullet" style="color:#7A2E1A"></div>La "questione meridionale" non era una condizione transitoria: era una struttura profonda che le politiche liberali stavano cristallizzando (Fortunato).</li>
+        </ul>
+      </div>
+      <div class="pos-card-foot">
+        <div class="pos-limit">Non sempre chiarisce quali alternative fossero concretamente praticabili con le risorse e i vincoli dello Stato del 1861.</div>
+      </div>
+    </div>
+
+    <div class="pos-card" style="border-top-color:#5B7FA6">
+      <div class="pos-card-head">
+        <div class="pos-label">Il sistema politico strutturalmente incapace di terapie efficaci</div>
+        <div class="pos-historians">Francesco Saverio Nitti (1900) · storiografia recente</div>
+      </div>
+      <div class="pos-card-body">
+        <ul class="pos-args">
+          <li class="pos-arg"><div class="arg-bullet" style="color:#5B7FA6"></div>I trasferimenti fiscali avvenivano prevalentemente dal Sud al Nord, attraverso imposte indirette e commesse pubbliche concentrate nell'industria settentrionale (Nitti, <em>Nord e Sud</em>, 1900).</li>
+          <li class="pos-arg"><div class="arg-bullet" style="color:#5B7FA6"></div>Le terapie efficaci (riforma agraria, politiche fiscali progressive, investimenti nel Sud) erano esattamente quelle che il sistema trasformista era strutturalmente incapace di produrre.</li>
+          <li class="pos-arg"><div class="arg-bullet" style="color:#5B7FA6"></div>Il problema non era la negligenza di singoli politici, ma la logica di un sistema che favoriva strutturalmente chi aveva già qualcosa da proteggere.</li>
+        </ul>
+      </div>
+      <div class="pos-card-foot">
+        <div class="pos-limit">La lettura di Nitti è stata discussa e su alcuni punti contestata dalla storiografia successiva per eccesso di sistematizzazione.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="shared-box">
+    <strong>Terreno comune</strong>
+    Nessuna delle posizioni nega che il divario preesistesse all'unificazione, né che le politiche della Destra abbiano prodotto effetti negativi sul Sud. Il disaccordo riguarda: se esistessero alternative credibili, se i costi fossero inevitabili o evitabili, e soprattutto chi fosse strutturalmente incapace di vedere o agire diversamente.
+  </div>
+
+  <div class="open-q">
+    <div class="open-q-mark">?</div>
+    <div class="open-q-body">
+      <div class="open-q-label">Domanda aperta</div>
+      <div class="open-q-text">Franchetti e Sonnino documentarono le conseguenze del liberismo sul Sud già nel 1876 — mentre le politiche che le producevano erano ancora in corso. Il governo le lesse, le discusse, e sostanzialmente le ignorò. Come si spiega questa capacità di vedere senza agire? È sufficiente attribuirla alla cattiva volontà dei governanti, o è necessario guardare alla struttura del sistema politico?</div>
+      <div class="open-q-note">Argomenta la tua risposta usando almeno uno degli storici presentati. Non esiste una risposta corretta: esiste una risposta più o meno ben argomentata.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ NODO 2 — TRASFORMISMO ════════════════════════════════════════════ -->
+<div class="section" id="n1">
+  <div class="node-head">
+    <div class="node-badge" style="background:#3A5C4A">Nodo 2</div>
+    <div class="node-title">Il trasformismo: degenerazione morale o necessità sistemica?</div>
+    <div class="node-intro">Agostino Depretis ha avuto storicamente pessima stampa. Il suo nome è diventato sinonimo di opportunismo politico. Ma prima di accettare questo giudizio vale la pena chiedersi: era davvero possibile fare altrimenti? Come si governa un paese in cui vota meno del 2% della popolazione, i partiti nel senso moderno non esistono, le fratture regionali sono profondissime?</div>
+  </div>
+
+  <div class="confront-label">
+    <div class="confront-line"></div>
+    Posizioni a confronto
+    <div class="confront-line"></div>
+  </div>
+
+  <div class="positions-grid two">
+
+    <div class="pos-card" style="border-top-color:#3A5C4A">
+      <div class="pos-card-head">
+        <div class="pos-label">Necessità sistemica: il trasformismo era razionale date le condizioni</div>
+        <div class="pos-historians">Benedetto Croce · Rosario Romeo</div>
+      </div>
+      <div class="pos-card-body">
+        <ul class="pos-args">
+          <li class="pos-arg"><div class="arg-bullet" style="color:#3A5C4A"></div>In un paese senza partiti organizzati e con un elettorato così ristretto, la stabilità di governo richiedeva necessariamente forme di mediazione che trascendevano le divisioni ideologiche.</li>
+          <li class="pos-arg"><div class="arg-bullet" style="color:#3A5C4A"></div>Il "Connubio" di Cavour nel 1852 aveva già funzionato con la stessa logica: viene ricordato come una mossa geniale, non come una degenerazione.</li>
+          <li class="pos-arg"><div class="arg-bullet" style="color:#3A5C4A"></div>I governi trasformisti produssero riforme reali: legge Coppino, riforma elettorale del 1882, Codice Zanardelli — impossibili senza la capacità di costruire consensi trasversali (Romeo).</li>
+        </ul>
+      </div>
+      <div class="pos-card-foot">
+        <div class="pos-limit">Spiega perché il trasformismo fosse comprensibile, ma non risponde alla domanda sui suoi costi: ritardo dei partiti, clientelismo, sfiducia istituzionale.</div>
+      </div>
+    </div>
+
+    <div class="pos-card" style="border-top-color:#5B4A7A">
+      <div class="pos-card-head">
+        <div class="pos-label">Processo sistemico di cooptazione che svuota l'opposizione</div>
+        <div class="pos-historians">Antonio Gramsci (anni Trenta) · Silvio Lanaro (1992)</div>
+      </div>
+      <div class="pos-card-body">
+        <ul class="pos-args">
+          <li class="pos-arg"><div class="arg-bullet" style="color:#5B4A7A"></div>Il trasformismo non è una patologia individuale ma il meccanismo attraverso cui la classe dirigente moderata assorbe progressivamente le personalità più dinamiche dell'opposizione, svuotandola della sua funzione critica (Gramsci).</li>
+          <li class="pos-arg"><div class="arg-bullet" style="color:#5B4A7A"></div>Pratiche analoghe — maggioranze trasversali attraverso cooptazione e scambio di favori — hanno caratterizzato la Prima Repubblica italiana: il termine è sopravvissuto al suo contesto originario perché descrive una patologia strutturale (Lanaro, <em>Storia dell'Italia repubblicana</em>, 1992).</li>
+          <li class="pos-arg"><div class="arg-bullet" style="color:#5B4A7A"></div>I costi furono reali: ritardo nella formazione di partiti moderni, favoritismo endemico, sfiducia nelle istituzioni, domanda di un "uomo forte".</li>
+        </ul>
+      </div>
+      <div class="pos-card-foot">
+        <div class="pos-limit">La lettura gramsciana rischia di proiettare categorie novecentesche su una situazione strutturalmente molto diversa, con un elettorato al 2% e partiti inesistenti.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="shared-box">
+    <strong>Terreno comune</strong>
+    Entrambe le posizioni riconoscono che il trasformismo produsse sia risultati reali (riforme legislative) sia costi reali (clientelismo, sfiducia). Il disaccordo riguarda il peso relativo da attribuire agli uni e agli altri, e soprattutto se le condizioni strutturali che lo rendevano necessario fossero a loro volta inevitabili o modificabili più rapidamente.
+  </div>
+
+  <div class="open-q">
+    <div class="open-q-mark">?</div>
+    <div class="open-q-body">
+      <div class="open-q-label">Domanda aperta</div>
+      <div class="open-q-text">Silvio Lanaro ha mostrato come pratiche analoghe al trasformismo abbiano caratterizzato fasi significative della Prima Repubblica italiana. Se questo è vero, cosa significa per la lettura del trasformismo depretisiano: che era una degenerazione evitabile, o che era il prodotto di condizioni strutturali che tendono a riprodursi? E se tendono a riprodursi, come si spezza il ciclo?</div>
+      <div class="open-q-note">Argomenta la tua risposta distinguendo tra la spiegazione del fenomeno e il giudizio su di esso. I due piani spesso si confondono.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ NODO 3 — CRISPI ══════════════════════════════════════════════════ -->
+<div class="section" id="n2">
+  <div class="node-head">
+    <div class="node-badge" style="background:#7A2E1A">Nodo 3</div>
+    <div class="node-title">Crispi: precursore del fascismo o modernizzatore incompreso?</div>
+    <div class="node-intro">Pochi personaggi della storia italiana hanno ricevuto giudizi così divergenti. Ex garibaldino diventato presidente del Consiglio, riformatore che governava con metodi autoritari, meridionale che represse i contadini siciliani con lo stato d'assedio: le contraddizioni di Crispi sono reali, e la storiografia le ha risolte in modi diversi a seconda del momento in cui scriveva.</div>
+  </div>
+
+  <div class="confront-label">
+    <div class="confront-line"></div>
+    Posizioni a confronto
+    <div class="confront-line"></div>
+  </div>
+
+  <div class="positions-grid three">
+
+    <div class="pos-card" style="border-top-color:#7A2E1A">
+      <div class="pos-card-head">
+        <div class="pos-label">Precursore del modello autoritario italiano</div>
+        <div class="pos-historians">Renzo De Felice</div>
+      </div>
+      <div class="pos-card-body">
+        <ul class="pos-args">
+          <li class="pos-arg"><div class="arg-bullet" style="color:#7A2E1A"></div>La concentrazione del potere esecutivo, la repressione delle opposizioni, il nazionalismo aggressivo, il culto dello Stato forte anticipano, almeno nelle forme, alcuni tratti del fascismo.</li>
+          <li class="pos-arg"><div class="arg-bullet" style="color:#7A2E1A"></div>La retorica imperialista e il rapporto con le masse — mobilitate ma non emancipate — prefigurano meccanismi che il fascismo avrebbe portato a compimento.</li>
+          <li class="pos-arg"><div class="arg-bullet" style="color:#7A2E1A"></div>La "democrazia autoritaria" non è solo un ossimoro descrittivo: è la forma embrionale di un sistema che sacrifica la libertà in nome dell'ordine.</li>
+        </ul>
+      </div>
+      <div class="pos-card-foot">
+        <div class="pos-limit">Rischia il "presentismo": leggere Crispi alla luce di quello che venne dopo, attribuendo intenzionalità e direzione a scelte che nel loro contesto avevano una logica diversa.</div>
+      </div>
+    </div>
+
+    <div class="pos-card" style="border-top-color:#5B7FA6">
+      <div class="pos-card-head">
+        <div class="pos-label">Modernizzatore incompreso schiacciato tra forze opposte</div>
+        <div class="pos-historians">Christopher Duggan (2002)</div>
+      </div>
+      <div class="pos-card-body">
+        <ul class="pos-args">
+          <li class="pos-arg"><div class="arg-bullet" style="color:#5B7FA6"></div>Il Codice Zanardelli, la riforma amministrativa, le leggi sulla sanità pubblica e le Opere pie non sono dettagli: sono il nucleo di un progetto modernizzatore genuino.</li>
+          <li class="pos-arg"><div class="arg-bullet" style="color:#5B7FA6"></div>Crispi cercava di fare per l'Italia quello che Bismarck aveva fatto per la Germania: costruire uno Stato forte capace di guidare lo sviluppo senza cedere né alle pressioni reazionarie né a quelle rivoluzionarie.</li>
+          <li class="pos-arg"><div class="arg-bullet" style="color:#5B7FA6"></div>Il suo autoritarismo non era la negazione del suo riformismo ma la sua condizione: era convinto che senza uno Stato forte non ci fossero riforme possibili (Duggan, <em>Francesco Crispi</em>, 2002).</li>
+        </ul>
+      </div>
+      <div class="pos-card-foot">
+        <div class="pos-limit">Rischia di giustificare i metodi autoritari in nome dei fini riformatori, oscurando la violenza reale esercitata sulle classi subalterne.</div>
+      </div>
+    </div>
+
+    <div class="pos-card" style="border-top-color:#8B7355">
+      <div class="pos-card-head">
+        <div class="pos-label">Contraddizione strutturale, non deviazione accidentale</div>
+        <div class="pos-historians">Umberto Levra · storiografia recente</div>
+      </div>
+      <div class="pos-card-body">
+        <ul class="pos-args">
+          <li class="pos-arg"><div class="arg-bullet" style="color:#8B7355"></div>La "democrazia autoritaria" non era un ossimoro accidentale ma la descrizione precisa di un sistema che cercava di espandere le basi sociali dello Stato e al tempo stesso di controllarne le conseguenze.</li>
+          <li class="pos-arg"><div class="arg-bullet" style="color:#8B7355"></div>Quando le due cose entrarono in collisione — come accadde con i Fasci siciliani — Crispi scelse il controllo sulla modernizzazione. Era una scelta, non un destino.</li>
+          <li class="pos-arg"><div class="arg-bullet" style="color:#8B7355"></div>Il caso Crispi è utile non solo per capire un personaggio, ma per riflettere su come i giudizi storici cambino in funzione del contesto in cui vengono formulati.</li>
+        </ul>
+      </div>
+      <div class="pos-card-foot">
+        <div class="pos-limit">La posizione "equilibrata" rischia di dissolversi in un'equidistanza che non prende mai posizione: capire perché qualcuno faccia una scelta non significa necessariamente che quella scelta fosse giustificata.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="shared-box">
+    <strong>Lezione metodologica</strong>
+    La lettura prefascista nacque nel dopoguerra, quando era naturale cercare le radici del fascismo. La riabilitazione parziale di Crispi arrivò quando la storiografia cominciò a guardare al periodo liberale con occhi meno condizionati dall'ombra del ventennio. Né l'una né l'altra lettura è semplicemente sbagliata: entrambe colgono qualcosa di reale, ed entrambe dicono qualcosa del momento storico in cui furono formulate.
+  </div>
+
+  <div class="open-q">
+    <div class="open-q-mark">?</div>
+    <div class="open-q-body">
+      <div class="open-q-label">Domanda aperta</div>
+      <div class="open-q-text">De Felice scrive di Crispi negli anni del dopoguerra, mentre studia il fascismo. Duggan scrive nel 2002, in un contesto molto diverso. Se il giudizio su Crispi dipende anche dal contesto in cui lo storico scrive, cosa significa questo per la pretesa di obiettività della storiografia? È possibile — o anche solo desiderabile — un giudizio storico che faccia astrazione dal proprio tempo?</div>
+      <div class="open-q-note">Questa domanda non riguarda solo Crispi: riguarda il mestiere dello storico. Prova a usare il caso Crispi come esempio concreto di un problema metodologico più generale.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ NODO 4 — COLONIALISMO ════════════════════════════════════════════ -->
+<div class="section" id="n3">
+  <div class="node-head">
+    <div class="node-badge" style="background:#3A5C7A">Nodo 4</div>
+    <div class="node-title">Il colonialismo italiano e la sua rimozione</div>
+    <div class="node-intro">Per molto tempo la storiografia italiana ha trattato il colonialismo di fine Ottocento come un episodio minore: avventure mal organizzate culminate nell'umiliazione di Adua. Era una lettura comoda, e come tutte le letture comode nascondeva più di quanto mostrasse. La domanda storiografica è: perché questa rimozione? E cosa ha reso così difficile fare i conti con questo capitolo della storia italiana?</div>
+  </div>
+
+  <div class="confront-label">
+    <div class="confront-line"></div>
+    Posizioni a confronto
+    <div class="confront-line"></div>
+  </div>
+
+  <div class="positions-grid two">
+
+    <div class="pos-card" style="border-top-color:#888070">
+      <div class="pos-card-head">
+        <div class="pos-label">Lettura tradizionale: episodio minore, avventura mal organizzata</div>
+        <div class="pos-historians">Storiografia italiana dominante fino agli anni Settanta</div>
+      </div>
+      <div class="pos-card-body">
+        <ul class="pos-args">
+          <li class="pos-arg"><div class="arg-bullet" style="color:#888070"></div>Il colonialismo italiano fu un tentativo maldestro e velleitario, privo delle risorse e della determinazione dei grandi imperialismi europei.</li>
+          <li class="pos-arg"><div class="arg-bullet" style="color:#888070"></div>Adua fu la fine naturale di quella stagione: una lezione imparata a caro prezzo che chiuse il capitolo.</li>
+          <li class="pos-arg"><div class="arg-bullet" style="color:#888070"></div>La violenza coloniale fascista (1935–36) fu incorporata nella condanna generale del regime, distinta nettamente dal colonialismo liberale.</li>
+        </ul>
+      </div>
+      <div class="pos-card-foot">
+        <div class="pos-limit">Oscura la continuità tra colonialismo liberale e fascista, la violenza reale esercitata sulle popolazioni colonizzate già nell'Ottocento, e il fatto che il colonialismo italiano non finì con Adua.</div>
+      </div>
+    </div>
+
+    <div class="pos-card" style="border-top-color:#3A5C7A">
+      <div class="pos-card-head">
+        <div class="pos-label">Revisione critica: rimozione attiva, continuità con il fascismo, prospettiva delle vittime</div>
+        <div class="pos-historians">Angelo Del Boca (dal 1976) · Nicola Labanca (2002) · storiografia postcoloniale</div>
+      </div>
+      <div class="pos-card-body">
+        <ul class="pos-args">
+          <li class="pos-arg"><div class="arg-bullet" style="color:#3A5C7A"></div>Il colonialismo italiano non finì con Adua: riprese con Giolitti in Libia (1911–12), continuò con campagne in Somalia ed Eritrea, culminò nel 1935–36 con l'uso sistematico di armi chimiche in Etiopia — fatto documentato negli archivi, riconosciuto ufficialmente solo nel 1996 dopo vent'anni di battaglia storiografica (Del Boca).</li>
+          <li class="pos-arg"><div class="arg-bullet" style="color:#3A5C7A"></div>La costruzione della colonia Eritrea comportò espropriazioni di terre, lavoro coatto, discriminazioni sistematiche codificate in leggi razziali che precedono di decenni quelle del 1938.</li>
+          <li class="pos-arg"><div class="arg-bullet" style="color:#3A5C7A"></div>La rimozione non fu spontanea: fu il prodotto di scelte attive di oscuramento da parte di ambienti militari e politici che per decenni negarono fatti documentati negli archivi (Labanca, <em>Oltremare</em>, 2002).</li>
+        </ul>
+      </div>
+      <div class="pos-card-foot">
+        <div class="pos-limit">La storiografia critica ha prevalso sui fatti documentati, ma il dibattito pubblico e la manualistica scolastica restano in ritardo rispetto alla ricerca accademica.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="shared-box">
+    <strong>Un caso particolare: il confronto con altri paesi</strong>
+    Francia, Belgio, Gran Bretagna hanno avviato — non senza conflitti — riflessioni pubbliche sul proprio passato coloniale. L'Italia no, o in misura molto minore. Una ragione è strutturale: i paesi ex colonizzati (Eritrea, Somalia, Etiopia) non hanno esercitato la stessa pressione politica e diplomatica che ha obbligato altri paesi europei a fare i conti con la propria memoria. Un'altra ragione è storiografica: la storia del colonialismo italiano è stata studiata a lungo prevalentemente con fonti e prospettive italiane, senza il dialogo con la storiografia africana e postcoloniale che avrebbe cambiato le domande.
+  </div>
+
+  <div class="open-q">
+    <div class="open-q-mark">?</div>
+    <div class="open-q-body">
+      <div class="open-q-label">Domanda aperta</div>
+      <div class="open-q-text">Del Boca pubblicò le sue ricerche sull'uso dei gas tossici in Etiopia a partire dagli anni Settanta. Il governo italiano le riconobbe ufficialmente solo nel 1996. Cosa ci dice questo ritardo di vent'anni? È un problema storiografico — le prove non erano abbastanza solide? — o è un problema politico — qualcuno aveva interesse a che non fossero accettate? E chi dovrebbe fare i conti con il passato coloniale di un paese: gli storici, i governi, l'opinione pubblica, tutti insieme?</div>
+      <div class="open-q-note">Considera che questa domanda riguarda non solo il passato, ma anche il presente: come una società sceglie cosa ricordare e cosa dimenticare dice qualcosa di quella società nel momento in cui sceglie.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const nodeColors = ['#5B4A3A','#3A5C4A','#7A2E1A','#3A5C7A'];
+
+function switchNode(idx, btn) {
+  document.querySelectorAll('.node-btn').forEach(b => {
+    b.classList.remove('active');
+    b.style.borderBottomColor = 'transparent';
+  });
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  btn.classList.add('active');
+  btn.style.borderBottomColor = nodeColors[idx];
+  document.getElementById('n' + idx).classList.add('active');
+}
+
+// set initial active color
+document.querySelectorAll('.node-btn')[0].style.borderBottomColor = nodeColors[0];
+</script>
+</body>
+</html>
