@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meme Storico — Italia 1861–1900</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Source+Serif+4:wght@300;400;600&display=swap');
+
+  :root {
+    --ink: #1a1208;
+    --paper: #f5f0e8;
+    --aged: #e8dfc8;
+    --rust: #8b3a1a;
+    --gold: #c9922a;
+    --muted: #7a6e5f;
+    --border: #c4b89a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--paper);
+    font-family: 'Source Serif 4', Georgia, serif;
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  header {
+    border-bottom: 2px solid var(--border);
+    padding: 1.8rem 3rem 1.4rem;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    background: var(--aged);
+  }
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.9rem; font-weight: 700;
+    letter-spacing: -0.02em; line-height: 1.1;
+  }
+  header h1 span { font-style: italic; color: var(--rust); }
+  header p.sub {
+    font-size: 0.8rem; color: var(--muted); margin-top: 0.35rem;
+    font-weight: 300; letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  header .meta {
+    text-align: right; font-size: 0.78rem;
+    color: var(--muted); font-style: italic; line-height: 1.6;
+  }
+
+  .page-body {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2.5rem 2rem 5rem;
+  }
+
+  .step-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 0.6rem;
+  }
+  .step-label em {
+    font-style: italic; font-weight: 300;
+    text-transform: none; letter-spacing: 0;
+  }
+
+  .student-bar {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.8rem;
+  }
+
+  .field { margin-bottom: 1.4rem; }
+  .field label {
+    display: block;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 0.35rem;
+  }
+  .field label em {
+    text-transform: none; letter-spacing: 0;
+    font-weight: 300; font-style: italic;
+    color: var(--border); font-size: 0.72rem;
+  }
+  .field input[type=text],
+  .field textarea {
+    width: 100%;
+    border: 1px solid var(--border);
+    padding: 0.6rem 0.85rem;
+    font-family: 'Source Serif 4', serif;
+    font-size: 0.95rem;
+    color: var(--ink);
+    background: rgba(255,255,255,0.6);
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.15s, background 0.15s;
+    border-radius: 1px;
+  }
+  .field input:focus, .field textarea:focus {
+    border-color: var(--rust); background: #fff;
+  }
+  .field textarea { min-height: 110px; }
+  .char-hint {
+    font-size: 0.7rem; color: var(--border);
+    text-align: right; margin-top: 0.2rem;
+  }
+  .char-hint.warn { color: var(--rust); }
+
+  .upload-area {
+    border: 2px dashed var(--border);
+    padding: 2.5rem 2rem;
+    text-align: center;
+    cursor: pointer;
+    position: relative;
+    transition: border-color 0.2s, background 0.2s;
+    background: rgba(255,255,255,0.35);
+    margin-bottom: 1.8rem;
+  }
+  .upload-area:hover, .upload-area.drag-over {
+    border-color: var(--rust);
+    background: rgba(139,58,26,0.04);
+  }
+  .upload-area input {
+    position: absolute; inset: 0;
+    opacity: 0; cursor: pointer;
+    width: 100%; height: 100%;
+  }
+  .upload-area .upload-icon { font-size: 2rem; display: block; margin-bottom: 0.6rem; color: var(--gold); }
+  .upload-area h3 { font-family: 'Playfair Display', serif; font-size: 1.1rem; margin-bottom: 0.3rem; }
+  .upload-area p { font-size: 0.82rem; color: var(--muted); }
+  .upload-area p strong { color: var(--ink); }
+
+  .instr-box {
+    background: var(--aged);
+    border-left: 3px solid var(--gold);
+    padding: 1rem 1.2rem;
+    font-size: 0.82rem;
+    line-height: 1.75;
+    color: var(--muted);
+    margin-bottom: 2rem;
+  }
+  .instr-box strong { color: var(--ink); }
+
+  hr.sep { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+  #progress-wrap {
+    display: none; text-align: center; padding: 1.5rem 0;
+  }
+  .prog-bar { width: 100%; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; margin: 0.6rem 0; }
+  .prog-fill { height: 100%; background: var(--rust); width: 0%; transition: width 0.3s; }
+
+  #preview-wrap { display: none; margin-bottom: 1.8rem; }
+  .preview-frame {
+    border: 1px solid var(--border);
+    background: #111;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-height: 380px;
+  }
+  .preview-frame img {
+    max-width: 100%; max-height: 380px;
+    object-fit: contain; display: block;
+  }
+  .meme-overlay {
+    position: absolute;
+    bottom: 14px; left: 0; right: 0;
+    text-align: center;
+    font-family: Impact, 'Arial Black', sans-serif;
+    font-size: clamp(18px, 4vw, 32px);
+    color: #fff;
+    text-shadow: 2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000;
+    padding: 0 1.2rem;
+    pointer-events: none;
+    line-height: 1.25;
+    letter-spacing: 0.02em;
+  }
+  .preview-change { margin-top: 0.5rem; text-align: right; }
+
+  .btn {
+    padding: 0.65rem 1.5rem;
+    font-family: 'Source Serif 4', serif;
+    font-size: 0.88rem;
+    cursor: pointer;
+    border: 1px solid var(--ink);
+    transition: all 0.15s;
+    letter-spacing: 0.02em;
+    border-radius: 1px;
+  }
+  .btn-primary { background: var(--rust); color: #fff; border-color: var(--rust); font-weight: 600; }
+  .btn-primary:hover { background: #6e2e14; border-color: #6e2e14; }
+  .btn-secondary { background: transparent; color: var(--ink); }
+  .btn-secondary:hover { background: var(--aged); }
+  .btn-ghost { background: transparent; color: var(--muted); border-color: var(--border); font-size: 0.8rem; }
+  .btn-ghost:hover { color: var(--ink); border-color: var(--ink); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .actions-bar {
+    display: flex; gap: 0.75rem; align-items: center;
+    flex-wrap: wrap; margin-top: 0.5rem;
+  }
+  .status-msg {
+    font-size: 0.8rem; color: var(--muted);
+    font-style: italic; flex: 1; text-align: right;
+  }
+
+  #toast {
+    position: fixed; bottom: 2rem; right: 2rem;
+    background: var(--ink); color: var(--paper);
+    padding: 0.75rem 1.4rem;
+    font-size: 0.83rem; font-family: 'Source Serif 4', serif;
+    border-left: 3px solid var(--gold);
+    opacity: 0; transform: translateY(8px);
+    transition: all 0.25s; pointer-events: none; z-index: 999;
+  }
+  #toast.show { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 600px) {
+    header { padding: 1.2rem; flex-direction: column; gap: 0.5rem; }
+    header .meta { text-align: left; }
+    .student-bar { grid-template-columns: 1fr; }
+    .page-body { padding: 1.5rem 1rem 4rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Il <span>Meme</span> Storico</h1>
+    <p class="sub">Laboratorio — Italia 1861–1900</p>
+  </div>
+  <div class="meta">
+    Liceo Classico G. B. Vico · Chieti<br>
+    Francesco Baldassarre
+  </div>
+</header>
+
+<div class="page-body">
+
+  <div class="instr-box">
+    <strong>Come si lavora:</strong><br>
+    1. Seleziona l'immagine da usare per costruire il meme (puoi utilizzare anche una di quelle condivise dal docente).<br>
+    2. Carica qui sotto quella che vuoi usare come base del tuo meme (<strong>JPG</strong>, <strong>PNG</strong> o <strong>PDF</strong>).<br>
+    3. Scrivi il <strong>testo del meme</strong> — breve e incisivo — e la <strong>spiegazione storica</strong>.<br>
+    4. Scarica il PDF da consegnare: conterrà immagine, testo e spiegazione.
+  </div>
+
+  <div class="step-label">Dati dello studente</div>
+  <div class="student-bar">
+    <div class="field" style="margin-bottom:0">
+      <label>Nome e Cognome</label>
+      <input type="text" id="s-name" placeholder="es. Mario Rossi">
+    </div>
+    <div class="field" style="margin-bottom:0">
+      <label>Classe</label>
+      <input type="text" id="s-class" placeholder="es. 3A">
+    </div>
+    <div class="field" style="margin-bottom:0">
+      <label>Data</label>
+      <input type="text" id="s-date" placeholder="es. 10/05/2026">
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <div class="step-label">1 — Carica l'immagine <em>(JPG, PNG oppure PDF — verrà usata la prima pagina)</em></div>
+
+  <div class="upload-area" id="drop-area">
+    <input type="file" id="file-input" accept="image/jpeg,image/png,image/gif,image/webp,application/pdf">
+    <span class="upload-icon">🖼</span>
+    <h3>Scegli o trascina il file qui</h3>
+    <p>Formati accettati: <strong>JPG, PNG</strong> (caricamento diretto) &nbsp;·&nbsp; <strong>PDF</strong> (viene estratta la prima pagina)</p>
+  </div>
+
+  <div id="progress-wrap">
+    <p style="font-size:0.82rem;color:var(--muted);font-style:italic">Elaborazione PDF…</p>
+    <div class="prog-bar"><div class="prog-fill" id="prog-fill"></div></div>
+  </div>
+
+  <div id="preview-wrap">
+    <div class="step-label">Anteprima del meme</div>
+    <div class="preview-frame">
+      <img id="preview-img" src="" alt="Immagine meme">
+      <div class="meme-overlay" id="overlay-text"></div>
+    </div>
+    <div class="preview-change">
+      <button class="btn btn-ghost" id="btn-change-img">← Cambia immagine</button>
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <div class="step-label">2 — Testo del meme</div>
+  <div class="field">
+    <label>Testo <em>— apparirà sull'immagine nel PDF finale</em></label>
+    <input type="text" id="meme-text" maxlength="150"
+      placeholder="Scrivi il testo del meme (max 150 caratteri)">
+    <div class="char-hint" id="text-count">0 / 150</div>
+  </div>
+
+  <hr class="sep">
+
+  <div class="step-label">3 — Spiegazione storica</div>
+  <div class="field">
+    <label>Spiegazione <em>— argomenta il riferimento storico (min. 80 parole)</em></label>
+    <textarea id="meme-expl"
+      placeholder="Qual è l'evento o il personaggio storico evocato? Perché questa immagine funziona come metafora? Che connessione c'è tra la logica comica del meme e il contenuto storico? Usa almeno 80 parole."></textarea>
+    <div class="char-hint" id="expl-count">0 parole</div>
+  </div>
+
+  <hr class="sep">
+
+  <div class="actions-bar">
+    <button class="btn btn-primary" id="btn-download">⬇ Scarica PDF</button>
+    <button class="btn btn-ghost" id="btn-reset">Ricomincia</button>
+    <span class="status-msg" id="status-msg"></span>
+  </div>
+
+</div>
+
+<div id="toast"></div>
+
+<script>
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+  let currentImgDataUrl = null;
+
+  document.getElementById('s-date').value =
+    new Date().toLocaleDateString('it-IT');
+
+  // ---- UPLOAD ----
+  const dropArea  = document.getElementById('drop-area');
+  const fileInput = document.getElementById('file-input');
+
+  dropArea.addEventListener('dragover', e => { e.preventDefault(); dropArea.classList.add('drag-over'); });
+  dropArea.addEventListener('dragleave', () => dropArea.classList.remove('drag-over'));
+  dropArea.addEventListener('drop', e => {
+    e.preventDefault(); dropArea.classList.remove('drag-over');
+    handleFile(e.dataTransfer.files[0]);
+  });
+  fileInput.addEventListener('change', e => { if (e.target.files[0]) handleFile(e.target.files[0]); });
+
+  async function handleFile(file) {
+    if (!file) return;
+    if (file.type === 'application/pdf') {
+      await handlePDF(file);
+    } else if (file.type.startsWith('image/')) {
+      await handleImage(file);
+    } else {
+      showToast('Formato non supportato. Usa JPG, PNG o PDF.');
+    }
+  }
+
+  function handleImage(file) {
+    return new Promise((res, rej) => {
+      const reader = new FileReader();
+      reader.onload = e => { setPreview(e.target.result); res(); };
+      reader.onerror = rej;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function handlePDF(file) {
+    showProgress(true);
+    try {
+      const buf = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+      const total = pdf.numPages;
+      const page  = await pdf.getPage(1);
+      const vp    = page.getViewport({ scale: 2.5 });
+      const cvs   = document.createElement('canvas');
+      cvs.width = vp.width; cvs.height = vp.height;
+      await page.render({ canvasContext: cvs.getContext('2d'), viewport: vp }).promise;
+      document.getElementById('prog-fill').style.width = '100%';
+      setPreview(cvs.toDataURL('image/jpeg', 0.93));
+      if (total > 1) showToast(`PDF di ${total} pagine: caricata solo la prima.`);
+    } catch(e) {
+      showToast('Errore nel PDF. Riprova con un JPG.'); console.error(e);
+    } finally { showProgress(false); }
+  }
+
+  function setPreview(dataUrl) {
+    currentImgDataUrl = dataUrl;
+    document.getElementById('preview-img').src = dataUrl;
+    dropArea.style.display = 'none';
+    document.getElementById('preview-wrap').style.display = 'block';
+  }
+
+  function showProgress(on) {
+    document.getElementById('progress-wrap').style.display = on ? 'block' : 'none';
+    document.getElementById('prog-fill').style.width = on ? '60%' : '0%';
+  }
+
+  document.getElementById('btn-change-img').addEventListener('click', () => {
+    currentImgDataUrl = null;
+    document.getElementById('preview-img').src = '';
+    document.getElementById('overlay-text').textContent = '';
+    document.getElementById('preview-wrap').style.display = 'none';
+    dropArea.style.display = '';
+    fileInput.value = '';
+  });
+
+  // ---- LIVE PREVIEW ----
+  const memeInput  = document.getElementById('meme-text');
+  const overlayEl  = document.getElementById('overlay-text');
+  const textCount  = document.getElementById('text-count');
+
+  memeInput.addEventListener('input', () => {
+    overlayEl.textContent = memeInput.value;
+    textCount.textContent = `${memeInput.value.length} / 150`;
+  });
+
+  const explArea  = document.getElementById('meme-expl');
+  const explCount = document.getElementById('expl-count');
+
+  explArea.addEventListener('input', () => {
+    const w = countWords(explArea.value);
+    explCount.textContent = `${w} parole`;
+    explCount.className = 'char-hint' + (w > 0 && w < 80 ? ' warn' : '');
+  });
+
+  function countWords(s) {
+    return s.trim().split(/\s+/).filter(w => w.length > 0).length;
+  }
+
+  // ---- RESET ----
+  document.getElementById('btn-reset').addEventListener('click', () => {
+    if (!confirm('Vuoi ricominciare da capo? Perderai il lavoro corrente.')) return;
+    currentImgDataUrl = null;
+    document.getElementById('preview-img').src = '';
+    overlayEl.textContent = '';
+    document.getElementById('preview-wrap').style.display = 'none';
+    dropArea.style.display = '';
+    fileInput.value = '';
+    memeInput.value = ''; explArea.value = '';
+    textCount.textContent = '0 / 150';
+    explCount.textContent = '0 parole';
+    explCount.className = 'char-hint';
+    document.getElementById('s-name').value = '';
+    document.getElementById('s-class').value = '';
+    document.getElementById('s-date').value = new Date().toLocaleDateString('it-IT');
+    document.getElementById('status-msg').textContent = '';
+  });
+
+  // ---- DOWNLOAD PDF ----
+  document.getElementById('btn-download').addEventListener('click', async () => {
+    const name = document.getElementById('s-name').value.trim();
+    const cls  = document.getElementById('s-class').value.trim();
+    const date = document.getElementById('s-date').value.trim();
+    const text = memeInput.value.trim();
+    const expl = explArea.value.trim();
+    const words = countWords(expl);
+
+    if (!currentImgDataUrl) { showToast('Carica prima un\'immagine.'); return; }
+    if (!text) { showToast('Scrivi il testo del meme.'); return; }
+    if (!expl) { showToast('Scrivi la spiegazione storica.'); return; }
+    if (words < 30) { showToast('La spiegazione è troppo breve. Aggiungi più contenuto.'); return; }
+
+    const btn = document.getElementById('btn-download');
+    const statusEl = document.getElementById('status-msg');
+    btn.disabled = true;
+    statusEl.textContent = 'Generazione PDF…';
+
+    try {
+      const burned = await burnText(currentImgDataUrl, text);
+      buildAndSavePDF(burned, name, cls, date, text, expl);
+      statusEl.textContent = '✓ PDF salvato.';
+      showToast('PDF scaricato!');
+      setTimeout(() => { statusEl.textContent = ''; }, 4000);
+    } catch(e) {
+      showToast('Errore nella generazione del PDF.'); console.error(e);
+      statusEl.textContent = '';
+    } finally { btn.disabled = false; }
+  });
+
+  function burnText(imgDataUrl, text) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        const cvs = document.createElement('canvas');
+        cvs.width = img.naturalWidth; cvs.height = img.naturalHeight;
+        const ctx = cvs.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        if (text) {
+          const w = cvs.width, h = cvs.height;
+          const fs = Math.max(32, Math.min(72, w / 14));
+          ctx.font      = `bold ${fs}px Impact, Arial Black, sans-serif`;
+          ctx.textAlign = 'center';
+          ctx.lineWidth = Math.max(3, fs / 9);
+          const lines  = wrapCtx(ctx, text.toUpperCase(), w * 0.88);
+          const lineH  = fs * 1.22;
+          const startY = h - 22 - (lines.length - 1) * lineH;
+          lines.forEach((line, i) => {
+            const y = startY + i * lineH;
+            ctx.strokeStyle = '#000'; ctx.strokeText(line, w / 2, y);
+            ctx.fillStyle   = '#fff'; ctx.fillText(line, w / 2, y);
+          });
+        }
+        resolve(cvs.toDataURL('image/jpeg', 0.93));
+      };
+      img.onerror = reject;
+      img.src = imgDataUrl;
+    });
+  }
+
+  function wrapCtx(ctx, text, maxW) {
+    const words = text.split(' ');
+    const lines = []; let line = '';
+    for (const w of words) {
+      const test = line ? line + ' ' + w : w;
+      if (ctx.measureText(test).width > maxW && line) { lines.push(line); line = w; }
+      else line = test;
+    }
+    if (line) lines.push(line);
+    return lines;
+  }
+
+  function buildAndSavePDF(imgData, name, cls, date, text, expl) {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+    const W = 210, H = 297, ml = 18, mr = 18, cW = W - ml - mr;
+
+    // header
+    doc.setFillColor(232, 223, 200);
+    doc.rect(0, 0, W, 26, 'F');
+    doc.setFont('times', 'bold'); doc.setFontSize(18); doc.setTextColor(26, 18, 8);
+    doc.text('Il Meme Storico', ml, 12);
+    doc.setFont('times', 'italic'); doc.setFontSize(8.5); doc.setTextColor(122, 110, 95);
+    doc.text('Laboratorio · Italia 1861–1900 · Liceo Classico G. B. Vico · Chieti', ml, 20);
+
+    // student band
+    doc.setFillColor(245, 240, 232);
+    doc.rect(0, 26, W, 12, 'F');
+    doc.setFont('times', 'normal'); doc.setFontSize(8.5); doc.setTextColor(122, 110, 95);
+    if (name) doc.text(`Studente: ${name}`, ml, 34);
+    if (cls)  doc.text(`Classe: ${cls}`, ml + 80, 34);
+    if (date) doc.text(`Data: ${date}`, ml + 148, 34);
+
+    // rule
+    doc.setDrawColor(196, 184, 154); doc.setLineWidth(0.3);
+    doc.line(ml, 40, W - mr, 40);
+
+    let y = 46;
+
+    // image
+    const tmpImg = new Image();
+    tmpImg.src = imgData;
+    const origW = tmpImg.naturalWidth  || 800;
+    const origH = tmpImg.naturalHeight || 600;
+    const maxH  = 115;
+    let dW = cW, dH = (origH / origW) * dW;
+    if (dH > maxH) { dH = maxH; dW = (origW / origH) * dH; }
+    doc.addImage(imgData, 'JPEG', ml + (cW - dW) / 2, y, dW, dH);
+    y += dH + 8;
+
+    doc.setDrawColor(196, 184, 154); doc.line(ml, y, W - mr, y); y += 7;
+
+    // meme text
+    doc.setFont('times', 'bold'); doc.setFontSize(8); doc.setTextColor(122, 110, 95);
+    doc.text('TESTO DEL MEME', ml, y); y += 5;
+    doc.setFont('times', 'bolditalic'); doc.setFontSize(13); doc.setTextColor(26, 18, 8);
+    const tLines = doc.splitTextToSize(`"${text}"`, cW);
+    doc.text(tLines, ml, y); y += tLines.length * 6.2 + 8;
+
+    doc.setDrawColor(196, 184, 154); doc.line(ml, y, W - mr, y); y += 7;
+
+    // explanation
+    doc.setFont('times', 'bold'); doc.setFontSize(8); doc.setTextColor(122, 110, 95);
+    doc.text('SPIEGAZIONE STORICA', ml, y); y += 5;
+    doc.setFont('times', 'normal'); doc.setFontSize(11); doc.setTextColor(26, 18, 8);
+    doc.setLineHeightFactor(1.55);
+    const eLines = doc.splitTextToSize(expl, cW);
+    doc.text(eLines, ml, y);
+
+    // footer
+    doc.setFont('times', 'italic'); doc.setFontSize(7.5); doc.setTextColor(196, 184, 154);
+    doc.text('Meme Storico — Italia 1861–1900', ml, H - 10);
+    if (name) doc.text(name, W - mr, H - 10, { align: 'right' });
+
+    const fname = name
+      ? `meme_storico_${name.replace(/\s+/g,'_').toLowerCase()}.pdf`
+      : 'meme_storico.pdf';
+    doc.save(fname);
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+</script>
+</body>
+</html>
