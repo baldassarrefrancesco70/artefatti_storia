@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Votazione — Il Meme Storico</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Source+Serif+4:wght@300;400;600&display=swap');
+
+  :root {
+    --ink:    #1a1208;
+    --paper:  #f5f0e8;
+    --aged:   #e8dfc8;
+    --rust:   #8b3a1a;
+    --gold:   #c9922a;
+    --muted:  #7a6e5f;
+    --border: #c4b89a;
+    --pos1:   #c9922a;
+    --pos2:   #2d6fa3;
+    --pos3:   #3a7d44;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  header {
+    background: var(--aged);
+    border-bottom: 2px solid var(--border);
+    padding: 1.4rem 2.5rem;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.7rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  header h1 span { font-style: italic; color: var(--rust); }
+  header .meta { font-size: 0.75rem; color: var(--muted); font-style: italic; text-align: right; line-height: 1.6; }
+
+  .page { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem 5rem; }
+
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  .card {
+    background: #fff;
+    border: 1px solid var(--border);
+    padding: 1.5rem 1.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .section-label {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  input[type=text], input[type=password] {
+    width: 100%;
+    border: 1px solid var(--border);
+    padding: 0.6rem 0.85rem;
+    font-family: 'Source Serif 4', serif;
+    font-size: 0.95rem;
+    color: var(--ink);
+    background: var(--paper);
+    outline: none;
+    transition: border-color 0.15s;
+    border-radius: 1px;
+  }
+  input:focus { border-color: var(--rust); background: #fff; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0.6rem 1.3rem;
+    font-family: 'Source Serif 4', serif;
+    font-size: 0.85rem;
+    cursor: pointer;
+    border: 1px solid var(--ink);
+    background: transparent;
+    color: var(--ink);
+    transition: all 0.15s;
+    letter-spacing: 0.02em;
+    border-radius: 1px;
+  }
+  .btn:hover { background: var(--aged); }
+  .btn.primary { background: var(--rust); color: #fff; border-color: var(--rust); font-weight: 600; }
+  .btn.primary:hover { background: #6e2e14; }
+  .btn.ghost { color: var(--muted); border-color: var(--border); font-size: 0.78rem; }
+  .btn.ghost:hover { color: var(--ink); border-color: var(--ink); }
+  .btn.danger { color: #9b2222; border-color: #9b2222; }
+  .btn.danger:hover { background: #fcebeb; }
+  .btn:disabled { opacity: 0.38; cursor: not-allowed; }
+
+  .btn-row { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; margin-top: 0.9rem; }
+
+  .error { font-size: 0.78rem; color: var(--rust); min-height: 1.1rem; margin-top: 0.35rem; }
+
+  hr.sep { border: none; border-top: 1px solid var(--border); margin: 1.75rem 0; }
+
+  /* UPLOAD */
+  .upload-zone {
+    border: 1.5px dashed var(--border);
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    position: relative;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .upload-zone:hover, .upload-zone.drag { border-color: var(--rust); background: rgba(139,58,26,0.03); }
+  .upload-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+  .upload-zone .icon { font-size: 1.8rem; display: block; color: var(--gold); margin-bottom: 0.4rem; }
+  .upload-zone p { font-size: 0.82rem; color: var(--muted); }
+  .upload-zone p strong { color: var(--ink); }
+
+  /* MEME LIST (admin) */
+  .meme-list { display: grid; gap: 8px; margin: 1rem 0; }
+  .meme-list-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    background: #fff;
+  }
+  .meme-list-thumb { width: 56px; height: 42px; object-fit: cover; flex-shrink: 0; }
+  .meme-list-num { font-size: 0.78rem; font-weight: 600; color: var(--muted); min-width: 32px; }
+
+  /* VOTE GRID */
+  .vote-legend {
+    display: flex; gap: 1rem; font-size: 0.78rem;
+    color: var(--muted); margin-bottom: 1rem; flex-wrap: wrap;
+  }
+  .vote-legend span { display: flex; align-items: center; gap: 5px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+
+  .meme-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 1rem;
+    margin: 1rem 0;
+  }
+  .meme-card {
+    border: 2px solid var(--border);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.15s, transform 0.1s;
+    background: var(--ink);
+  }
+  .meme-card:hover { transform: translateY(-2px); border-color: var(--muted); }
+  .meme-card.sel-1 { border-color: var(--pos1); }
+  .meme-card.sel-2 { border-color: var(--pos2); }
+  .meme-card.sel-3 { border-color: var(--pos3); }
+  .meme-card img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; opacity: 0.96; }
+  .meme-card .num-label {
+    padding: 5px 8px;
+    font-size: 0.72rem; font-weight: 600;
+    color: var(--muted);
+    background: #fff;
+    border-top: 1px solid var(--border);
+  }
+  .pos-badge {
+    position: absolute; top: 7px; right: 7px;
+    width: 26px; height: 26px; border-radius: 50%;
+    display: none; align-items: center; justify-content: center;
+    font-size: 0.72rem; font-weight: 700; color: #fff;
+  }
+  .pos-badge.show { display: flex; }
+  .pos-badge.p1 { background: var(--pos1); }
+  .pos-badge.p2 { background: var(--pos2); }
+  .pos-badge.p3 { background: var(--pos3); }
+
+  /* RESULTS */
+  .results-list { display: grid; gap: 10px; }
+  .result-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 14px;
+    background: #fff;
+    border: 1px solid var(--border);
+  }
+  .result-rank {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem; font-weight: 700;
+    min-width: 32px; color: var(--muted);
+  }
+  .r1 .result-rank { color: var(--pos1); }
+  .r2 .result-rank { color: var(--pos2); }
+  .r3 .result-rank { color: var(--pos3); }
+  .result-thumb { width: 64px; height: 48px; object-fit: cover; flex-shrink: 0; }
+  .result-info { flex: 1; }
+  .result-title { font-size: 0.95rem; font-weight: 600; }
+  .result-detail { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+  .result-pts { text-align: right; }
+  .result-pts .n { font-size: 1.4rem; font-weight: 600; font-family: 'Playfair Display', serif; }
+  .result-pts .l { font-size: 0.68rem; color: var(--muted); display: block; }
+
+  /* STATUS TAG */
+  .status-tag {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 3px 10px; border-radius: 1px;
+  }
+  .tag-open  { background: #eaf3de; color: #2a5a1e; border: 1px solid #a0c878; }
+  .tag-closed{ background: #fcebeb; color: #7a1e1e; border: 1px solid #e8a0a0; }
+  .status-dot { width: 7px; height: 7px; border-radius: 50%; }
+  .dot-open   { background: #3a7d44; }
+  .dot-closed { background: #9b2222; }
+
+  /* PROG BAR */
+  .prog-wrap { height: 3px; background: var(--border); margin: 0.6rem 0; overflow: hidden; }
+  .prog-fill { height: 100%; background: var(--rust); width: 0%; transition: width 0.3s; }
+
+  /* SPINNER */
+  .spinner {
+    display: inline-block; width: 16px; height: 16px;
+    border: 2px solid var(--border); border-top-color: var(--rust);
+    border-radius: 50%; animation: spin 0.7s linear infinite;
+    vertical-align: middle; margin-right: 6px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* TOAST */
+  #toast {
+    position: fixed; bottom: 1.5rem; right: 1.5rem;
+    background: var(--ink); color: var(--paper);
+    padding: 0.7rem 1.2rem; font-size: 0.82rem;
+    border-left: 3px solid var(--gold);
+    opacity: 0; transform: translateY(8px);
+    transition: all 0.25s; pointer-events: none; z-index: 999;
+  }
+  #toast.show { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 600px) {
+    header { flex-direction: column; gap: 0.4rem; padding: 1rem; }
+    header .meta { text-align: left; }
+    .page { padding: 1.2rem 1rem 4rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Il <span>Meme</span> Storico</h1>
+    <div style="font-size:0.75rem;color:var(--muted);margin-top:0.2rem;letter-spacing:0.04em;text-transform:uppercase">Votazione finale</div>
+  </div>
+  <div class="meta">
+    Liceo Classico G.&thinsp;B.&thinsp;Vico · Chieti<br>
+    Francesco Baldassarre
+  </div>
+</header>
+
+<div class="page">
+
+  <!-- ===== ENTRY ===== -->
+  <div id="s-entry" class="screen active">
+    <div class="card">
+      <div class="section-label">Studente</div>
+      <input type="text" id="inp-name" placeholder="Nome e Cognome" maxlength="60"
+        onkeydown="if(event.key==='Enter')enterStudent()">
+      <div class="error" id="err-entry"></div>
+      <div class="btn-row">
+        <button class="btn primary" onclick="enterStudent()">Vota →</button>
+        <button class="btn ghost" onclick="show('s-admin-login')">Accesso docente</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ADMIN LOGIN ===== -->
+  <div id="s-admin-login" class="screen">
+    <div class="card">
+      <div class="section-label">Password docente</div>
+      <input type="password" id="inp-pwd" placeholder="••••••••"
+        onkeydown="if(event.key==='Enter')checkAdmin()">
+      <div class="error" id="err-admin"></div>
+      <div class="btn-row">
+        <button class="btn primary" onclick="checkAdmin()">Entra</button>
+        <button class="btn ghost" onclick="show('s-entry')">← Indietro</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ADMIN PANEL ===== -->
+  <div id="s-admin" class="screen">
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap">
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700">Pannello docente</div>
+        <div style="font-size:0.78rem;color:var(--muted);margin-top:2px">Gestisci meme e votazione</div>
+      </div>
+      <div style="flex:1"></div>
+      <span id="status-tag" class="status-tag tag-open">
+        <span class="status-dot dot-open"></span> Votazione aperta
+      </span>
+    </div>
+
+    <div class="card">
+      <div class="section-label">Carica i PDF degli studenti</div>
+      <div class="upload-zone" id="drop-zone">
+        <input type="file" id="inp-pdf" accept="application/pdf" multiple onchange="handleFiles(this.files)">
+        <span class="icon">📄</span>
+        <p><strong>Trascina i PDF qui</strong> oppure clicca per selezionarli</p>
+        <p>Ogni PDF deve essere il file consegnato dallo studente</p>
+      </div>
+      <div class="prog-wrap" id="prog-wrap" style="display:none"><div class="prog-fill" id="prog-fill"></div></div>
+      <div id="upload-status" style="font-size:0.78rem;color:var(--muted);margin-top:6px"></div>
+    </div>
+
+    <div id="admin-meme-list" class="meme-list" style="display:none"></div>
+
+    <div class="card">
+      <div class="section-label">Controlli</div>
+      <div class="btn-row" style="margin-top:0">
+        <button class="btn" id="btn-toggle" onclick="toggleVoting()">⏸ Chiudi votazione</button>
+        <button class="btn danger" onclick="resetAll()">✕ Azzera tutto</button>
+        <button class="btn ghost" onclick="show('s-entry')">← Home</button>
+      </div>
+      <div style="margin-top:0.9rem;font-size:0.78rem;color:var(--muted)">
+        Meme caricati: <strong id="admin-meme-count">0</strong>
+        &nbsp;·&nbsp;
+        Votanti: <strong id="admin-voter-count">0</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== VOTE ===== -->
+  <div id="s-vote" class="screen">
+    <div style="margin-bottom:1.2rem">
+      <div style="font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700">Scegli i tuoi tre preferiti</div>
+      <div style="font-size:0.8rem;color:var(--muted);margin-top:4px">
+        Clicca per assegnare 1°, 2° e 3° posto. Il voto non è modificabile dopo la conferma.
+      </div>
+    </div>
+    <div class="vote-legend">
+      <span><span class="dot" style="background:var(--pos1)"></span> 1° posto (3 pt)</span>
+      <span><span class="dot" style="background:var(--pos2)"></span> 2° posto (2 pt)</span>
+      <span><span class="dot" style="background:var(--pos3)"></span> 3° posto (1 pt)</span>
+    </div>
+    <div class="meme-grid" id="vote-grid"></div>
+    <div class="error" id="err-vote"></div>
+    <div style="display:flex;align-items:center;gap:1rem;margin-top:0.5rem;flex-wrap:wrap">
+      <div style="font-size:0.8rem;color:var(--muted)">Selezionati: <strong id="sel-count">0</strong>/3</div>
+      <div style="flex:1"></div>
+      <button class="btn primary" onclick="confirmVote()">✓ Conferma voto</button>
+    </div>
+  </div>
+
+  <!-- ===== VOTED ===== -->
+  <div id="s-voted" class="screen">
+    <div class="card" style="text-align:center;padding:2.5rem">
+      <div style="font-size:2.5rem;margin-bottom:0.75rem">✓</div>
+      <div style="font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;margin-bottom:0.4rem">Voto registrato</div>
+      <div style="font-size:0.85rem;color:var(--muted);margin-bottom:1.2rem">
+        I risultati saranno visibili quando il docente chiuderà la votazione.
+      </div>
+      <button class="btn" onclick="tryResults()">Controlla risultati</button>
+    </div>
+  </div>
+
+  <!-- ===== RESULTS ===== -->
+  <div id="s-results" class="screen">
+    <div style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;margin-bottom:4px">Classifica finale</div>
+    <div style="font-size:0.8rem;color:var(--muted);margin-bottom:1.5rem" id="results-sub"></div>
+    <div class="results-list" id="results-list"></div>
+    <div style="margin-top:1.2rem">
+      <button class="btn ghost" onclick="show('s-entry')">← Torna alla home</button>
+    </div>
+  </div>
+
+</div>
+
+<div id="toast"></div>
+
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+// ---- CONFIG ----
+const ADMIN_PWD = 'vico2026';
+const API_KEY   = '$2a$10$GbdTh.p.1Bo1v.ClIvJ9P.fkSAsd3OKMZjlHrT0En9lAnMgpszrlK';
+const BASE      = 'https://api.jsonbin.io/v3/b';
+
+// Bin IDs — compilati automaticamente al primo uso
+let BIN_MEMES  = localStorage.getItem('bin_memes')  || null;
+let BIN_VOTES  = localStorage.getItem('bin_votes')  || null;
+let BIN_STATUS = localStorage.getItem('bin_status') || null;
+
+// ---- STATE ----
+let memes       = [];
+let votes       = {};
+let votingOpen  = true;
+let currentUser = null;
+let myVotes     = {1: null, 2: null, 3: null};
+
+// ---- JSONBIN HELPERS ----
+async function jbGet(binId) {
+  const r = await fetch(`${BASE}/${binId}/latest`, {
+    headers: { 'X-Master-Key': API_KEY }
+  });
+  if (!r.ok) throw new Error('get failed');
+  const d = await r.json();
+  return d.record;
+}
+
+async function jbSet(binId, data) {
+  const r = await fetch(`${BASE}/${binId}`, {
+    method: 'PUT',
+    headers: { 'X-Master-Key': API_KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  if (!r.ok) throw new Error('set failed');
+  return r.json();
+}
+
+async function jbCreate(name, data) {
+  const r = await fetch(BASE, {
+    method: 'POST',
+    headers: {
+      'X-Master-Key': API_KEY,
+      'Content-Type': 'application/json',
+      'X-Bin-Name': name,
+      'X-Bin-Private': 'false'
+    },
+    body: JSON.stringify(data)
+  });
+  if (!r.ok) throw new Error('create failed');
+  const d = await r.json();
+  return d.metadata.id;
+}
+
+async function ensureBins() {
+  if (!BIN_MEMES) {
+    BIN_MEMES = await jbCreate('meme_memes', []);
+    localStorage.setItem('bin_memes', BIN_MEMES);
+  }
+  if (!BIN_VOTES) {
+    BIN_VOTES = await jbCreate('meme_votes', {});
+    localStorage.setItem('bin_votes', BIN_VOTES);
+  }
+  if (!BIN_STATUS) {
+    BIN_STATUS = await jbCreate('meme_status', { open: true });
+    localStorage.setItem('bin_status', BIN_STATUS);
+  }
+}
+
+async function loadState() {
+  await ensureBins();
+  const [m, v, s] = await Promise.all([
+    jbGet(BIN_MEMES), jbGet(BIN_VOTES), jbGet(BIN_STATUS)
+  ]);
+  memes      = Array.isArray(m) ? m : [];
+  votes      = v && typeof v === 'object' ? v : {};
+  votingOpen = s ? s.open : true;
+}
+
+async function saveAll() {
+  await Promise.all([
+    jbSet(BIN_MEMES,  memes),
+    jbSet(BIN_VOTES,  votes),
+    jbSet(BIN_STATUS, { open: votingOpen }),
+  ]);
+}
+
+async function saveVotes() {
+  await jbSet(BIN_VOTES, votes);
+}
+
+async function saveMemes() {
+  await jbSet(BIN_MEMES, memes);
+}
+
+async function saveStatus() {
+  await jbSet(BIN_STATUS, { open: votingOpen });
+}
+
+// ---- UI HELPERS ----
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function setLoading(btnId, on) {
+  const b = document.getElementById(btnId);
+  if (b) b.disabled = on;
+}
+
+// ---- ENTRY ----
+async function enterStudent() {
+  const name = document.getElementById('inp-name').value.trim();
+  if (!name) { document.getElementById('err-entry').textContent = 'Inserisci il tuo nome.'; return; }
+  document.getElementById('err-entry').textContent = 'Caricamento… ';
+  try {
+    await loadState();
+    currentUser = name;
+    if (!votingOpen) { renderResults(); show('s-results'); return; }
+    if (votes[name]) { renderResults(); show('s-results'); return; }
+    if (memes.length === 0) {
+      document.getElementById('err-entry').textContent = 'I meme non sono ancora stati caricati. Riprova tra poco.';
+      return;
+    }
+    document.getElementById('err-entry').textContent = '';
+    renderVoteGrid();
+    show('s-vote');
+  } catch(e) {
+    document.getElementById('err-entry').textContent = 'Errore di connessione. Riprova.';
+  }
+}
+
+// ---- ADMIN ----
+async function checkAdmin() {
+  const pwd = document.getElementById('inp-pwd').value;
+  if (pwd !== ADMIN_PWD) { document.getElementById('err-admin').textContent = 'Password errata.'; return; }
+  document.getElementById('err-admin').textContent = 'Caricamento…';
+  try {
+    await loadState();
+    document.getElementById('err-admin').textContent = '';
+    document.getElementById('inp-pwd').value = '';
+    renderAdmin();
+    show('s-admin');
+  } catch(e) {
+    document.getElementById('err-admin').textContent = 'Errore di connessione.';
+  }
+}
+
+function renderAdmin() {
+  document.getElementById('admin-meme-count').textContent  = memes.length;
+  document.getElementById('admin-voter-count').textContent = Object.keys(votes).length;
+
+  const tag  = document.getElementById('status-tag');
+  const btn  = document.getElementById('btn-toggle');
+  if (votingOpen) {
+    tag.className = 'status-tag tag-open';
+    tag.innerHTML = '<span class="status-dot dot-open"></span> Votazione aperta';
+    btn.textContent = '⏸ Chiudi votazione';
+  } else {
+    tag.className = 'status-tag tag-closed';
+    tag.innerHTML = '<span class="status-dot dot-closed"></span> Votazione chiusa';
+    btn.textContent = '▶ Riapri votazione';
+  }
+
+  const list = document.getElementById('admin-meme-list');
+  if (memes.length === 0) { list.style.display = 'none'; return; }
+  list.style.display = 'grid';
+  list.innerHTML = memes.map(m =>
+    `<div class="meme-list-item">
+      <span class="meme-list-num">#${m.num}</span>
+      <img class="meme-list-thumb" src="${m.img}" alt="Meme ${m.num}">
+      <span style="font-size:0.78rem;color:var(--muted);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${m.file}</span>
+      <button class="btn ghost" style="padding:3px 9px;font-size:0.7rem" onclick="removeMeme(${m.id})">✕</button>
+    </div>`
+  ).join('');
+}
+
+// ---- UPLOAD ----
+const dropZone = document.getElementById('drop-zone');
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag'));
+dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('drag'); handleFiles(e.dataTransfer.files); });
+
+async function handleFiles(files) {
+  if (!files.length) return;
+  const prog = document.getElementById('prog-fill');
+  const wrap = document.getElementById('prog-wrap');
+  const stat = document.getElementById('upload-status');
+  wrap.style.display = 'block';
+  const newMemes = [];
+
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    stat.textContent = `Elaborazione ${i+1}/${files.length}: ${file.name}`;
+    prog.style.width = Math.round(((i) / files.length) * 100) + '%';
+    try {
+      const buf  = await file.arrayBuffer();
+      const pdf  = await pdfjsLib.getDocument({ data: buf }).promise;
+      const page = await pdf.getPage(1);
+      const vp   = page.getViewport({ scale: 1.8 });
+      const cvs  = document.createElement('canvas');
+      cvs.width = vp.width; cvs.height = vp.height;
+      await page.render({ canvasContext: cvs.getContext('2d'), viewport: vp }).promise;
+      newMemes.push({ id: Date.now() + i, img: cvs.toDataURL('image/jpeg', 0.78), file: file.name });
+    } catch(e) { console.error(file.name, e); }
+  }
+
+  prog.style.width = '100%';
+  if (!newMemes.length) { stat.textContent = 'Nessun file valido.'; return; }
+
+  // Shuffle e rinumera
+  const combined = [...memes, ...newMemes];
+  for (let i = combined.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [combined[i], combined[j]] = [combined[j], combined[i]];
+  }
+  memes = combined.map((m, i) => ({ ...m, num: i + 1 }));
+
+  stat.textContent = 'Salvataggio…';
+  try {
+    await saveMemes();
+    stat.textContent = `${newMemes.length} meme aggiunt${newMemes.length===1?'o':'i'}.`;
+    toast('Meme caricati e salvati.');
+  } catch(e) {
+    stat.textContent = 'Errore nel salvataggio. Riprova.';
+  }
+  renderAdmin();
+  setTimeout(() => { wrap.style.display = 'none'; }, 1500);
+}
+
+async function removeMeme(id) {
+  memes = memes.filter(m => m.id !== id).map((m, i) => ({ ...m, num: i + 1 }));
+  try { await saveMemes(); renderAdmin(); toast('Meme rimosso.'); }
+  catch(e) { toast('Errore nel salvataggio.'); }
+}
+
+async function toggleVoting() {
+  votingOpen = !votingOpen;
+  try { await saveStatus(); renderAdmin(); toast(votingOpen ? 'Votazione riaperta.' : 'Votazione chiusa.'); }
+  catch(e) { toast('Errore.'); }
+}
+
+async function resetAll() {
+  if (!confirm('Eliminare tutti i meme e i voti? Azione irreversibile.')) return;
+  memes = []; votes = {}; votingOpen = true;
+  try { await saveAll(); renderAdmin(); toast('Azzzerato.'); }
+  catch(e) { toast('Errore.'); }
+}
+
+// ---- VOTE ----
+function renderVoteGrid() {
+  myVotes = {1: null, 2: null, 3: null};
+  document.getElementById('sel-count').textContent = '0';
+  document.getElementById('err-vote').textContent  = '';
+  document.getElementById('vote-grid').innerHTML = memes.map(m =>
+    `<div class="meme-card" id="mc-${m.num}" onclick="clickMeme(${m.num})">
+      <img src="${m.img}" alt="Meme ${m.num}" loading="lazy">
+      <div class="num-label">Meme #${m.num}</div>
+      <div class="pos-badge" id="pb-${m.num}"></div>
+    </div>`
+  ).join('');
+}
+
+function clickMeme(num) {
+  const existing = Object.keys(myVotes).find(p => myVotes[p] === num);
+  if (existing) {
+    myVotes[existing] = null;
+    document.getElementById('mc-'+num).className = 'meme-card';
+    const pb = document.getElementById('pb-'+num);
+    pb.className = 'pos-badge'; pb.textContent = '';
+    updateSelCount(); return;
+  }
+  const next = [1,2,3].find(p => myVotes[p] === null);
+  if (!next) {
+    document.getElementById('err-vote').textContent = 'Hai già 3 preferenze. Clicca su uno per deselezionarlo.';
+    return;
+  }
+  document.getElementById('err-vote').textContent = '';
+  myVotes[next] = num;
+  const cl = {1:'sel-1', 2:'sel-2', 3:'sel-3'};
+  const pc = {1:'p1',    2:'p2',    3:'p3'};
+  document.getElementById('mc-'+num).className = 'meme-card ' + cl[next];
+  const pb = document.getElementById('pb-'+num);
+  pb.className = 'pos-badge show ' + pc[next];
+  pb.textContent = next + '°';
+  updateSelCount();
+}
+
+function updateSelCount() {
+  document.getElementById('sel-count').textContent =
+    [1,2,3].filter(p => myVotes[p] !== null).length;
+}
+
+async function confirmVote() {
+  if ([1,2,3].some(p => myVotes[p] === null)) {
+    document.getElementById('err-vote').textContent = 'Devi selezionare esattamente 3 meme.';
+    return;
+  }
+  const btn = document.querySelector('#s-vote .btn.primary');
+  btn.disabled = true;
+  btn.textContent = 'Salvataggio…';
+  try {
+    await loadState(); // ricarica per evitare sovrascritture
+    votes[currentUser] = { ...myVotes };
+    await saveVotes();
+    show('s-voted');
+  } catch(e) {
+    btn.disabled = false; btn.textContent = '✓ Conferma voto';
+    document.getElementById('err-vote').textContent = 'Errore di connessione. Riprova.';
+  }
+}
+
+async function tryResults() {
+  try {
+    await loadState();
+    if (!votingOpen) { renderResults(); show('s-results'); }
+    else toast('La votazione è ancora aperta.');
+  } catch(e) { toast('Errore di connessione.'); }
+}
+
+// ---- RESULTS ----
+function computeScores() {
+  const pts = {}; const det = {};
+  memes.forEach(m => { pts[m.num] = 0; det[m.num] = { b:{1:0,2:0,3:0}, voters:[] }; });
+  const ptMap = {1:3, 2:2, 3:1};
+  Object.entries(votes).forEach(([voter, v]) => {
+    [1,2,3].forEach(pos => {
+      const n = v[pos];
+      if (n) {
+        pts[n]  = (pts[n]  || 0) + ptMap[pos];
+        det[n]  = det[n] || { b:{1:0,2:0,3:0}, voters:[] };
+        det[n].b[pos]++;
+        det[n].voters.push(`${voter} (${pos}°)`);
+      }
+    });
+  });
+  return { pts, det };
+}
+
+function renderResults() {
+  const { pts, det } = computeScores();
+  const sorted = [...memes].sort((a,b) => (pts[b.num]||0) - (pts[a.num]||0));
+  const total  = Object.keys(votes).length;
+  document.getElementById('results-sub').textContent =
+    `${total} votant${total===1?'e':'i'} · 1°=3pt · 2°=2pt · 3°=1pt`;
+
+  document.getElementById('results-list').innerHTML = sorted.map((m, i) => {
+    const p = pts[m.num] || 0;
+    const d = det[m.num] || { b:{1:0,2:0,3:0}, voters:[] };
+    const rk = i < 3 ? `r${i+1}` : '';
+    return `<div class="result-row ${rk}">
+      <div class="result-rank">${i+1}</div>
+      <img class="result-thumb" src="${m.img}" alt="Meme ${m.num}">
+      <div class="result-info">
+        <div class="result-title">Meme #${m.num}</div>
+        <div class="result-detail">${d.b[1]}× 1° &nbsp; ${d.b[2]}× 2° &nbsp; ${d.b[3]}× 3°</div>
+        <div class="result-detail" style="margin-top:2px">${d.voters.join(' · ') || '—'}</div>
+      </div>
+      <div class="result-pts">
+        <div class="n">${p}</div>
+        <span class="l">punti</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+</script>
+</body>
+</html>
