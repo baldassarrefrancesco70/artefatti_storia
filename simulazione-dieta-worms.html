@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulazione — La Dieta di Worms</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Gill Sans','Gill Sans MT',Calibri,sans-serif;background:#F5F0E8;padding:0}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.sim{background:#F5F0E8;padding:1.5rem;max-width:860px;margin:0 auto}
+.scene-header{border-left:3px solid #8B7355;padding:0.5rem 0 0.5rem 1rem;margin-bottom:1.25rem;border-radius:0}
+.scene-label{font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#8B7355;font-family:'Gill Sans',Calibri,sans-serif;margin-bottom:0.25rem}
+.scene-title{font-family:Georgia,serif;font-size:17px;font-weight:normal;color:#2c2218;line-height:1.3}
+.scene-date{font-size:12px;color:#7a6a55;margin-top:0.2rem;font-style:italic}
+.context-box{background:#ede8de;border:1px solid #c9b89a;border-radius:6px;padding:1rem 1.1rem;margin-bottom:1.25rem;font-size:13.5px;color:#3a2e1e;line-height:1.65}
+.context-box p{margin:0}
+.context-box p+p{margin-top:0.6rem}
+.accusation{background:#fff8f0;border:1px solid #d4b896;border-left:3px solid #8B7355;border-radius:0 6px 6px 0;padding:0.9rem 1rem;margin-bottom:1.25rem}
+.accusation-label{font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:#8B7355;margin-bottom:0.4rem}
+.accusation-text{font-family:Georgia,serif;font-size:14px;color:#2c2218;line-height:1.6;font-style:italic}
+.choices-label{font-size:12px;color:#6b5c45;margin-bottom:0.6rem;letter-spacing:0.03em}
+.choice-btn{width:100%;text-align:left;background:#fff;border:1px solid #c9b89a;border-radius:6px;padding:0.75rem 1rem;margin-bottom:0.5rem;cursor:pointer;font-family:'Gill Sans',Calibri,sans-serif;font-size:13.5px;color:#2c2218;line-height:1.5;transition:background 0.15s,border-color 0.15s;display:flex;align-items:flex-start;gap:10px}
+.choice-btn:hover{background:#f5efe4;border-color:#8B7355}
+.choice-btn:disabled{cursor:default;opacity:0.5}
+.choice-letter{font-family:Georgia,serif;font-size:13px;color:#8B7355;min-width:18px;flex-shrink:0;padding-top:1px}
+.feedback{display:none;margin-top:0.85rem;border-radius:6px;overflow:hidden}
+.feedback.visible{display:block}
+.feedback-header{padding:0.55rem 1rem;font-size:11px;letter-spacing:0.07em;text-transform:uppercase;font-family:'Gill Sans',Calibri,sans-serif}
+.feedback-body{padding:0.85rem 1rem;font-size:13.5px;line-height:1.65}
+.feedback-body p{margin:0}
+.feedback-body p+p{margin-top:0.55rem}
+.fb-cedimento .feedback-header{background:#e8ddd0;color:#5c4a33}
+.fb-cedimento .feedback-body{background:#f5efe4;color:#3a2e1e}
+.fb-compromesso .feedback-header{background:#dde8e0;color:#334d38}
+.fb-compromesso .feedback-body{background:#f0f5f1;color:#2a3d2e}
+.fb-resistenza .feedback-header{background:#d8dce8;color:#2e3456}
+.fb-resistenza .feedback-body{background:#f0f1f8;color:#1e2440}
+.historical-badge{display:inline-block;font-size:10px;letter-spacing:0.06em;text-transform:uppercase;background:#8B7355;color:#f5efe4;padding:2px 7px;border-radius:3px;margin-left:8px;vertical-align:middle;font-family:'Gill Sans',Calibri,sans-serif}
+.next-btn{margin-top:1rem;background:#8B7355;color:#f5efe4;border:none;border-radius:6px;padding:0.6rem 1.25rem;font-family:'Gill Sans',Calibri,sans-serif;font-size:13px;cursor:pointer;letter-spacing:0.03em;transition:background 0.15s}
+.next-btn:hover{background:#7a6245}
+.progress{display:flex;gap:6px;margin-bottom:1.5rem;align-items:center}
+.progress-step{width:28px;height:4px;border-radius:2px;background:#d4c4ae}
+.progress-step.done{background:#8B7355}
+.progress-step.active{background:#8B7355;opacity:0.5}
+.progress-label{font-size:11px;color:#8B7355;margin-left:4px;letter-spacing:0.04em}
+.conclusion{display:none}
+.conclusion.visible{display:block}
+.concl-section{background:#fff;border:1px solid #c9b89a;border-radius:6px;padding:1.1rem 1.25rem;margin-bottom:1rem}
+.concl-title{font-family:Georgia,serif;font-size:15px;font-weight:normal;color:#2c2218;margin-bottom:0.65rem;display:flex;align-items:center;gap:8px}
+.concl-body{font-size:13.5px;color:#3a2e1e;line-height:1.7}
+.concl-body p+p{margin-top:0.6rem}
+.divider{height:1px;background:#d4c4ae;margin:1.1rem 0}
+.restart-btn{background:transparent;border:1px solid #8B7355;color:#8B7355;border-radius:6px;padding:0.5rem 1.1rem;font-family:'Gill Sans',Calibri,sans-serif;font-size:13px;cursor:pointer;margin-top:0.5rem;transition:background 0.15s}
+.restart-btn:hover{background:#f5efe4}
+</style>
+</head>
+<body>
+<div class="sim" id="app">
+<h2 class="sr-only">Simulazione — La Dieta di Worms: Lutero davanti a Carlo V</h2>
+
+<div class="progress" id="progress-bar">
+  <div class="progress-step active" id="ps0"></div>
+  <div class="progress-step" id="ps1"></div>
+  <div class="progress-step" id="ps2"></div>
+  <span class="progress-label" id="progress-label">Primo momento — 17 aprile 1521</span>
+</div>
+
+<div id="scenes-container"></div>
+<div class="conclusion" id="conclusion"></div>
+</div>
+
+<script>
+var choices = [];
+
+var scenes = [
+  {
+    label: "Primo momento",
+    title: "La richiesta di ritrattazione",
+    date: "17 aprile 1521, pomeriggio — Worms, sala del palazzo vescovile",
+    context: "<p>Sei Martin Lutero. Hai trentasette anni. Sei stato convocato alla Dieta imperiale su salvacondotto di Carlo V. Davanti a te siedono l'imperatore, i principi elettori, i legati papali, i rappresentanti delle città imperiali. Sul tavolo sono impilati i tuoi libri.</p><p>Johann Eck, teologo avversario, ti pone due domande secche: quei libri sono tuoi? Sei disposto a ritrattarli?</p>",
+    accusation: "«Questi libri portano il tuo nome. Li riconosci come tuoi? E sei pronto a ritrattare ciò che vi hai scritto, oppure intendi persistere nell'errore?»",
+    accusation_label: "Johann Eck, teologo dell'imperatore",
+    options: [
+      {
+        letter:"A",
+        text:"Chiedi tempo per riflettere. Non rispondi né sì né no: dici che una questione così grave merita una risposta meditata, non affrettata.",
+        type:"compromesso",
+        feedback_label:"La dilazione come tattica",
+        feedback:"<p>Questa fu la scelta storica di Lutero in questo primo momento. Chiedere tempo non era viltà: era una mossa consapevole. Lutero sapeva che una risposta improvvisata avrebbe potuto essere distorta o usata contro di lui. Guadagnare ventiquattr'ore significava controllare la forma della propria risposta davanti a tutta Europa.</p><p>Dal punto di vista politico, la dilazione imbarazzò leggermente la corte imperiale, che si aspettava una resa immediata o un rifiuto esplicito. Mostrava anche che Lutero non era un ribelle istintivo, ma un uomo capace di calcolo. I suoi sostenitori — alcuni principi tedeschi presenti — videro in questo un segno di lucidità.",
+        is_historical: true
+      },
+      {
+        letter:"B",
+        text:"Riconosci i libri come tuoi, ma distingui subito: alcuni trattano di fede evangelica, altri attaccano il papato, altri ancora rispondono a polemisti. Non puoi ritrattarli tutti insieme.",
+        type:"resistenza",
+        feedback_label:"La distinzione come strategia difensiva",
+        feedback:"<p>Questa risposta avrebbe anticipato ciò che Lutero disse il giorno successivo. Era teologicamente solida: non tutti i libri avevano lo stesso statuto, e chiedere una ritrattazione en bloc era intellettualmente disonesto. Ma pronunciarla subito, senza preparazione, avrebbe esposto Lutero al rischio di essere interrotto, frainteso, o accusato di sofismi davanti a una platea ostile.</p><p>La distinzione tra categorie di scritti era una difesa raffinata, ma richiedeva un contesto in cui poter sviluppare l'argomento. Il primo pomeriggio della Dieta non era quel contesto.",
+        is_historical: false
+      },
+      {
+        letter:"C",
+        text:"Ritratti immediatamente i libri che riguardano questioni disciplinari e di riforma della Chiesa, riservandoti di difendere solo le posizioni dottrinali fondamentali.",
+        type:"cedimento",
+        feedback_label:"La ritrattazione parziale",
+        feedback:"<p>Una ritrattazione parziale era esattamente ciò che la corte imperiale e la curia speravano di ottenere come primo passo. Sul piano tattico, avrebbe indebolito Lutero in modo irreversibile: concedere terreno sulla disciplina ecclesiastica avrebbe reso molto più difficile difendere le posizioni dottrinali, che apparivano allora come ostinazione pura.</p><p>Sul piano storiografico, questa scelta avrebbe probabilmente chiuso la vicenda entro i limiti di una disputa interna alla Chiesa, simile a quelle già viste nel conciliarismo del XV secolo — riformismo senza rottura. La Riforma come fenomeno europeo non sarebbe nata.",
+        is_historical: false
+      }
+    ]
+  },
+  {
+    label: "Secondo momento",
+    title: "La risposta finale",
+    date: "18 aprile 1521, sera — Worms, sala del palazzo vescovile",
+    context: "<p>Hai avuto una notte per pensare. La mattina è trascorsa in attesa; la convocazione è arrivata nel tardo pomeriggio. La sala è affollata e male illuminata. Eck ti incalza: hai avuto il tempo che chiedevi. Ora devi rispondere.</p><p>Sai che non c'è via di mezzo: o ritratti, o rifiuti. Un rifiuto significa la messa al bando dall'Impero — l'Editto di Worms, che ti dichiarerà fuorilegge. Sai anche che il salvacondotto di Jan Hus, un secolo prima, non impedì il rogo.</p>",
+    accusation: "«Hai avuto il tuo tempo. Ora rispondi semplicemente e senza corna: ritratti sì o no?»",
+    accusation_label: "Johann Eck, 18 aprile 1521",
+    options: [
+      {
+        letter:"A",
+        text:"Ritratti le posizioni che potevano essere fraintese o che avevano turbato la pace della Chiesa, pur mantenendo il nucleo della tua teologia della grazia.",
+        type:"cedimento",
+        feedback_label:"La resa con riserva",
+        feedback:"<p>Questa scelta avrebbe risolto la crisi nell'immediato, ma al prezzo di annullare il significato del conflitto. Lutero aveva costruito la propria posizione sull'impossibilità di separare la teologia della grazia dalle sue implicazioni pratiche: se la giustificazione viene solo dalla fede, le indulgenze sono una frode, e il sistema sacramentale della Chiesa un'usurpazione.</p><p>Una ritrattazione parziale avrebbe confermato l'autorità del papa e dell'imperatore di definire i limiti della teologia lecita. Era esattamente questo principio — non un contenuto dottrinale specifico — che Lutero rifiutava. La resa con riserva era dunque una contraddizione in termini: cedere sul metodo era cedere su tutto.",
+        is_historical: false
+      },
+      {
+        letter:"B",
+        text:"Dichiari che ritratterai se qualcuno ti confuterà con argomenti tratti dalla Scrittura o dalla retta ragione. Non puoi fare affidamento né sulla sola autorità del papa né sui soli concili, che si sono spesso contraddetti.",
+        type:"resistenza",
+        feedback_label:"Il rifiuto fondato sulla coscienza",
+        feedback:"<p>Questa fu la scelta storica — e fu un punto di non ritorno. La formula che Lutero pronunciò — nella versione più celebre: <em>«Qui sto, non posso fare altrimenti»</em>, probabilmente aggiunta in seguito — era una rivendicazione del primato della coscienza individuale illuminata dalla Scrittura sull'autorità istituzionale della Chiesa e dell'Impero.</p><p>Il gesto aveva una portata che superava la disputa teologica: affermava che esiste un'istanza — la coscienza del credente davanti alla Scrittura — che nessun potere umano può costringere. Era una posizione moderna, nel senso più preciso: anticipava la separazione tra foro interiore e obbedienza esterna che diventerà uno dei principi dello Stato di diritto.",
+        is_historical: true
+      },
+      {
+        letter:"C",
+        text:"Chiedi che la questione venga sottoposta a un concilio generale. Non rifiuti l'autorità della Chiesa, ma contesti la competenza di questa assemblea a giudicare questioni di fede.",
+        type:"compromesso",
+        feedback_label:"L'appello al concilio",
+        feedback:"<p>Appellarsi a un concilio generale era una mossa che Lutero aveva già tentato in precedenza — e che la curia aveva già respinto, dichiarando che un concilio non poteva essere superiore al papa. Alla Dieta di Worms, nel 1521, questa via era ormai chiusa: Eck lo sapeva, e Lutero probabilmente anche.</p><p>Sul piano politico, l'appello al concilio avrebbe guadagnato tempo, ma senza risolvere nulla. I principi favorevoli a Lutero avrebbero perso la loro posizione di fronte all'imperatore; quelli contrari avrebbero potuto usare l'ambiguità per isolare ulteriormente la causa riformatrice. Era una tattica dilatatoria in un momento in cui solo una presa di posizione netta poteva cristallizzare il fronte dei sostenitori.",
+        is_historical: false
+      }
+    ]
+  },
+  {
+    label: "Terzo momento",
+    title: "Dopo il rifiuto",
+    date: "Notte tra il 18 e il 19 aprile 1521 — Worms",
+    context: "<p>Hai detto no. L'imperatore si è ritirato senza pronunciarsi pubblicamente. Nella notte, alcuni consiglieri imperiali ti convocano in un colloquio privato. Non è ufficiale. Ti chiedono se c'è ancora una via d'uscita.</p><p>La situazione è critica: Carlo V ha già deciso di emettere l'Editto di Worms. I principi tedeschi sono divisi. Il tuo salvacondotto scade tra pochi giorni. Fuori dalla città, i tuoi sostenitori presidiano le strade.</p>",
+    accusation: "«Siete un uomo intelligente, Lutero. Sapete cosa vi aspetta. C'è ancora modo di trovare una formula che soddisfi l'imperatore senza costringervi ad abiurare ciò che avete a cuore?»",
+    accusation_label: "Un consigliere imperiale, colloquio privato",
+    options: [
+      {
+        letter:"A",
+        text:"Rifiuti qualsiasi formula di compromesso. Dici che non è una questione di parole: è una questione di principio. Non firmerai nulla che implichi il riconoscimento dell'autorità papale sulla Scrittura.",
+        type:"resistenza",
+        feedback_label:"Il rifiuto del compromesso privato",
+        feedback:"<p>Questa fu la linea che Lutero mantenne. Il colloquio privato era probabilmente un tentativo della parte imperiale di trovare una soluzione che evitasse lo scandalo politico di una condanna formale — non una concessione teologica sincera.</p><p>Accettare una formula ambigua avrebbe significato lasciare aperta la questione dell'autorità: chi aveva il diritto di interpretare la Scrittura? Lutero aveva capito che il conflitto era esattamente su questo punto, e che nessuna formula poteva aggirarlo senza dissolverlo. Il rifiuto del compromesso privato fu coerente con la posizione pubblica del giorno precedente.",
+        is_historical: true
+      },
+      {
+        letter:"B",
+        text:"Accetti di esaminare una formula di compromesso, a condizione che venga redatta per iscritto e sottoposta al giudizio di teologi indipendenti.",
+        type:"compromesso",
+        feedback_label:"La negoziazione condizionata",
+        feedback:"<p>Una disponibilità condizionata alla negoziazione avrebbe aperto uno spazio procedurale, ma probabilmente senza sbocco: Carlo V non era disposto ad attendere ulteriori mediazioni, e la curia aveva già ottenuto la condanna formale che cercava. La condizione del giudizio di teologi indipendenti era del resto irrealistica — non esisteva, nel 1521, un'istanza teologica neutrale riconosciuta da entrambe le parti.</p><p>Sul piano degli esiti storici, questa mossa avrebbe probabilmente ritardato ma non impedito la condanna. Avrebbe però indebolito la chiarezza simbolica del rifiuto: e fu proprio quella chiarezza — la nettezza del «no» — a fare della Dieta di Worms il momento fondativo della Riforma.",
+        is_historical: false
+      },
+      {
+        letter:"C",
+        text:"Proponi di sottoporti al giudizio dell'imperatore su tutte le questioni di carattere politico e civile, riservando alla sola Scrittura le questioni di fede. Una distinzione che potrebbe aprire uno spazio di accordo.",
+        type:"cedimento",
+        feedback_label:"La separazione tra fede e politica",
+        feedback:"<p>Questa distinzione era teoricamente interessante — e anticipa in qualche modo la dottrina luterana dei due regni, che Lutero avrebbe sviluppato negli anni successivi. Ma nel contesto della Dieta di Worms era una concessione troppo ampia: riconoscere all'imperatore autorità sulle questioni civili della Chiesa significava cedere il controllo sui beni ecclesiastici, sulle nomine, sulla disciplina — cioè su tutto ciò che i principi tedeschi stavano osservando con grande interesse.</p><p>La distinzione tra fede e politica sarebbe diventata una delle questioni centrali del protestantesimo, ma non poteva essere negoziata in un colloquio notturno come formula di resa: avrebbe richiesto un contesto di forza, non di debolezza.",
+        is_historical: false
+      }
+    ]
+  }
+];
+
+var conclusioni = {
+  profiles: {
+    rrr: {
+      text: "Hai scelto la resistenza in tutti e tre i momenti, senza esitazioni e senza cercare mediazioni. Hai intuito con precisione la logica interna della posizione di Lutero: che il conflitto non riguardava questo o quel contenuto dottrinale, ma il principio stesso dell'autorità — chi ha il diritto di interpretare la Scrittura, e chi può vincolare la coscienza del credente. Il rifiuto senza compromessi era l'unica risposta coerente con quella premessa."
+    },
+    ccc: {
+      text: "Hai cercato in tutti e tre i momenti una via d'uscita che evitasse la rottura. È una posizione comprensibile — e storicamente praticata da molti riformatori che rimasero dentro la Chiesa. Ma le scelte che hai fatto avrebbero consegnato a papa e imperatore il controllo sull'esito della disputa. Erasmo fece qualcosa di simile: rifiutò di seguire Lutero nella rottura, e per questo fu poi considerato da entrambe le parti un uomo senza coraggio. La domanda che questo percorso pone è: è possibile riformare un'istituzione restando nei suoi termini?"
+    },
+    mmm: {
+      text: "Hai scelto la via della mediazione in tutti e tre i momenti. È la posizione del riformatore prudente: guadagnare tempo, evitare la rottura definitiva, cercare spazi procedurali. Storicamente, questa era la strada del conciliarismo — e il conciliarismo aveva già fallito nel XV secolo. I compromessi che hai scelto erano politicamente plausibili, ma presupponevano che la controparte volesse davvero una mediazione. Carlo V e la curia non volevano mediare: volevano la resa o la condanna."
+    },
+    default: {
+      text: "Le tue scelte hanno disegnato un percorso discontinuo — resistenza in alcuni momenti, mediazione o cedimento in altri. Questo rispecchia la difficoltà reale della situazione: non tutti i momenti della Dieta avevano lo stesso peso, e non tutte le scelte avevano le stesse conseguenze. Vale la pena chiederti dove hai esitato e perché: nei punti di cedimento o compromesso, stavi valutando le conseguenze politiche? La teologia? O la pura sopravvivenza? Lutero stesso, in altri momenti della sua vita, non fu sempre coerente."
+    }
+  },
+  storico: "<p>La Dieta di Worms fu un punto di non ritorno perché trasformò una disputa teologica in un conflitto di autorità. Fino al 1521, la questione poteva ancora essere ricondotta nei canali del dibattito interno alla Chiesa — come era avvenuto con Wycliffe e con Hus. Ciò che Lutero fece a Worms fu diverso: rivendicò il primato della coscienza individuale illuminata dalla Scrittura su qualsiasi autorità istituzionale, ecclesiastica o imperiale.</p><p>Questo gesto aveva conseguenze che andavano ben oltre la teologia. Significava che il singolo credente poteva — doveva — giudicare da sé la legittimità di un'autorità religiosa. Era un principio che avrebbe incrinato l'unità religiosa dell'Europa e aperto la strada, nel lungo periodo, alla libertà di coscienza come categoria giuridica e politica.</p><p>Per Carlo V, la condanna di Lutero fu un atto dovuto: come imperatore del Sacro Romano Impero e difensore della fede cattolica, non poteva fare altrimenti. Ma non poté mai eseguirla davvero: i principi tedeschi che proteggevano Lutero erano troppo potenti, e le guerre contro Francia e Ottomani troppo urgenti. La Pace di Augusta del 1555 — <em>cuius regio, eius religio</em> — fu la soluzione pragmatica a un problema che la Dieta di Worms aveva reso insolubile in termini di principio.</p>"
+};
+
+var currentScene = 0;
+
+function getProfile(){
+  var r=0,c=0,ce=0;
+  choices.forEach(function(ch){
+    if(ch.type==='resistenza')r++;
+    else if(ch.type==='compromesso')c++;
+    else ce++;
+  });
+  if(r===3)return 'rrr';
+  if(ce===3)return 'ccc';
+  if(c===3)return 'mmm';
+  return 'default';
+}
+
+function renderProgress(){
+  for(var i=0;i<3;i++){
+    var el=document.getElementById('ps'+i);
+    if(i<currentScene){el.className='progress-step done';}
+    else if(i===currentScene){el.className='progress-step active';}
+    else{el.className='progress-step';}
+  }
+  var labels=['Primo momento — 17 aprile 1521','Secondo momento — 18 aprile 1521','Terzo momento — notte tra il 18 e il 19 aprile'];
+  document.getElementById('progress-label').textContent=labels[currentScene]||'';
+}
+
+function renderScene(idx){
+  var s=scenes[idx];
+  var html='';
+  html+='<div class="scene-header">';
+  html+='<div class="scene-label">'+s.label+'</div>';
+  html+='<div class="scene-title">'+s.title+'</div>';
+  html+='<div class="scene-date">'+s.date+'</div>';
+  html+='</div>';
+  html+='<div class="context-box">'+s.context+'</div>';
+  html+='<div class="accusation"><div class="accusation-label">'+s.accusation_label+'</div><div class="accusation-text">'+s.accusation+'</div></div>';
+  html+='<div class="choices-label">Come rispondi?</div>';
+  s.options.forEach(function(opt,i){
+    html+='<button class="choice-btn" id="btn-'+idx+'-'+i+'" onclick="selectChoice('+idx+','+i+')">';
+    html+='<span class="choice-letter">'+opt.letter+'</span>';
+    html+='<span>'+opt.text+'</span>';
+    html+='</button>';
+  });
+  s.options.forEach(function(opt,i){
+    var typeClass='fb-'+opt.type;
+    var typeLabel=opt.type==='cedimento'?'Cedimento':opt.type==='compromesso'?'Mediazione':'Resistenza';
+    var nextLabel=idx===0?'Secondo momento':idx===1?'Terzo momento':'Conclusione';
+    html+='<div class="feedback '+typeClass+'" id="fb-'+idx+'-'+i+'">';
+    html+='<div class="feedback-header">'+typeLabel+' — '+opt.feedback_label+(opt.is_historical?'<span class="historical-badge">scelta storica</span>':'')+'</div>';
+    html+='<div class="feedback-body">'+opt.feedback+'</div>';
+    html+='<button class="next-btn" id="next-'+idx+'-'+i+'" onclick="'+(idx<2?'nextScene()':'showConclusion()')+'" style="display:none">'+nextLabel+' <i class="ti ti-arrow-right" aria-hidden="true"></i></button>';
+    html+='</div>';
+  });
+  document.getElementById('scenes-container').innerHTML=html;
+}
+
+function selectChoice(sceneIdx,optIdx){
+  var s=scenes[sceneIdx];
+  var opt=s.options[optIdx];
+  choices[sceneIdx]={type:opt.type,letter:opt.letter};
+  for(var i=0;i<s.options.length;i++){
+    document.getElementById('btn-'+sceneIdx+'-'+i).disabled=true;
+    document.getElementById('fb-'+sceneIdx+'-'+i).classList.remove('visible');
+  }
+  var fb=document.getElementById('fb-'+sceneIdx+'-'+optIdx);
+  fb.classList.add('visible');
+  document.getElementById('next-'+sceneIdx+'-'+optIdx).style.display='inline-block';
+}
+
+function nextScene(){
+  currentScene++;
+  renderProgress();
+  renderScene(currentScene);
+  document.getElementById('scenes-container').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function showConclusion(){
+  document.getElementById('scenes-container').style.display='none';
+  document.getElementById('progress-bar').style.display='none';
+  var concl=document.getElementById('conclusion');
+  concl.classList.add('visible');
+  var profile=getProfile();
+  var prof=conclusioni.profiles[profile]||conclusioni.profiles.default;
+  var html='';
+  html+='<div class="scene-header"><div class="scene-label">Conclusione</div>';
+  html+='<div class="scene-title">Riflessione sul tuo percorso</div></div>';
+  html+='<div class="concl-section">';
+  html+='<div class="concl-title"><i class="ti ti-user" aria-hidden="true" style="font-size:16px;color:#8B7355"></i>Le tue scelte</div>';
+  html+='<div class="concl-body"><p>';
+  choices.forEach(function(ch,i){
+    html+='Nel '+['primo','secondo','terzo'][i]+' momento hai scelto <strong>'+ch.letter+'</strong> — una risposta di <em>'+ch.type+'</em>. ';
+  });
+  html+='</p><div class="divider"></div><p>'+prof.text+'</p></div></div>';
+  html+='<div class="concl-section">';
+  html+='<div class="concl-title"><i class="ti ti-book" aria-hidden="true" style="font-size:16px;color:#8B7355"></i>Il significato storico della Dieta di Worms</div>';
+  html+='<div class="concl-body">'+conclusioni.storico+'</div></div>';
+  html+='<button class="restart-btn" onclick="restart()"><i class="ti ti-refresh" aria-hidden="true"></i> Ricomincia con scelte diverse</button>';
+  concl.innerHTML=html;
+  concl.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function restart(){
+  choices=[];
+  currentScene=0;
+  document.getElementById('scenes-container').style.display='block';
+  document.getElementById('progress-bar').style.display='flex';
+  var concl=document.getElementById('conclusion');
+  concl.classList.remove('visible');
+  concl.innerHTML='';
+  renderProgress();
+  renderScene(0);
+  document.getElementById('app').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+renderProgress();
+renderScene(0);
+</script>
+</body>
+</html>
