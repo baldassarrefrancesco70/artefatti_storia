@@ -1,0 +1,384 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif; }
+
+  .wrapper {
+    background: #E8F4F8;
+    padding: 1.5rem 1.5rem 2rem;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+  }
+
+  .main-title {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 20px;
+    font-weight: normal;
+    color: #3a2e1e;
+    margin-bottom: 0.25rem;
+  }
+
+  .subtitle {
+    font-size: 13px;
+    color: #6b5c45;
+    margin-bottom: 1.75rem;
+    font-style: italic;
+  }
+
+  .block {
+    margin-bottom: 1.25rem;
+  }
+
+  .block-header {
+    background: #8B7355;
+    color: #f5efe4;
+    font-family: Georgia, serif;
+    font-size: 14px;
+    font-weight: normal;
+    letter-spacing: 0.04em;
+    padding: 0.65rem 1rem;
+    border-radius: 6px 6px 0 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .block-header .block-chevron {
+    margin-left: auto;
+    transition: transform 0.25s;
+    font-size: 16px;
+    color: #d9c9b0;
+  }
+
+  .block-header.open .block-chevron {
+    transform: rotate(180deg);
+  }
+
+  .block-body {
+    background: #ffffff;
+    border: 1px solid #c9b89a;
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    overflow: hidden;
+    display: none;
+  }
+
+  .block-body.open {
+    display: block;
+  }
+
+  .qa-item {
+    border-bottom: 1px solid #ede5d8;
+  }
+
+  .qa-item:last-child {
+    border-bottom: none;
+  }
+
+  .qa-question {
+    padding: 0.75rem 1rem;
+    font-size: 14px;
+    color: #3a2e1e;
+    cursor: pointer;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    transition: background 0.15s;
+    line-height: 1.5;
+  }
+
+  .qa-question:hover {
+    background: #f5efe4;
+  }
+
+  .q-number {
+    font-family: Georgia, serif;
+    font-size: 13px;
+    color: #8B7355;
+    font-weight: normal;
+    min-width: 20px;
+    padding-top: 1px;
+    flex-shrink: 0;
+  }
+
+  .q-text {
+    flex: 1;
+  }
+
+  .q-chevron {
+    font-size: 14px;
+    color: #a08060;
+    margin-top: 2px;
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+
+  .qa-question.open .q-chevron {
+    transform: rotate(180deg);
+  }
+
+  .qa-answer {
+    display: none;
+    background: #faf7f2;
+    border-top: 1px solid #ede5d8;
+    padding: 0.85rem 1rem 0.85rem 2.5rem;
+    font-size: 13.5px;
+    color: #4a3c28;
+    line-height: 1.65;
+  }
+
+  .qa-answer.open {
+    display: block;
+  }
+
+  .qa-answer p {
+    margin: 0;
+  }
+
+  .block-3 .block-header {
+    background: #5a7a5a;
+    border-radius: 6px 6px 0 0;
+  }
+
+  .block-3 .block-body {
+    border-color: #9ab89a;
+  }
+
+  .block-3 .qa-question:hover {
+    background: #eef4ee;
+  }
+
+  .block-3 .q-number {
+    color: #5a7a5a;
+  }
+
+  .block-3 .qa-answer {
+    background: #f2f7f2;
+    border-top-color: #c8dcc8;
+  }
+
+  .block-3 .qa-item {
+    border-bottom-color: #c8dcc8;
+  }
+
+  .spunto-icon {
+    font-size: 16px;
+    color: #9bbf9b;
+  }
+
+  .spunto-label {
+    font-size: 11px;
+    background: #9bbf9b;
+    color: #2a4a2a;
+    padding: 2px 8px;
+    border-radius: 3px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-left: 6px;
+    font-family: 'Gill Sans', Calibri, sans-serif;
+  }
+</style>
+
+<div class="wrapper">
+  <h2 class="sr-only">Ripasso prerequisiti — La Riforma protestante</h2>
+  <p class="main-title">Ripasso — La Riforma protestante</p>
+  <p class="subtitle">Verifica le tue conoscenze prima di affrontare il capitolo. Clicca su ogni domanda per confrontarti con l'orientamento.</p>
+
+  <!-- Blocco 1 -->
+  <div class="block">
+    <div class="block-header" onclick="toggleBlock(this)">
+      <i class="ti ti-list" aria-hidden="true"></i>
+      Blocco 1 — Termini e concetti chiave
+      <i class="ti ti-chevron-down block-chevron"></i>
+    </div>
+    <div class="block-body">
+
+      <div class="qa-item">
+        <div class="qa-question" onclick="toggleQ(this)">
+          <span class="q-number">1.</span>
+          <span class="q-text">Che differenza c'è tra scisma ed eresia?</span>
+          <i class="ti ti-chevron-down q-chevron"></i>
+        </div>
+        <div class="qa-answer">
+          <p>Lo scisma è una rottura nell'unità della Chiesa che non implica necessariamente un disaccordo dottrinale: ci si separa dall'autorità ecclesiastica riconosciuta, ma si può continuare ad aderire agli stessi dogmi (esempio: lo Scisma d'Oriente del 1054). L'eresia è invece un errore dottrinale: si mantiene formalmente l'appartenenza alla Chiesa, ma si sostengono posizioni teologiche considerate false o condannate. Nella Riforma, la distinzione diventa sfumata: Lutero cominciò come riformatore interno, fu accusato di eresia, e solo dopo la rottura definitiva il luteranesimo assunse i caratteri di uno scisma.</p>
+        </div>
+      </div>
+
+      <div class="qa-item">
+        <div class="qa-question" onclick="toggleQ(this)">
+          <span class="q-number">2.</span>
+          <span class="q-text">Che differenza c'è tra concilio e conclave?</span>
+          <i class="ti ti-chevron-down q-chevron"></i>
+        </div>
+        <div class="qa-answer">
+          <p>Il concilio è un'assemblea di vescovi convocata per discutere questioni dottrinali, disciplinari o di governo della Chiesa. Ha funzione deliberativa su materie di fede e può riformare le strutture ecclesiastiche (il Concilio di Trento ne è l'esempio più rilevante per questo capitolo). Il conclave è invece la procedura riservata di elezione del papa, riservata al Collegio cardinalizio: non ha funzione dottrinale, ma istituzionale. Confondere i due termini è un errore frequente: ricorda che i conciliaristi del XV secolo volevano rafforzare i concili a scapito del potere papale.</p>
+        </div>
+      </div>
+
+      <div class="qa-item">
+        <div class="qa-question" onclick="toggleQ(this)">
+          <span class="q-number">3.</span>
+          <span class="q-text">Cosa si intende con "potere temporale" della Chiesa, e come si era sviluppato nel Medioevo?</span>
+          <i class="ti ti-chevron-down q-chevron"></i>
+        </div>
+        <div class="qa-answer">
+          <p>Il potere temporale indica il controllo della Chiesa su territori, risorse e prerogative politiche — distinto dal potere spirituale, che riguarda la cura delle anime e la dottrina. Nel Medioevo si era sviluppato attraverso donazioni, la Donazione di Costantino (documento poi dimostrato falso da Lorenzo Valla nel 1440), e il consolidamento dello Stato Pontificio come entità politica autonoma. La disputa tra potere spirituale e potere temporale fu al centro dei conflitti tra papato e impero, dalla Lotta per le Investiture (XI secolo) fino ai secoli successivi.</p>
+        </div>
+      </div>
+
+      <div class="qa-item">
+        <div class="qa-question" onclick="toggleQ(this)">
+          <span class="q-number">4.</span>
+          <span class="q-text">Cosa significa "simonia", e perché era considerata un abuso?</span>
+          <i class="ti ti-chevron-down q-chevron"></i>
+        </div>
+        <div class="qa-answer">
+          <p>La simonia è la compravendita di cariche, sacramenti o beni spirituali ecclesiastici. Il termine deriva da Simone Mago (Atti degli Apostoli), che tentò di comprare il dono dello Spirito Santo dagli apostoli. Era considerata un abuso perché introduceva logiche mercantili nel rapporto con il sacro, subordinando la guida spirituale al denaro anziché al merito o alla vocazione. Nel XVI secolo era diffusa a tutti i livelli, dalle parrocchie rurali alla curia romana, e alimentava il risentimento dei fedeli verso una Chiesa percepita come corrotta.</p>
+        </div>
+      </div>
+
+      <div class="qa-item">
+        <div class="qa-question" onclick="toggleQ(this)">
+          <span class="q-number">5.</span>
+          <span class="q-text">Cosa si intende con "nepotismo" applicato alla Chiesa rinascimentale?</span>
+          <i class="ti ti-chevron-down q-chevron"></i>
+        </div>
+        <div class="qa-answer">
+          <p>Il nepotismo è l'assegnazione di cariche ecclesiastiche (vescovati, cardinalati, benefici) ai propri familiari, indipendentemente dalla loro idoneità spirituale o intellettuale. Il termine deriva da "nipote" (nephews), poiché i papi rinascimentali erano soliti favorire i propri nipoti. Rappresentava un intreccio tra interessi familiari e governo della Chiesa, tipico di un'istituzione che nel Rinascimento era anche una grande potenza politica e patrimoniale. Alessandro VI Borgia e Sisto IV sono esempi paradigmatici di questo fenomeno.</p>
+        </div>
+      </div>
+
+      <div class="qa-item">
+        <div class="qa-question" onclick="toggleQ(this)">
+          <span class="q-number">6.</span>
+          <span class="q-text">Cosa stabilisce la Bolla d'Oro del 1356, e perché è rilevante per capire la struttura del Sacro Romano Impero?</span>
+          <i class="ti ti-chevron-down q-chevron"></i>
+        </div>
+        <div class="qa-answer">
+          <p>La Bolla d'Oro, emanata dall'imperatore Carlo IV, formalizzò la procedura di elezione dell'imperatore, affidandola a sette principi elettori (tre ecclesiastici e quattro laici). Stabilì anche che i loro territori fossero indivisibili e trasmissibili per primogenitura, rafforzandone l'autonomia. È rilevante perché cristallizzò la natura elettiva e non ereditaria della dignità imperiale, rendendo l'imperatore dipendente dal consenso dei principi: una struttura che nel Cinquecento condizionò profondamente la risposta di Carlo V alla crisi luterana.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Blocco 2 -->
+  <div class="block">
+    <div class="block-header" onclick="toggleBlock(this)">
+      <i class="ti ti-arrows-exchange" aria-hidden="true"></i>
+      Blocco 2 — Connessioni storiche
+      <i class="ti ti-chevron-down block-chevron"></i>
+    </div>
+    <div class="block-body">
+
+      <div class="qa-item">
+        <div class="qa-question" onclick="toggleQ(this)">
+          <span class="q-number">1.</span>
+          <span class="q-text">Quali furono le condizioni — economiche, militari, amministrative — che permisero alle monarchie europee di accentrare il potere tra il XIV e il XVI secolo?</span>
+          <i class="ti ti-chevron-down q-chevron"></i>
+        </div>
+        <div class="qa-answer">
+          <p>L'accentramento monarchico fu favorito da diversi fattori convergenti: sul piano economico, lo sviluppo del commercio e la disponibilità di entrate fiscali stabili permisero di finanziare apparati burocratici e militari permanenti. Sul piano militare, la diffusione delle armi da fuoco e la fine della cavalleria feudale rese obsoleto il monopolio militare della nobiltà. Sul piano amministrativo, la formazione di corpi di funzionari regi — spesso di estrazione borghese — consentì di governare il territorio a prescindere dalla fedeltà feudale. In Francia e in Spagna questo processo fu più avanzato che nell'Impero, dove i principi resistettero efficacemente all'accentramento.</p>
+        </div>
+      </div>
+
+      <div class="qa-item">
+        <div class="qa-question" onclick="toggleQ(this)">
+          <span class="q-number">2.</span>
+          <span class="q-text">In che modo la frammentazione politica del Sacro Romano Impero era diversa dalla situazione delle monarchie francese e spagnola nello stesso periodo?</span>
+          <i class="ti ti-chevron-down q-chevron"></i>
+        </div>
+        <div class="qa-answer">
+          <p>Francia e Spagna erano monarchie in via di consolidamento: il re disponeva di un'autorità tendenzialmente centrale, di un'amministrazione in espansione, di eserciti in parte permanenti. Il Sacro Romano Impero era invece una struttura confederale: l'imperatore non era sovrano di un territorio unitario, ma un primus inter pares tra principi che detenevano prerogative sovrane nei propri stati. Questa differenza strutturale spiega perché la Riforma poté radicarsi in Germania: i principi poterono aderire al luteranesimo come scelta autonoma, senza che l'imperatore avesse strumenti giuridici o militari per impedirglielo facilmente.</p>
+        </div>
+      </div>
+
+      <div class="qa-item">
+        <div class="qa-question" onclick="toggleQ(this)">
+          <span class="q-number">3.</span>
+          <span class="q-text">In che modo le scoperte geografiche avevano modificato gli equilibri di potere tra le monarchie europee alla vigilia della Riforma?</span>
+          <i class="ti ti-chevron-down q-chevron"></i>
+        </div>
+        <div class="qa-answer">
+          <p>Le scoperte geografiche avevano concentrato enormi risorse nelle mani della Corona spagnola e, in misura minore, di quella portoghese. L'oro e l'argento americani fornirono a Carlo V una base finanziaria senza precedenti per sostenere i suoi eserciti in Italia, in Germania e nel Mediterraneo. Questo squilibrio di potere rendeva la Spagna l'attore dominante dell'Europa di inizio Cinquecento, mentre Francia e principi tedeschi cercavano di contrastare questa egemonia. La disponibilità di risorse coloniali influenzò direttamente la capacità di Carlo V di intervenire nella crisi religiosa.</p>
+        </div>
+      </div>
+
+      <div class="qa-item">
+        <div class="qa-question" onclick="toggleQ(this)">
+          <span class="q-number">4.</span>
+          <span class="q-text">Qual era il rapporto tra papato e impero nel tardo Medioevo? Su quali questioni si erano scontrati, e con quali esiti?</span>
+          <i class="ti ti-chevron-down q-chevron"></i>
+        </div>
+        <div class="qa-answer">
+          <p>Il conflitto tra papato e impero aveva dominato la storia medievale a partire dalla Lotta per le Investiture (XI secolo): il punto di contesa centrale era il controllo sulle nomine ecclesiastiche, che implicava il controllo su territori e risorse enormi. Il Concordato di Worms (1122) aveva stabilito un compromesso, ma la tensione non si esaurì. Nel XIV e XV secolo il papato uscì indebolito dalla cattività avignonese e dallo Scisma d'Occidente, mentre le monarchie territoriali si rafforzavano. All'inizio del Cinquecento il papato era una potenza politica italiana più che una guida spirituale universale — condizione che ne avrebbe reso difficile la risposta alla sfida luterana.</p>
+        </div>
+      </div>
+
+      <div class="qa-item">
+        <div class="qa-question" onclick="toggleQ(this)">
+          <span class="q-number">5.</span>
+          <span class="q-text">In che modo il rapporto tra monarchia e Chiesa si era trasformato tra il XIII e il XV secolo? Quali conflitti avevano segnato questa trasformazione?</span>
+          <i class="ti ti-chevron-down q-chevron"></i>
+        </div>
+        <div class="qa-answer">
+          <p>Il XIII secolo aveva visto la massima affermazione del primato papale (Innocenzo III, Bonifacio VIII). Ma già con lo scontro tra Bonifacio VIII e Filippo IV di Francia (1302–1303) era emerso un modello alternativo: la monarchia nazionale che rivendicava sovranità sulle chiese del proprio territorio. Nel corso del XIV e XV secolo le monarchie ottennero progressivamente il controllo sulle nomine ecclesiastiche nazionali (concordati, Pragmatica Sanzione di Bourges in Francia, 1438). Questo processo anticipò in molti casi la logica della Riforma: il controllo statale sulle chiese non nacque con Lutero, ma con la costruzione degli Stati moderni.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Blocco 3 — Spunti -->
+  <div class="block block-3">
+    <div class="block-header" onclick="toggleBlock(this)">
+      <i class="ti ti-book" aria-hidden="true"></i>
+      Blocco 3 — Spunti per il ripasso
+      <span class="spunto-label">lettura attiva</span>
+      <i class="ti ti-chevron-down block-chevron"></i>
+    </div>
+    <div class="block-body">
+
+      <div class="qa-item">
+        <div class="qa-question" onclick="toggleQ(this)">
+          <span class="q-number">1.</span>
+          <span class="q-text">Rileggi le tue note sulla crisi del papato medievale e sull'evoluzione della Chiesa tra XIV e XV secolo.</span>
+          <i class="ti ti-chevron-down q-chevron"></i>
+        </div>
+        <div class="qa-answer">
+          <p>Mentre rileggi, verifica se sai rispondere a questa domanda: perché la crisi del papato medievale — lo Scisma d'Occidente, il movimento conciliarista, il Concilio di Costanza — non produsse una riforma stabile della Chiesa? Prova a identificare gli ostacoli strutturali che impedirono allora ciò che Lutero riuscì ad avviare un secolo dopo. Se non riesci a rispondere con sicurezza, è un segnale che vale la pena rileggere con attenzione quelle pagine.</p>
+        </div>
+      </div>
+
+      <div class="qa-item">
+        <div class="qa-question" onclick="toggleQ(this)">
+          <span class="q-number">2.</span>
+          <span class="q-text">Rileggi le tue note sulla struttura del Sacro Romano Impero e verifica se sai descrivere il rapporto tra l'imperatore e i principi elettori.</span>
+          <i class="ti ti-chevron-down q-chevron"></i>
+        </div>
+        <div class="qa-answer">
+          <p>Mentre rileggi, verifica se sai spiegare in che senso il rapporto tra l'imperatore e i principi elettori era diverso da quello tra un re e i suoi feudatari. La differenza non è solo di grado, ma di natura: un feudatario dipende dal re, che gli ha concesso la terra; un principe elettore nell'Impero è un sovrano autonomo che ha contribuito a creare l'imperatore. Questa distinzione è fondamentale per capire perché Carlo V non poté semplicemente imporre ai principi tedeschi la soppressione della Riforma.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+
+<script>
+function toggleBlock(header) {
+  header.classList.toggle('open');
+  var body = header.nextElementSibling;
+  body.classList.toggle('open');
+}
+
+function toggleQ(questionEl) {
+  questionEl.classList.toggle('open');
+  var answer = questionEl.nextElementSibling;
+  answer.classList.toggle('open');
+}
+</script>
