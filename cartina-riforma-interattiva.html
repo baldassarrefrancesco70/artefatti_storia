@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La diffusione della Riforma in Europa — Guida alla cartina</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Gill Sans','Gill Sans MT',Calibri,sans-serif;background:#F5F0E8}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.wrap{background:#F5F0E8;padding:1.5rem;max-width:860px;margin:0 auto}
+
+.map-container{margin-bottom:1.5rem;border-radius:6px;overflow:hidden;border:1px solid #c9b89a}
+.map-container img{width:100%;display:block}
+.map-caption{background:#ede8de;padding:0.45rem 0.85rem;font-size:12px;color:#6b5c45;font-style:italic;border-top:1px solid #c9b89a}
+
+.mode-bar{display:flex;gap:8px;margin-bottom:1.25rem;flex-wrap:wrap}
+.mode-btn{background:#fff;border:1px solid #c9b89a;border-radius:6px;padding:0.45rem 0.9rem;font-family:'Gill Sans',Calibri,sans-serif;font-size:13px;color:#3a2e1e;cursor:pointer;transition:background 0.15s,border-color 0.15s}
+.mode-btn:hover{background:#f5efe4;border-color:#8B7355}
+.mode-btn.active{background:#8B7355;color:#f5efe4;border-color:#8B7355}
+
+.panel{display:none}
+.panel.active{display:block}
+
+.strato-nav{display:flex;align-items:center;gap:10px;margin-bottom:1.1rem}
+.strato-counter{font-size:12px;color:#7a6a55;font-style:italic}
+.nav-btn{background:#fff;border:1px solid #c9b89a;border-radius:5px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#8B7355;font-size:15px;transition:background 0.15s}
+.nav-btn:hover{background:#f5efe4}
+.nav-btn:disabled{opacity:0.35;cursor:default}
+.scene-header{border-left:3px solid #8B7355;padding:0.4rem 0 0.4rem 0.9rem;margin-bottom:1.1rem;border-radius:0}
+.scene-label{font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:#8B7355;margin-bottom:0.2rem}
+.scene-title{font-family:Georgia,serif;font-size:16px;font-weight:normal;color:#2c2218}
+.strato-card{background:#fff;border:1px solid #c9b89a;border-radius:6px;padding:1rem 1.1rem;margin-bottom:0.85rem}
+.strato-intro{font-size:13.5px;color:#3a2e1e;line-height:1.65;margin-bottom:0.85rem}
+.strato-intro p+p{margin-top:0.5rem}
+.osserva-label{font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:#8B7355;margin-bottom:0.5rem}
+.osserva-list{list-style:none;padding:0}
+.osserva-list li{font-size:13.5px;color:#3a2e1e;line-height:1.6;padding:0.35rem 0 0.35rem 1.1rem;border-bottom:1px solid #ede5d8;position:relative}
+.osserva-list li:last-child{border-bottom:none}
+.osserva-list li::before{content:'→';position:absolute;left:0;color:#8B7355;font-size:12px}
+.domanda-box{background:#f0ede8;border-left:3px solid #8B7355;padding:0.75rem 1rem;margin-top:0.75rem;font-size:13px;color:#3a2e1e;line-height:1.6;font-style:italic}
+
+.conf-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:1rem}
+.conf-chip{background:#fff;border:1px solid #c9b89a;border-radius:6px;padding:0.5rem 0.75rem;cursor:pointer;display:flex;align-items:center;gap:8px;transition:border-color 0.15s,background 0.15s}
+.conf-chip:hover{background:#f5efe4;border-color:#8B7355}
+.conf-chip.active{border-color:#8B7355;background:#faf6f0}
+.conf-chip-dot{width:14px;height:14px;border-radius:3px;flex-shrink:0;border:1px solid rgba(0,0,0,0.12)}
+.conf-chip-name{font-size:13px;color:#2c2218}
+.conf-detail{display:none;background:#fff;border:1px solid #c9b89a;border-radius:6px;padding:1rem 1.1rem;margin-bottom:0.85rem}
+.conf-detail.active{display:block}
+.conf-detail-header{display:flex;align-items:center;gap:10px;margin-bottom:0.75rem;padding-bottom:0.65rem;border-bottom:1px solid #ede5d8}
+.conf-detail-dot{width:20px;height:20px;border-radius:4px;flex-shrink:0;border:1px solid rgba(0,0,0,0.12)}
+.conf-detail-name{font-family:Georgia,serif;font-size:15px;color:#2c2218}
+.conf-meta{font-size:12px;color:#8B7355;margin-top:1px}
+.conf-body{font-size:13.5px;color:#3a2e1e;line-height:1.65}
+.conf-body p+p{margin-top:0.5rem}
+.conf-paesi{margin-top:0.75rem;padding-top:0.65rem;border-top:1px solid #ede5d8}
+.conf-paesi-label{font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:#8B7355;margin-bottom:0.4rem}
+.conf-paesi-list{font-size:13px;color:#3a2e1e;line-height:1.7}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h2 class="sr-only">Guida interattiva alla cartina — La diffusione della Riforma in Europa (1598)</h2>
+
+<div class="map-container">
+  <img src="https://drive.google.com/uc?export=view&id=1DyQn5H4P3DY6Oh-W1w7pzL0EvyLb581K" alt="Cartina della diffusione della Riforma protestante in Europa nel 1598">
+  <div class="map-caption">La diffusione della Riforma protestante in Europa — situazione confessionale al 1598</div>
+</div>
+
+<div class="mode-bar">
+  <button class="mode-btn active" onclick="switchMode('strati')"><i class="ti ti-layers-subtract" aria-hidden="true" style="font-size:14px;margin-right:5px"></i>Leggi la cartina per strati</button>
+  <button class="mode-btn" onclick="switchMode('confessioni')"><i class="ti ti-list" aria-hidden="true" style="font-size:14px;margin-right:5px"></i>Esplora per confessione</button>
+</div>
+
+<div class="panel active" id="panel-strati">
+  <div class="strato-nav">
+    <button class="nav-btn" id="btn-prev" onclick="changeStrato(-1)" disabled aria-label="Strato precedente"><i class="ti ti-arrow-left"></i></button>
+    <button class="nav-btn" id="btn-next" onclick="changeStrato(1)" aria-label="Strato successivo"><i class="ti ti-arrow-right"></i></button>
+    <span class="strato-counter" id="strato-counter">Strato 1 di 5</span>
+  </div>
+  <div id="strato-content"></div>
+</div>
+
+<div class="panel" id="panel-confessioni">
+  <div class="scene-header">
+    <div class="scene-label">Esplora per confessione</div>
+    <div class="scene-title">Seleziona una confessione per leggerne la distribuzione e le caratteristiche</div>
+  </div>
+  <div class="conf-grid" id="conf-chips"></div>
+  <div id="conf-detail-area"></div>
+</div>
+
+</div>
+
+<script>
+var strati = [
+  {
+    name: "Il cattolicesimo: il punto di partenza",
+    color: "#E8A000",
+    intro: "<p>Il colore dominante della cartina è il giallo-arancio: indica le aree a <strong>maggioranza cattolica nel 1598</strong>. Prima di leggere la diffusione della Riforma, è utile fissare questo dato di partenza: all'inizio del XVI secolo, tutta l'Europa occidentale era cattolica. La cartina mostra l'esito di ottant'anni di conflitti religiosi.</p><p>Nota anche il giallo più tenue, che indica aree dove il protestantesimo era presente in modo significativo ma non maggioritario nel 1598 — spesso regioni dove la Riforma aveva attecchito ma era poi stata contenuta o sconfitta.</p>",
+    osserva: [
+      "Individua sulla cartina la Spagna, il Portogallo e l'Italia: sono interamente gialle. Queste monarchie non furono mai toccate dalla Riforma in modo strutturale.",
+      "La Francia è gialla, ma con ampie zone a righe (presenza calvinista). Ricorda le guerre di religione (1562–1598) e l'Editto di Nantes.",
+      "L'Austria e la Baviera sono gialle nonostante si trovino nel cuore del Sacro Romano Impero. Erano i bastioni cattolici dell'Impero."
+    ],
+    domanda: "Guardando la cartina, riesci a identificare una linea approssimativa che separa le aree prevalentemente cattoliche da quelle prevalentemente protestanti? Dove passa? Corrisponde a confini politici o geografici?"
+  },
+  {
+    name: "Il luteranesimo: la prima ondata",
+    color: "#E8B4C8",
+    intro: "<p>Il rosa indica le aree a <strong>maggioranza luterana nel 1598</strong>. Il luteranesimo fu la prima forma di protestantesimo a diffondersi, a partire dalla Germania settentrionale e centrale dopo il 1517. La Pace di Augusta (1555) — <em>cuius regio, eius religio</em> — aveva consentito ai principi imperiali di scegliere la confessione del loro territorio.</p><p>Il luteranesimo si radicò principalmente nei principati tedeschi settentrionali e nei regni scandinavi, dove le monarchie adottarono la riforma in modo ufficiale e centralizzato.</p>",
+    osserva: [
+      "I regni scandinavi (Svezia, Danimarca-Norvegia) sono interamente rosa: la riforma vi fu imposta dall'alto, come decisione regia, tra il 1527 e il 1537.",
+      "Nel Sacro Romano Impero, il luteranesimo si distribuisce in modo irregolare: alcuni principati sono rosa, altri gialli. Questo rispecchia la frammentazione politica dell'Impero.",
+      "Brandeburgo e Sassonia sono luterani — erano tra i principati che avevano protetto Lutero dopo la Dieta di Worms del 1521."
+    ],
+    domanda: "Perché il luteranesimo si diffuse più facilmente nei principati tedeschi e nei regni scandinavi che nelle monarchie di Francia e Spagna? Che ruolo ebbe la struttura politica di ciascun territorio?"
+  },
+  {
+    name: "Il calvinismo: la seconda ondata",
+    color: "#9090D0",
+    intro: "<p>Il blu-viola indica le aree a <strong>maggioranza calvinista nel 1598</strong>. Il calvinismo si sviluppò a Ginevra a partire dagli anni Quaranta del Cinquecento e si diffuse in modo diverso dal luteranesimo: non attraverso le monarchie, ma attraverso reti urbane, comunità di esuli, minoranze organizzate.</p><p>È significativo che il calvinismo sia la confessione dominante in aree politicamente frammentate o in conflitto con le monarchie cattoliche: le Province Unite (in rivolta contro la Spagna), la Scozia (in conflitto con l'Inghilterra anglicana), una parte della Svizzera, ampie zone della Francia.</p>",
+    osserva: [
+      "Le Province Unite (Olanda) sono blu: la rivolta contro la Spagna e la Riforma calvinista si intrecciarono profondamente dalla seconda metà del Cinquecento.",
+      "La Francia mostra una distribuzione mista: le aree a righe indicano la presenza ugonotta (calvinista), concentrata nel sud e nelle città. La data 1598 corrisponde all'Editto di Nantes.",
+      "La Svizzera è divisa: alcune aree sono calviniste (Ginevra, Zurigo), altre sono cattoliche, altre ancora luterane. Il 1529 sulla cartina rimanda alla Confessio Helvetica."
+    ],
+    domanda: "Il calvinismo fu definito da alcuni storici una 'religione della resistenza': guardando la cartina, riesci a capire perché? In quali aree si diffuse, e quale era la loro relazione con le monarchie cattoliche?"
+  },
+  {
+    name: "L'anglicanesimo e le confessioni minori",
+    color: "#D080D0",
+    intro: "<p>Il viola indica l'<strong>anglicanesimo</strong>, confessione limitata all'Inghilterra. La rottura di Enrico VIII con Roma (1534) aveva origini diverse da quelle della Riforma continentale: fu prima di tutto un conflitto politico-matrimoniale, non una disputa teologica. La data sulla cartina è 1534.</p><p>La cartina mostra anche alcune confessioni minoritarie: i Valdesi (presenti nelle valli alpine e in alcune zone della Francia), gli Ussiti (in Boemia, eredi della riforma di Jan Hus, un secolo prima di Lutero), i Bogomili (nei Balcani). Sono tracce di movimenti riformatori che precedettero o rimasero ai margini della Riforma protestante principale.</p>",
+    osserva: [
+      "L'Inghilterra è interamente viola nel 1598. Ma ricorda che tra il 1534 e il 1598 ci furono oscillazioni: sotto Maria Tudor (1553–1558) il paese tornò al cattolicesimo.",
+      "La Boemia (verde misto) ospitava gli Ussiti, eredi di Jan Hus, bruciato al Concilio di Costanza nel 1415. Lutero conosceva bene Hus e ne rivendicò in parte l'eredità.",
+      "I simboli dei Valdesi compaiono anche in alcune zone della Francia meridionale: erano una comunità preesistente che aderì al calvinismo nel corso del Cinquecento."
+    ],
+    domanda: "La rottura anglicana con Roma fu diversa da quella luterana o calvinista: fu una rottura di autorità, non una rivoluzione dottrinale. Che conseguenze ebbe questa differenza d'origine sulla natura della Chiesa anglicana?"
+  },
+  {
+    name: "Il quadro d'insieme: frontiere religiose e politiche",
+    color: "#8B7355",
+    intro: "<p>Guarda ora la cartina nel suo insieme. Dopo ottant'anni di Riforma (1517–1598), l'Europa cristiana occidentale si è divisa in almeno quattro grandi blocchi confessionali, più una serie di aree miste e di minoranze. La Pace di Augusta (1555) e l'Editto di Nantes (1598) avevano tentato di stabilizzare questa divisione sul piano politico — senza riuscirci del tutto.</p><p>Due elementi sono particolarmente significativi: la corrispondenza tra confessione e struttura politica (le monarchie centralizzate restano cattoliche; i principati frammentati o le repubbliche urbane abbracciano il protestantesimo), e la presenza, ai margini orientali, di ortodossi e musulmani — il promemoria che la divisione confessionale riguardava l'Europa latina, non tutto il continente.</p>",
+    osserva: [
+      "Le aree ortodosse (marrone, a est) e musulmane (verde scuro, a sud-est) ricordano che l'espansione ottomana era il terzo grande fattore geopolitico del Cinquecento — e che Carlo V combatté su tre fronti contemporaneamente.",
+      "La Boemia (verde misto) sarà il teatro di avvio della Guerra dei Trent'anni (1618): la cartina del 1598 mostra già la tensione latente.",
+      "Confronta la Francia del 1598 con quella che immagini nel 1562: qual è il prezzo umano e politico di quegli ottant'anni di conflitti religiosi?"
+    ],
+    domanda: "La divisione religiosa d'Europa nel 1598 coincide con una divisione politica? Prova a tracciare mentalmente i confini tra aree a monarchia forte e aree a struttura politica frammentata o repubblicana: c'è una correlazione con la distribuzione delle confessioni?"
+  }
+];
+
+var confessioni = [
+  {
+    id:"luteranesimo",
+    name:"Luteranesimo",
+    color:"#E8B4C8",
+    date:"1517 — tesi di Wittenberg",
+    paesi:"Germania settentrionale e centrale (principati elettorali), Svezia (1527), Danimarca e Norvegia (1536), Brandeburgo, Sassonia, Prussia",
+    body:"<p>Il luteranesimo fu la prima e più estesa forma di protestantesimo. Partì dalla disputa teologica di Lutero sulle indulgenze (1517) e si consolidò attorno a tre principi fondamentali: la giustificazione per sola fede (<em>sola fide</em>), la Scrittura come unica autorità (<em>sola Scriptura</em>), il sacerdozio universale dei fedeli.</p><p>La sua diffusione fu strettamente legata alla struttura politica del Sacro Romano Impero: i principi che aderirono al luteranesimo lo imposero ai loro territori in base al principio <em>cuius regio, eius religio</em> (Pace di Augusta, 1555). Nei regni scandinavi, la riforma fu adottata dall'alto come riforma di Stato, senza i conflitti interni che caratterizzarono la Germania.</p><p>Il luteranesimo fu più conservatore del calvinismo nell'organizzazione ecclesiastica: mantenne una struttura gerarchica, i vescovi, e un'importanza centrale della liturgia e dei sacramenti.</p>"
+  },
+  {
+    id:"calvinismo",
+    name:"Calvinismo",
+    color:"#9090D0",
+    date:"1536 — Institutio di Calvino a Ginevra",
+    paesi:"Province Unite (Olanda), Scozia, Svizzera riformata (Ginevra, Zurigo), Francia ugonotta, Palatinato del Reno, alcune aree dell'Ungheria e della Polonia",
+    body:"<p>Il calvinismo si sviluppò a Ginevra sotto la guida di Giovanni Calvino a partire dagli anni Quaranta. Rispetto al luteranesimo, presentava alcune differenze dottrinali significative — in particolare la dottrina della predestinazione e una concezione più radicale della riforma della Chiesa — e soprattutto un modello organizzativo diverso: la chiesa presbiteriana, governata da anziani (<em>presbiteri</em>) eletti dalla comunità, senza vescovi.</p><p>Questo modello si adattava bene a contesti politici non monarchici o in conflitto con le monarchie cattoliche: le Province Unite in rivolta contro la Spagna, la Scozia in tensione con l'Inghilterra anglicana, gli ugonotti francesi come minoranza organizzata. Il calvinismo fu più internazionale del luteranesimo, diffondendosi attraverso reti di esuli e comunità urbane.</p><p>La data 1536 sulla cartina (nella zona svizzera) rimanda alla prima edizione dell'<em>Institutio Christianae Religionis</em>, il testo fondativo del calvinismo.</p>"
+  },
+  {
+    id:"anglicanesimo",
+    name:"Anglicanesimo",
+    color:"#D080D0",
+    date:"1534 — Atto di supremazia di Enrico VIII",
+    paesi:"Inghilterra (e progressivamente Galles e Irlanda, con resistenze)",
+    body:"<p>La rottura anglicana con Roma ebbe origini prevalentemente politiche: Enrico VIII volle il divorzio dalla prima moglie Caterina d'Aragona, che il papa non poteva concedere per ragioni politiche (Caterina era zia di Carlo V). L'Atto di supremazia del 1534 dichiarò il re capo supremo della Chiesa d'Inghilterra.</p><p>Sul piano dottrinale, l'anglicanesimo rimase inizialmente vicino al cattolicesimo — era una rottura di autorità, non una rivoluzione teologica. Sotto Edoardo VI (1547–1553) si avvicinò al protestantesimo continentale; sotto Maria Tudor (1553–1558) tornò al cattolicesimo; con Elisabetta I (1558–1603) si stabilizzò in una posizione mediana, il cosiddetto <em>via media</em>.</p><p>La data 1534 sulla cartina è quella dell'Atto di supremazia. La maturazione dottrinale della Chiesa anglicana (Trentanove articoli, 1563) è successiva.</p>"
+  },
+  {
+    id:"cattolicesimo",
+    name:"Cattolicesimo",
+    color:"#E8A000",
+    date:"Risposta tridentina: 1545–1563",
+    paesi:"Spagna, Portogallo, Italia, Francia (maggioranza), Austria, Baviera, Polonia (maggioranza), Irlanda",
+    body:"<p>Il cattolicesimo rimase la confessione maggioritaria in Europa nel 1598, ma era profondamente cambiato rispetto all'inizio del secolo. Il Concilio di Trento (1545–1563) aveva definito con precisione la dottrina cattolica in risposta alle sfide protestanti, riformato la disciplina ecclesiastica, rilanciato la formazione del clero attraverso i seminari e sostenuto nuovi ordini religiosi — in primo luogo i Gesuiti (fondati da Ignazio di Loyola nel 1540).</p><p>La Controriforma (o Riforma cattolica) fu un fenomeno complesso: non solo difensivo, ma anche di rinnovamento interno. Nelle aree rimaste cattoliche, produsse una nuova cultura religiosa — l'arte barocca, la devozione popolare, la spiritualità ignaziana — che segnò profondamente l'Europa meridionale e centro-orientale.</p><p>Il giallo più tenue sulla cartina indica aree dove il protestantesimo aveva avuto una presenza significativa ma era stato contenuto — spesso attraverso la guerra (come nelle Province Unite spagnole) o la pressione politica.</p>"
+  },
+  {
+    id:"ortodossia",
+    name:"Ortodossia e islam",
+    color:"#8B6040",
+    date:"Presenze preesistenti alla Riforma",
+    paesi:"Russia, Balcani cristiani (ortodossia); Impero Ottomano, Bosnia, zone balcaniche (islam)",
+    body:"<p>La cartina ricorda che la divisione confessionale del protestantesimo riguardava l'Europa latina, non tutto il continente. A est e a sud-est esistevano due grandi blocchi religiosi che la Riforma non toccò direttamente.</p><p>I cristiani ortodossi (marrone sulla cartina) erano concentrati nell'area balcanica sotto dominio ottomano e nei principati russi. La Chiesa ortodossa aveva una propria struttura ecclesiastica, distinta da Roma sin dallo Scisma del 1054, e non era coinvolta nelle dispute teologiche che agitavano l'Occidente latino.</p><p>I musulmani (verde scuro) erano presenti nell'Impero Ottomano, che nel 1526 aveva sconfitto i cristiani a Mohács e occupato gran parte dell'Ungheria. La pressione ottomana era uno dei fattori geopolitici principali che condizionarono la risposta di Carlo V alla crisi luterana: impegnato su più fronti, non poté mai dedicarsi completamente alla repressione della Riforma.</p>"
+  },
+  {
+    id:"minoranze",
+    name:"Confessioni minoritarie",
+    color:"#606060",
+    date:"Valdesi, Ussiti, Bogomili",
+    paesi:"Valdesi: valli alpine (Piemonte, Francia meridionale) — Ussiti: Boemia — Bogomili: Balcani",
+    body:"<p>In Europa esistevano anche confessioni minoritarie diffuse localmente.</p><p>I <strong>Valdesi</strong> erano un movimento riformatore medievale fondato da Pietro Valdo nel XII secolo, sopravvissuto nelle valli alpine nonostante le persecuzioni. Nel corso del Cinquecento aderirono in larga parte al calvinismo, trovando in Ginevra un punto di riferimento.</p><p>Gli <strong>Ussiti</strong> erano i seguaci di Jan Hus, teologo boemo bruciato al Concilio di Costanza nel 1415. Hus aveva anticipato molte posizioni luterane un secolo prima di Lutero: la centralità della Scrittura, la critica alle indulgenze, la comunione sotto entrambe le specie. La loro presenza in Boemia è un'importante premessa della Riforma.</p><p>I <strong>Bogomili</strong> erano un movimento dualista dei Balcani, di origine medievale, sopravvissuto come minoranza. La loro presenza sulla cartina ricorda la pluralità di esperienze religiose ai margini dell'Europa latina.</p>"
+  }
+];
+
+var stratoIdx = 0;
+var activeConf = null;
+
+function renderStrato(){
+  var s = strati[stratoIdx];
+  var html = '';
+  html += '<div class="scene-header"><div class="scene-label">Strato '+(stratoIdx+1)+' di '+strati.length+'</div>';
+  html += '<div class="scene-title" style="display:flex;align-items:center;gap:8px"><span style="display:inline-block;width:16px;height:16px;border-radius:3px;background:'+s.color+';border:1px solid rgba(0,0,0,0.15);flex-shrink:0"></span>'+s.name+'</div></div>';
+  html += '<div class="strato-card">';
+  html += '<div class="strato-intro">'+s.intro+'</div>';
+  html += '<div class="osserva-label">Osserva sulla cartina</div>';
+  html += '<ul class="osserva-list">';
+  s.osserva.forEach(function(o){ html += '<li>'+o+'</li>'; });
+  html += '</ul>';
+  html += '<div class="domanda-box"><i class="ti ti-help-circle" aria-hidden="true" style="font-size:14px;margin-right:5px;vertical-align:-2px;color:#8B7355"></i>'+s.domanda+'</div>';
+  html += '</div>';
+  document.getElementById('strato-content').innerHTML = html;
+  document.getElementById('strato-counter').textContent = 'Strato '+(stratoIdx+1)+' di '+strati.length;
+  document.getElementById('btn-prev').disabled = stratoIdx === 0;
+  document.getElementById('btn-next').disabled = stratoIdx === strati.length - 1;
+}
+
+function changeStrato(dir){
+  stratoIdx = Math.max(0, Math.min(strati.length-1, stratoIdx+dir));
+  renderStrato();
+}
+
+function renderConfChips(){
+  var html = '';
+  confessioni.forEach(function(c){
+    html += '<div class="conf-chip" id="chip-'+c.id+'" onclick="selectConf(\''+c.id+'\')">';
+    html += '<span class="conf-chip-dot" style="background:'+c.color+'"></span>';
+    html += '<span class="conf-chip-name">'+c.name+'</span></div>';
+  });
+  document.getElementById('conf-chips').innerHTML = html;
+  document.getElementById('conf-detail-area').innerHTML = '';
+}
+
+function selectConf(id){
+  if(activeConf === id){ return; }
+  activeConf = id;
+  confessioni.forEach(function(c){
+    var chip = document.getElementById('chip-'+c.id);
+    if(chip){ chip.classList.toggle('active', c.id===id); }
+  });
+  var conf = confessioni.find(function(c){ return c.id===id; });
+  if(!conf) return;
+  var html = '<div class="conf-detail active">';
+  html += '<div class="conf-detail-header">';
+  html += '<span class="conf-detail-dot" style="background:'+conf.color+'"></span>';
+  html += '<div><div class="conf-detail-name">'+conf.name+'</div><div class="conf-meta">'+conf.date+'</div></div>';
+  html += '</div>';
+  html += '<div class="conf-body">'+conf.body+'</div>';
+  html += '<div class="conf-paesi"><div class="conf-paesi-label">Sulla cartina</div><div class="conf-paesi-list">'+conf.paesi+'</div></div>';
+  html += '</div>';
+  document.getElementById('conf-detail-area').innerHTML = html;
+}
+
+function switchMode(mode){
+  document.querySelectorAll('.mode-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
+  if(mode==='strati'){
+    document.querySelector('.mode-btn:nth-child(1)').classList.add('active');
+    document.getElementById('panel-strati').classList.add('active');
+  } else {
+    document.querySelector('.mode-btn:nth-child(2)').classList.add('active');
+    document.getElementById('panel-confessioni').classList.add('active');
+  }
+}
+
+renderStrato();
+renderConfChips();
+</script>
+</body>
+</html>
