@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Questionario di riepilogo — Riforma, impero e Controriforma</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Georgia,'Times New Roman',serif;background:#FAF7F2;color:#2C2C2A;min-height:100vh}
+.header{background:#2C2C2A;padding:1.4rem 2.5rem;border-bottom:4px solid #8B7355}
+.header-title{font-size:1.15rem;font-weight:normal;color:#F0EBE0}
+.header-title em{color:#C2A882;font-style:italic}
+.header-sub{font-family:'Gill Sans','Gill Sans MT',Calibri,sans-serif;font-size:0.78rem;color:#888070;margin-top:0.35rem}
+.instructions{background:#F5F0E8;border-bottom:1px solid #D4C9B8;padding:0.7rem 2.5rem;font-family:'Gill Sans','Gill Sans MT',Calibri,sans-serif;font-size:0.8rem;color:#5C4A2A;line-height:1.55}
+.instructions strong{color:#2C2C2A}
+.dashboard{background:#FFFDF8;border-bottom:1px solid #D4C9B8;padding:0.65rem 2.5rem;display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap}
+.dash-label{font-family:'Gill Sans','Gill Sans MT',Calibri,sans-serif;font-size:0.75rem;color:#888070;text-transform:uppercase;letter-spacing:0.05em}
+.dash-counters{display:flex;gap:1rem}
+.dash-item{display:flex;align-items:center;gap:5px;font-family:'Gill Sans','Gill Sans MT',Calibri,sans-serif;font-size:0.8rem}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+.dot-yes{background:#4A6741}.dot-part{background:#C2A882}.dot-no{background:#7A2E1A}.dot-open{background:#C8BBA8}
+.q-list{padding:1.5rem 2.5rem;display:flex;flex-direction:column;gap:0.6rem}
+.q-item{border:1px solid #D4C9B8;border-radius:6px;overflow:hidden;background:#fff}
+.q-item.eval-yes{border-left:4px solid #4A6741}
+.q-item.eval-part{border-left:4px solid #C2A882}
+.q-item.eval-no{border-left:4px solid #7A2E1A}
+.q-header{padding:0.75rem 1rem;cursor:pointer;display:flex;align-items:flex-start;gap:0.75rem;transition:background 0.15s}
+.q-header:hover{background:#F5F0E8}
+.q-num-badge{font-family:'Gill Sans','Gill Sans MT',Calibri,sans-serif;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.07em;color:#8B7355;min-width:24px;padding-top:2px;flex-shrink:0}
+.q-text-label{font-size:0.88rem;line-height:1.55;color:#2C2C2A;flex:1}
+.q-chevron{font-size:0.75rem;color:#B0A090;margin-top:3px;transition:transform 0.2s;flex-shrink:0}
+.q-item.open .q-chevron{transform:rotate(180deg)}
+.q-answer{display:none;padding:0 1rem 0.85rem 2.5rem;border-top:1px solid #EDE5D8}
+.q-item.open .q-answer{display:block}
+.answer-label{font-family:'Gill Sans','Gill Sans MT',Calibri,sans-serif;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.07em;color:#8B7355;margin:0.6rem 0 0.3rem}
+.answer-text{font-size:0.83rem;line-height:1.65;color:#3A2E1E}
+.eval-row{display:flex;align-items:center;gap:0.5rem;margin-top:0.75rem;padding-top:0.6rem;border-top:1px solid #EDE5D8;flex-wrap:wrap}
+.eval-label{font-family:'Gill Sans','Gill Sans MT',Calibri,sans-serif;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.06em;color:#B0A090;margin-right:0.15rem}
+.eval-btn{font-family:'Gill Sans','Gill Sans MT',Calibri,sans-serif;font-size:0.75rem;padding:4px 12px;border-radius:20px;border:1.5px solid;cursor:pointer;transition:all 0.18s;background:transparent;display:flex;align-items:center;gap:4px}
+.btn-yes{border-color:#4A6741;color:#4A6741}.btn-yes:hover,.btn-yes.active{background:#4A6741;color:#fff}
+.btn-part{border-color:#C2A882;color:#8B6A3A}.btn-part:hover,.btn-part.active{background:#C2A882;color:#fff}
+.btn-no{border-color:#7A2E1A;color:#7A2E1A}.btn-no:hover,.btn-no.active{background:#7A2E1A;color:#fff}
+.reset-wrap{padding:0 2.5rem 2rem;display:flex;justify-content:flex-end}
+.reset-btn{font-family:'Gill Sans','Gill Sans MT',Calibri,sans-serif;font-size:0.78rem;padding:5px 14px;border-radius:4px;border:1.5px solid #C8BBA8;background:transparent;color:#888070;cursor:pointer;transition:all 0.18s}
+.reset-btn:hover{border-color:#8B7355;color:#5C4A2A;background:#F5F0E8}
+.section-divider{font-family:'Gill Sans','Gill Sans MT',Calibri,sans-serif;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.09em;color:#8B7355;padding:0.8rem 0 0.3rem;border-top:1px solid #D4C9B8;margin-top:0.4rem}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-title"><em>Questionario di riepilogo</em> — Riforma, impero e Controriforma</div>
+  <div class="header-sub">24 domande aperte sull'intero capitolo · Risposta sintetica ricavata dal testo</div>
+</div>
+<div class="instructions">
+  <strong>Come usare questo questionario.</strong> Leggi la domanda e formula mentalmente la tua risposta. Poi clicca per aprire la scheda e confrontarti con la risposta sintetica. Infine indica quanto sei stato preciso: le domande si colorano di conseguenza e il pannello in alto tiene traccia del tuo avanzamento.
+</div>
+<div class="dashboard">
+  <span class="dash-label">Avanzamento</span>
+  <div class="dash-counters">
+    <div class="dash-item"><span class="dot dot-yes"></span><span id="cnt-yes">0</span> saputa</div>
+    <div class="dash-item"><span class="dot dot-part"></span><span id="cnt-part">0</span> parziale</div>
+    <div class="dash-item"><span class="dot dot-no"></span><span id="cnt-no">0</span> non saputa</div>
+    <div class="dash-item"><span class="dot dot-open"></span><span id="cnt-open">24</span> da fare</div>
+  </div>
+</div>
+
+<div class="q-list" id="q-list">
+
+<div class="section-divider">La crisi della Chiesa di Roma</div>
+
+<div class="q-item" id="qi-0">
+  <div class="q-header" onclick="toggleQ(0)">
+    <span class="q-num-badge">1</span>
+    <span class="q-text-label">Quali erano i principali abusi che affliggevano la Chiesa alla vigilia della Riforma, e a quali livelli della gerarchia si manifestavano?</span>
+    <span class="q-chevron">▼</span>
+  </div>
+  <div class="q-answer">
+    <div class="answer-label">Risposta</div>
+    <div class="answer-text">Gli abusi investivano tutta la gerarchia. Al vertice: nepotismo (assegnazione di cariche ai familiari), simonia (compravendita di benefici), finanziamento delle spese curiali attraverso la vendita sistematica delle indulgenze. Nel clero locale: absenteismo (vescovi lontani dalle diocesi), ignoranza diffusa (molti preti non padroneggiavano il latino), concubinato tollerato nonostante il celibato formale. La crisi non era solo morale ma strutturale: un sistema istituzionale che aveva perso la capacità di rispondere alle domande religiose del tempo.</div>
+    <div class="eval-row"><span class="eval-label">L'ho saputa?</span>
+      <button class="eval-btn btn-yes" onclick="setEval(0,'yes')">✓ Sì</button>
+      <button class="eval-btn btn-part" onclick="setEval(0,'part')">~ In parte</button>
+      <button class="eval-btn btn-no" onclick="setEval(0,'no')">✗ No</button>
+    </div>
+  </div>
+</div>
+
+<div class="q-item" id="qi-1">
+  <div class="q-header" onclick="toggleQ(1)">
+    <span class="q-num-badge">2</span>
+    <span class="q-text-label">In che modo la campagna di Johann Tetzel fu la scintilla diretta delle 95 Tesi di Lutero?</span>
+    <span class="q-chevron">▼</span>
+  </div>
+  <div class="q-answer">
+    <div class="answer-label">Risposta</div>
+    <div class="answer-text">Tetzel organizzò la vendita delle indulgenze in Germania come uno spettacolo itinerante, promettendo la remissione immediata dei peccati senza necessità di pentimento interiore, e garantendo che il versamento di una somma bastasse a liberare dall'istante le anime dei defunti dal Purgatorio. Era l'applicazione più estrema di un sistema già contestato. Lutero, convinto che la salvezza non potesse essere comprata, redasse le 95 Tesi per contestare sia la pratica di Tetzel sia il diritto stesso del papa di disporre delle pene divine.</div>
+    <div class="eval-row"><span class="eval-label">L'ho saputa?</span>
+      <button class="eval-btn btn-yes" onclick="setEval(1,'yes')">✓ Sì</button>
+      <button class="eval-btn btn-part" onclick="setEval(1,'part')">~ In parte</button>
+      <button class="eval-btn btn-no" onclick="setEval(1,'no')">✗ No</button>
+    </div>
+  </div>
+</div>
+
+<div class="q-item" id="qi-2">
+  <div class="q-header" onclick="toggleQ(2)">
+    <span class="q-num-badge">3</span>
+    <span class="q-text-label">Perché la risposta di Roma alle 95 Tesi fu lenta, e cosa permise a Lutero di guadagnare tempo decisivo?</span>
+    <span class="q-chevron">▼</span>
+  </div>
+  <div class="q-answer">
+    <div class="answer-label">Risposta</div>
+    <div class="answer-text">La lentezza fu dovuta al contesto politico: l'imperatore Massimiliano I era morto e l'elezione imperiale era aperta. Leone X non poteva inimicarsi Federico il Saggio di Sassonia, protettore di Lutero e principe elettore, mentre cercava di ostacolare l'elezione di Carlo V. Il processo fu sospeso. Nel frattempo le tesi, tradotte in tedesco e riprodotte dalla stampa in migliaia di copie, circolarono in tutta la Germania intercettando il malcontento di fedeli e principi contro Roma.</div>
+    <div class="eval-row"><span class="eval-label">L'ho saputa?</span>
+      <button class="eval-btn btn-yes" onclick="setEval(2,'yes')">✓ Sì</button>
+      <button class="eval-btn btn-part" onclick="setEval(2,'part')">~ In parte</button>
+      <button class="eval-btn btn-no" onclick="setEval(2,'no')">✗ No</button>
+    </div>
+  </div>
+</div>
+
+<div class="section-divider">Lutero e la rottura</div>
+
+<div class="q-item" id="qi-3">
+  <div class="q-header" onclick="toggleQ(3)">
+    <span class="q-num-badge">4</span>
+    <span class="q-text-label">Quali sono i tre principi fondamentali della teologia luterana e quali conseguenze istituzionali derivano da ciascuno?</span>
+    <span class="q-chevron">▼</span>
+  </div>
+  <div class="q-answer">
+    <div class="answer-label">Risposta</div>
+    <div class="answer-text">Primo: sola fide — la giustificazione per sola fede nega il sistema sacramentale e penitenziale su cui la Chiesa fondava la propria mediazione. Secondo: sola Scriptura — la Scrittura come unica autorità elimina il ruolo del magistero e apre al principio del libero esame, imponendo che i fedeli sappiano leggere. Terzo: sacerdozio universale dei credenti — ogni fedele è sacerdote davanti a Dio, il che implica la negazione del ruolo sacro del clero, l'abolizione degli ordini monastici, la soppressione del celibato.</div>
+    <div class="eval-row"><span class="eval-label">L'ho saputa?</span>
+      <button class="eval-btn btn-yes" onclick="setEval(3,'yes')">✓ Sì</button>
+      <button class="eval-btn btn-part" onclick="setEval(3,'part')">~ In parte</button>
+      <button class="eval-btn btn-no" onclick="setEval(3,'no')">✗ No</button>
+    </div>
+  </div>
+</div>
+
+<div class="q-item" id="qi-4">
+  <div class="q-header" onclick="toggleQ(4)">
+    <span class="q-num-badge">5</span>
+    <span class="q-text-label">Cosa avvenne alla Dieta di Worms nell'aprile 1521, e perché quell'evento è considerato un punto di non ritorno?</span>
+    <span class="q-chevron">▼</span>
+  </div>
+  <div class="q-answer">
+    <div class="answer-label">Risposta</div>
+    <div class="answer-text">Davanti a Carlo V e ai grandi dell'Impero, Lutero rifiutò di ritrattare: non avrebbe abiurato, disse, a meno che non gli si dimostrasse con le Scritture di essere nel torto. Rivendicando il primato della coscienza individuale su qualsiasi autorità istituzionale, trasformò la disputa teologica in un conflitto di autorità. Carlo V emanò l'Editto di Worms che lo condannò come eretico e lo mise al bando. Federico il Saggio organizzò un finto rapimento e lo nascose nel castello di Wartburg: la Riforma era ormai irreversibile.</div>
+    <div class="eval-row"><span class="eval-label">L'ho saputa?</span>
+      <button class="eval-btn btn-yes" onclick="setEval(4,'yes')">✓ Sì</button>
+      <button class="eval-btn btn-part" onclick="setEval(4,'part')">~ In parte</button>
+      <button class="eval-btn btn-no" onclick="setEval(4,'no')">✗ No</button>
+    </div>
+  </div>
+</div>
+
+<div class="q-item" id="qi-5">
+  <div class="q-header" onclick="toggleQ(5)">
+    <span class="q-num-badge">6</span>
+    <span class="q-text-label">Qual è il nesso tra la teologia luterana della sola Scriptura e la diffusione della stampa?</span>
+    <span class="q-chevron">▼</span>
+  </div>
+  <div class="q-answer">
+    <div class="answer-label">Risposta</div>
+    <div class="answer-text">Il principio del libero esame imponeva che i fedeli sapessero leggere: Lutero tradusse la Bibbia in tedesco e Melantone avviò la creazione di scuole elementari. La stampa rese possibile questo progetto: tra il 1517 e il 1520 furono pubblicate circa trecentomila copie degli scritti di Lutero. Opuscoli brevi in volgare e xilografie satiriche resero accessibile il messaggio anche agli analfabeti. La Riforma divenne così un motore di alfabetizzazione di massa. Teologia e tecnologia si alimentarono a vicenda.</div>
+    <div class="eval-row"><span class="eval-label">L'ho saputa?</span>
+      <button class="eval-btn btn-yes" onclick="setEval(5,'yes')">✓ Sì</button>
+      <button class="eval-btn btn-part" onclick="setEval(5,'part')">~ In parte</button>
+      <button class="eval-btn btn-no" onclick="setEval(5,'no')">✗ No</button>
+    </div>
+  </div>
+</div>
+
+<div class="q-item" id="qi-6">
+  <div class="q-header" onclick="toggleQ(6)">
+    <span class="q-num-badge">7</span>
+    <span class="q-text-label">Perché i principi tedeschi sostennero la Riforma, e quali interessi — oltre a quelli religiosi — li motivavano?</span>
+    <span class="q-chevron">▼</span>
+  </div>
+  <div class="q-answer">
+    <div class="answer-label">Risposta</div>
+    <div class="answer-text">Aderire al luteranesimo significava sottrarsi ai tributi dovuti a Roma, liberarsi dall'ingerenza pontificia nelle nomine ecclesiastiche, e soprattutto incamerare le immense proprietà terriere del clero nei propri territori. Sul piano politico, sostenere Lutero era anche un modo per resistere al progetto accentratore di Carlo V. Fu questa convergenza di interessi religiosi, economici e politici a trasformare la protesta di un monaco in un movimento che nessuna bolla papale e nessun editto imperiale riuscì a spegnere.</div>
+    <div class="eval-row"><span class="eval-label">L'ho saputa?</span>
+      <button class="eval-btn btn-yes" onclick="setEval(6,'yes')">✓ Sì</button>
+      <button class="eval-btn btn-part" onclick="setEval(6,'part')">~ In parte</button>
+      <button class="eval-btn btn-no" onclick="setEval(6,'no')">✗ No</button>
+    </div>
+  </div>
+</div>
+
+<div class="q-item" id="qi-7">
+  <div class="q-header" onclick="toggleQ(7)">
+    <span class="q-num-badge">8</span>
+    <span class="q-text-label">Cosa fu la Guerra dei contadini del 1524-1525, e come si comportò Lutero di fronte ad essa?</span>
+    <span class="q-chevron">▼</span>
+  </div>
+  <div class="q-answer">
+    <div class="answer-label">Risposta</div>
+    <div class="answer-text">La più grande rivolta popolare della storia tedesca medievale e moderna: contadini oppressi dai vincoli feudali usarono il linguaggio evangelico per rivendicare l'abolizione della servitù della gleba, la restituzione delle terre comuni, l'elezione democratica dei parroci. L'ala più radicale fu guidata da Thomas Müntzer. Lutero scrisse il pamphlet Contro le empie e scellerate bande dei contadini, esortando i principi a reprimere la rivolta: aveva bisogno della protezione delle autorità laiche e non era disposto a confondere libertà spirituale e sovversione dell'ordine politico. I contadini furono massacrati a Frankenhausen nel maggio 1525.</div>
+    <div class="eval-row"><span class="eval-label">L'ho saputa?</span>
+      <button class="eval-btn btn-yes" onclick="setEval(7,'yes')">✓ Sì</button>
+      <button class="eval-btn btn-part" onclick="setEval(7,'part')">~ In parte</button>
+      <button class="eval-btn btn-no" onclick="setEval(7,'no')">✗ No</button>
+    </div>
+  </div>
+</div>
+
+<div class="section-divider">La Riforma si moltiplica</div>
+
+<div class="q-item" id="qi-8">
+  <div class="q-header" onclick="toggleQ(8)">
+    <span class="q-num-badge">9</span>
+    <span class="q-text-label">Quali erano le differenze principali tra luteranesimo e calvinismo sul piano dottrinale e organizzativo?</span>
+    <span class="q-chevron">▼</span>
+  </div>
+  <div class="q-answer">
+    <div class="answer-label">Risposta</div>
+    <div class="answer-text">Sul piano dottrinale: il calvinismo aggiungeva la dottrina della predestinazione (Dio ha stabilito dall'eternità chi è salvato e chi no) e attribuiva all'eucaristia un valore puramente simbolico, mentre Lutero sosteneva la consustanziazione. Sul piano organizzativo: il luteranesimo mantenne strutture episcopali e liturgiche vicine al cattolicesimo; il calvinismo introdusse il presbiteranesimo — governo della comunità da parte di anziani laici eletti — senza vescovi. Il modello calvinista si adattava meglio a contesti non monarchici o di resistenza politica.</div>
+    <div class="eval-row"><span class="eval-label">L'ho saputa?</span>
+      <button class="eval-btn btn-yes" onclick="setEval(8,'yes')">✓ Sì</button>
+      <button class="eval-btn btn-part" onclick="setEval(8,'part')">~ In parte</button>
+      <button class="eval-btn btn-no" onclick="setEval(8,'no')">✗ No</button>
+    </div>
+  </div>
+</div>
+
+<div class="q-item" id="qi-9">
+  <div class="q-header" onclick="toggleQ(9)">
+    <span class="q-num-badge">10</span>
+    <span class="q-text-label">In quali aree geografiche si diffuse il calvinismo, e perché proprio in quei contesti?</span>
+    <span class="q-chevron">▼</span>
+  </div>
+  <div class="q-answer">
+    <div class="answer-label">Risposta</div>
+    <div class="answer-text">Il calvinismo si radicò nelle Province Unite (in rivolta contro la Spagna), in Scozia (in tensione con l'Inghilterra anglicana), tra gli ugonotti francesi, nel Palatinato del Reno, in alcune aree dell'Ungheria e della Polonia. Non si diffuse attraverso le monarchie ma attraverso reti urbane, comunità di esuli, minoranze organizzate. Questi contesti — politicamente frammentati o in conflitto con le monarchie cattoliche — si adattavano al modello presbiteriano di autogoverno della comunità, il che spiega l'etichetta di «religione della resistenza».</div>
+    <div class="eval-row"><span class="eval-label">L'ho saputa?</span>
+      <button class="eval-btn btn-yes" onclick="setEval(9,'yes')">✓ Sì</button>
+      <button class="eval-btn btn-part" onclick="setEval(9,'part')">~ In parte</button>
+      <button class="eval-btn btn-no" onclick="setEval(9,'no')">✗ No</button>
+    </div>
+  </div>
+</div>
+
+<div class="q-item" id="qi-10">
+  <div class="q-header" onclick="toggleQ(10)">
+    <span class="q-num-badge">11</span>
+    <span class="q-text-label">In che cosa lo scisma anglicano differisce dalla Riforma luterana e calvinista nelle sue origini?</span>
+    <span class="q-chevron">▼</span>
+  </div>
+  <div class="q-answer">
+    <div class="answer-label">Risposta</div>
+    <div class="answer-text">Lo scisma anglicano ebbe origini prevalentemente politiche e dinastiche, non teologiche: Enrico VIII aveva bisogno di un erede maschio e il papa non poteva concedere l'annullamento del matrimonio con Caterina d'Aragona per ragioni politiche (era zia di Carlo V). L'Atto di Supremazia del 1534 fu una rottura di autorità, non una rivoluzione dottrinale: la dottrina rimase inizialmente vicina al cattolicesimo. Solo con Edoardo VI (1547-1553) la Chiesa anglicana adottò una teologia protestante, e con Elisabetta I si stabilizzò nella cosiddetta via media.</div>
+    <div class="eval-row"><span class="eval-label">L'ho saputa?</span>
+      <button class="eval-btn btn-yes" onclick="setEval(10,'yes')">✓ Sì</button>
+      <button class="eval-btn btn-part" onclick="setEval(10,'part')">~ In parte</button>
+      <button class="eval-btn btn-no" onclick="setEval(10,'no')">✗ No</button>
+    </div>
+  </div>
+</div>
+
+<div class="q-item" id="qi-11">
+  <div class="q-header" onclick="toggleQ(11)">
+    <span class="q-num-badge">12</span>
+    <span class="q-text-label">Chi erano gli anabattisti e perché furono perseguitati sia dai cattolici sia dagli altri protestanti?</span>
+    <span class="q-chevron">▼</span>
+  </div>
+  <div class="q-answer">
+    <div class="answer-label">Risposta</div>
+    <div class="answer-text">Gli anabattisti rifiutavano il battesimo infantile (ritenendo il sacramento valido solo se ricevuto da un adulto consapevole) e sostenevano la separazione della comunità dei credenti dal potere civile: rifiuto delle cariche pubbliche, del giuramento, dell'uso delle armi. Questa visione minacciava i fondamenti dell'ordine sociale e fu perseguitata con durezza da tutti. L'episodio più drammatico fu l'esperimento di Münster (1534-1535), dove un gruppo di anabattisti radicali tentò di instaurare una comunità basata sulla comunione dei beni: la città fu assediata e riconquistata.</div>
+    <div class="eval-row"><span class="eval-label">L'ho saputa?</span>
+      <button class="eval-btn btn-yes" onclick="setEval(11,'yes')">✓ Sì</button>
+      <button class="eval-btn btn-part" onclick="setEval(11,'part')">~ In parte</button>
+      <button class="eval-btn btn-no" onclick="setEval(11,'no')">✗ No</button>
+    </div>
+  </div>
+</div>
+
+<div class="section-divider">Carlo V e l'impero impossibile</div>
+
+<div class="q-item" id="qi-12">
+  <div class="q-header" onclick="toggleQ(12)">
+    <span class="q-num-badge">13</span>
+    <span class="q-text-label">Quali erano le tre componenti dell'eredità dinastica di Carlo V, e perché quella vastità era anche la sua condanna?</span>
+    <span class="q-chevron">▼</span>
+  </div>
+  <div class="q-answer">
+    <div class="answer-label">Risposta</div>
+    <div class="answer-text">Dall'eredità spagnola: penisola iberica, domini italiani meridionali, possedimenti americani con il loro afflusso di oro e argento. Dall'eredità austriaca: domini diretti degli Asburgo nell'Europa centrale. Dall'eredità borgognona: Paesi Bassi, Fiandre, Franca Contea. La vastità era una condanna perché i territori non formavano un impero unitario ma un aggregato disomogeneo, tenuto insieme solo dalla persona del sovrano, esposto simultaneamente alla pressione ottomana a est, alla rivalità francese a ovest e alle tensioni religiose al centro.</div>
+    <div class="eval-row"><span class="eval-label">L'ho saputa?</span>
+      <button class="eval-btn btn-yes" onclick="setEval(12,'yes')">✓ Sì</button>
+      <button class="eval-btn btn-part" onclick="setEval(12,'part')">~ In parte</button>
+      <button class="eval-btn btn-no" onclick="setEval(12,'no')">✗ No</button>
+    </div>
+  </div>
+</div>
+
+<div class="q-item" id="qi-13">
+  <div class="q-header" onclick="toggleQ(13)">
+    <span class="q-num-badge">14</span>
+    <span class="q-text-label">Quali furono i quattro fronti principali che Carlo V dovette fronteggiare simultaneamente, e come condizionarono la sua risposta alla Riforma?</span>
+    <span class="q-chevron">▼</span>
+  </div>
+  <div class="q-answer">
+    <div class="answer-label">Risposta</div>
+    <div class="answer-text">I quattro fronti: la Francia (Francesco I poi Enrico II, che cercava di spezzare l'accerchiamento asburgico in Italia), i principi tedeschi protestanti (che nella Riforma avevano trovato uno strumento di autonomia), l'Impero Ottomano di Solimano il Magnifico (in piena espansione verso l'Europa centrale), e il papato stesso (che temeva l'eccessivo potere asburgico in Italia). Carlo non poté mai concentrare le proprie forze su un unico fronte decisivo: questa distrazione sistematica concesse ai principi luterani lo spazio per consolidare le proprie posizioni prima di qualsiasi intervento imperiale efficace.</div>
+    <div class="eval-row"><span class="eval-label">L'ho saputa?</span>
+      <button class="eval-btn btn-yes" onclick="setEval(13,'yes')">✓ Sì</button>
+      <button class="eval-btn btn-part" onclick="setEval(13,'part')">~ In parte</button>
+      <button class="eval-btn btn-no" onclick="setEval(13,'no')">✗ No</button>
+    </div>
+  </div>
+</div>
+
+<div class="q-item" id="qi-14">
+  <div class="q-header" onclick="toggleQ(14)">
+    <span class="q-num-badge">15</span>
+    <span class="q-text-label">Cosa fu il Sacco di Roma del 1527, e quale paradosso storico esso rappresentò?</span>
+    <span class="q-chevron">▼</span>
+  </div>
+  <div class="q-answer">
+    <div class="answer-label">Risposta</div>
+    <div class="answer-text">I lanzichenecchi — mercenari tedeschi rimasti senza paga al servizio di Carlo V — assaltarono Roma il 6 maggio 1527, devastandola per settimane. Papa Clemente VII si rifugiò in Castel Sant'Angelo. Il paradosso: il difensore della fede cattolica aveva saccheggiato la città del papa. L'episodio fu la conseguenza della Lega di Cognac (1526), in cui Clemente VII si era alleato con Francia, Venezia e Firenze contro Carlo. Mostra come le alleanze politiche del papato rinascimentale spesso contraddicessero il suo ruolo spirituale.</div>
+    <div class="eval-row"><span class="eval-label">L'ho saputa?</span>
+      <button class="eval-btn btn-yes" onclick="setEval(14,'yes')">✓ Sì</button>
+      <button class="eval-btn btn-part" onclick="setEval(14,'part')">~ In parte</button>
+      <button class="eval-btn btn-no" onclick="setEval(14,'no')">✗ No</button>
+    </div>
+  </div>
+</div>
+
+<div class="q-item" id="qi-15">
+  <div class="q-header" onclick="toggleQ(15)">
+    <span class="q-num-badge">16</span>
+    <span class="q-text-label">Cosa stabilì la Pace di Augusta del 1555, e in che senso segnò la fine del sogno imperiale di Carlo V?</span>
+    <span class="q-chevron">▼</span>
+  </div>
+  <div class="q-answer">
+    <div class="answer-label">Risposta</div>
+    <div class="answer-text">La Pace di Augusta riconobbe la divisione religiosa della Germania sancendo il principio cuius regio, eius religio: ogni principe aveva il diritto di scegliere la propria confessione, cattolica o luterana, e i sudditi erano tenuti a seguirla o a emigrare. Era la fine del sogno della monarchia universale cristiana: un impero unito sotto un'unica fede non era più possibile. Il 25 ottobre 1555 Carlo V abdicò, dividendo i domini tra il figlio Filippo II (Spagna, Paesi Bassi, Italia, colonie) e il fratello Ferdinando I (domini austriaci e corona imperiale).</div>
+    <div class="eval-row"><span class="eval-label">L'ho saputa?</span>
+      <button class="eval-btn btn-yes" onclick="setEval(15,'yes')">✓ Sì</button>
+      <button class="eval-btn btn-part" onclick="setEval(15,'part')">~ In parte</button>
+      <button class="eval-btn btn-no" onclick="setEval(15,'no')">✗ No</button>
+    </div>
+  </div>
+</div>
+
+<div class="section-divider">La risposta cattolica</div>
+
+<div class="q-item" id="qi-16">
+  <div class="q-header" onclick="toggleQ(16)">
+    <span class="q-num-badge">17</span>
+    <span class="q-text-label">Quali furono le principali decisioni dottrinali del Concilio di Trento in risposta alle posizioni protestanti?</span>
+    <span class="q-chevron">▼</span>
+  </div>
+  <div class="q-answer">
+    <div class="answer-label">Risposta</div>
+    <div class="answer-text">Contro la sola fide: la giustificazione richiede tanto la fede quanto le opere buone; il battesimo cancella il peccato originale. Contro la sola Scriptura: Scrittura e Tradizione sono fonti parallele della Rivelazione; la Vulgata latina è l'unica versione ufficiale; l'interpretazione spetta al magistero. Confermati tutti e sette i sacramenti, con particolare insistenza sulla transustanziazione. Confermata la validità delle indulgenze, del culto dei santi, della devozione alla Vergine. Trento non fu una resa né una mediazione: fu una chiusura dottrinale sistematica.</div>
+    <div class="eval-row"><span class="eval-label">L'ho saputa?</span>
+      <button class="eval-btn btn-yes" onclick="setEval(16,'yes')">✓ Sì</button>
+      <button class="eval-btn btn-part" onclick="setEval(16,'part')">~ In parte</button>
+      <button class="eval-btn btn-no" onclick="setEval(16,'no')">✗ No</button>
+    </div>
+  </div>
+</div>
+
+<div class="q-item" id="qi-17">
+  <div class="q-header" onclick="toggleQ(17)">
+    <span class="q-num-badge">18</span>
+    <span class="q-text-label">Quali riforme disciplinari introdusse il Concilio di Trento per affrontare gli abusi del clero?</span>
+    <span class="q-chevron">▼</span>
+  </div>
+  <div class="q-answer">
+    <div class="answer-label">Risposta</div>
+    <div class="answer-text">Obbligo di residenza per vescovi e parroci nelle proprie sedi; divieto del cumulo dei benefici ecclesiastici; riaffermazione rigorosa del celibato con divieto esplicito del concubinato; istituzione obbligatoria di un seminario in ogni diocesi per la formazione teologica del clero; visite pastorali periodiche nelle parrocchie; compilazione degli stati delle anime (registri dei parrocchiani e dei sacramenti ricevuti). Le riforme disciplinari affrontavano direttamente gli abusi — absenteismo, ignoranza, concubinato — che avevano alimentato il malcontento dei fedeli.</div>
+    <div class="eval-row"><span class="eval-label">L'ho saputa?</span>
+      <button class="eval-btn btn-yes" onclick="setEval(17,'yes')">✓ Sì</button>
+      <button class="eval-btn btn-part" onclick="setEval(17,'part')">~ In parte</button>
+      <button class="eval-btn btn-no" onclick="setEval(17,'no')">✗ No</button>
+    </div>
+  </div>
+</div>
+
+<div class="q-item" id="qi-18">
+  <div class="q-header" onclick="toggleQ(18)">
+    <span class="q-num-badge">19</span>
+    <span class="q-text-label">Quali erano le caratteristiche principali della Compagnia di Gesù, e in quali ambiti operò?</span>
+    <span class="q-chevron">▼</span>
+  </div>
+  <div class="q-answer">
+    <div class="answer-label">Risposta</div>
+    <div class="answer-text">Fondata da Ignazio di Loyola e approvata da Paolo III nel 1540. Caratteristiche: disciplina quasi militare, struttura gerarchica rigida, quarto voto di obbedienza incondizionata al papa (perinde ac cadaver). Ambiti di azione: educazione (collegi per le aristocrazie europee, che consentirono ai Gesuiti di diventare confessori e consiglieri di sovrani) e missioni (Americhe, Giappone, Cina, India). In Europa si impegnarono nella rievangelizzazione dei territori protestanti. Furono il principale strumento dell'espansione cattolica nel mondo post-tridentino.</div>
+    <div class="eval-row"><span class="eval-label">L'ho saputa?</span>
+      <button class="eval-btn btn-yes" onclick="setEval(18,'yes')">✓ Sì</button>
+      <button class="eval-btn btn-part" onclick="setEval(18,'part')">~ In parte</button>
+      <button class="eval-btn btn-no" onclick="setEval(18,'no')">✗ No</button>
+    </div>
+  </div>
+</div>
+
+<div class="q-item" id="qi-19">
+  <div class="q-header" onclick="toggleQ(19)">
+    <span class="q-num-badge">20</span>
+    <span class="q-text-label">Cosa fu l'Index librorum prohibitorum e quali categorie di testi colpì?</span>
+    <span class="q-chevron">▼</span>
+  </div>
+  <div class="q-answer">
+    <div class="answer-label">Risposta</div>
+    <div class="answer-text">Istituito da Paolo IV nel 1559: un elenco ufficiale di testi la cui lettura o possesso era vietata ai cattolici, pena il rischio di un processo per eresia. I libri proibiti venivano sequestrati e bruciati. Colpì gli scritti dei riformatori protestanti e le Bibbie in volgare, ma anche opere ben lontane dall'eresia: il Decameron di Boccaccio, gli scritti di Machiavelli, persino le opere di Erasmo. Nel 1571 fu istituita una Congregazione apposita per aggiornare i divieti. L'Indice rimase in vigore, con successive revisioni, fino al 1966.</div>
+    <div class="eval-row"><span class="eval-label">L'ho saputa?</span>
+      <button class="eval-btn btn-yes" onclick="setEval(19,'yes')">✓ Sì</button>
+      <button class="eval-btn btn-part" onclick="setEval(19,'part')">~ In parte</button>
+      <button class="eval-btn btn-no" onclick="setEval(19,'no')">✗ No</button>
+    </div>
+  </div>
+</div>
+
+<div class="q-item" id="qi-20">
+  <div class="q-header" onclick="toggleQ(20)">
+    <span class="q-num-badge">21</span>
+    <span class="q-text-label">In cosa differiva l'Inquisizione romana dall'Inquisizione spagnola per struttura e rapporto con il potere?</span>
+    <span class="q-chevron">▼</span>
+  </div>
+  <div class="q-answer">
+    <div class="answer-label">Risposta</div>
+    <div class="answer-text">L'Inquisizione spagnola era attiva dal Quattrocento, profondamente legata alla Reconquista e sotto il controllo diretto della corona. Quella romana, istituita da Paolo III nel 1542 con la bolla Licet ab initio, rispondeva direttamente al papa — non ai sovrani — e rivendicava giurisdizione assoluta su tutta la penisola italiana, scavalcando i tribunali civili degli Stati. Questo produsse tensioni ricorrenti con Venezia e Lucca. Entrambe ricorrevano alla tortura e al rogo, ma la storiografia ha mostrato che i tribunali romani e spagnoli applicavano procedure più rigorose e condannavano a morte con minore frequenza rispetto ai tribunali civili del Nord Europa.</div>
+    <div class="eval-row"><span class="eval-label">L'ho saputa?</span>
+      <button class="eval-btn btn-yes" onclick="setEval(20,'yes')">✓ Sì</button>
+      <button class="eval-btn btn-part" onclick="setEval(20,'part')">~ In parte</button>
+      <button class="eval-btn btn-no" onclick="setEval(20,'no')">✗ No</button>
+    </div>
+  </div>
+</div>
+
+<div class="q-item" id="qi-21">
+  <div class="q-header" onclick="toggleQ(21)">
+    <span class="q-num-badge">22</span>
+    <span class="q-text-label">Qual è la tesi di Max Weber sul rapporto tra calvinismo e capitalismo, e quali sono le principali obiezioni storiografiche?</span>
+    <span class="q-chevron">▼</span>
+  </div>
+  <div class="q-answer">
+    <div class="answer-label">Risposta</div>
+    <div class="answer-text">Weber (1905): la dottrina calvinista della predestinazione generò un'angoscia esistenziale che spinse i fedeli a cercare segni dell'elezione nel successo professionale, producendo un'etica dell'ascesi intramondana — lavoro come vocazione, profitto come gloria di Dio — che fu la matrice culturale del capitalismo. Obiezioni: Tawney invertì la causalità (il capitalismo trovò nel calvinismo una giustificazione, non il contrario); Braudel mostrò che le pratiche capitaliste erano fiorite in ambienti cattolici italiani e fiamminghi prima del calvinismo; Trevor-Roper osservò che le regioni più dinamiche del Cinquecento erano state a lungo cattoliche.</div>
+    <div class="eval-row"><span class="eval-label">L'ho saputa?</span>
+      <button class="eval-btn btn-yes" onclick="setEval(21,'yes')">✓ Sì</button>
+      <button class="eval-btn btn-part" onclick="setEval(21,'part')">~ In parte</button>
+      <button class="eval-btn btn-no" onclick="setEval(21,'no')">✗ No</button>
+    </div>
+  </div>
+</div>
+
+<div class="q-item" id="qi-22">
+  <div class="q-header" onclick="toggleQ(22)">
+    <span class="q-num-badge">23</span>
+    <span class="q-text-label">In che cosa consiste la distinzione proposta da Hubert Jedin tra Gegenreformation e Katholische Reform?</span>
+    <span class="q-chevron">▼</span>
+  </div>
+  <div class="q-answer">
+    <div class="answer-label">Risposta</div>
+    <div class="answer-text">Jedin (Storia del Concilio di Trento, 1949-1975) propose di distinguere due fenomeni storicamente distinti: la Gegenreformation, ossia la risposta offensiva e repressiva alla Riforma protestante, che guardava al nemico esterno; e la Katholische Reform, una riforma cattolica con radici proprie nel tardo Quattrocento — l'Osservanza francescana, la Devotio moderna, i circoli di umanisti cristiani — che sarebbe maturata indipendentemente da Lutero. Confonderle, secondo Jedin, significa ridurre un complesso processo di rinnovamento spirituale a una mera reazione difensiva.</div>
+    <div class="eval-row"><span class="eval-label">L'ho saputa?</span>
+      <button class="eval-btn btn-yes" onclick="setEval(22,'yes')">✓ Sì</button>
+      <button class="eval-btn btn-part" onclick="setEval(22,'part')">~ In parte</button>
+      <button class="eval-btn btn-no" onclick="setEval(22,'no')">✗ No</button>
+    </div>
+  </div>
+</div>
+
+<div class="q-item" id="qi-23">
+  <div class="q-header" onclick="toggleQ(23)">
+    <span class="q-num-badge">24</span>
+    <span class="q-text-label">Come ha risposto la storiografia recente all'immagine tradizionale dell'Inquisizione come macchina di terrore sistematico?</span>
+    <span class="q-chevron">▼</span>
+  </div>
+  <div class="q-answer">
+    <div class="answer-label">Risposta</div>
+    <div class="answer-text">L'apertura degli archivi inquisitoriali nel secondo Novecento ha permesso di rivedere i dati: Kamen calcolò che le esecuzioni dell'Inquisizione spagnola furono nell'ordine delle migliaia su tre secoli; Henningsen mostrò che su circa quarantamila processi per stregoneria le condanne a morte furono meno di duecento — percentuale irrisoria rispetto ai tribunali civili del Nord Europa. Tuttavia Prosperi (Tribunali della coscienza) ha spostato l'attenzione dal numero dei roghi al sistema di controllo capillare sulle coscienze — confessione, rete parrocchiale, Indice — che costituiva la vera violenza strutturale dell'Inquisizione.</div>
+    <div class="eval-row"><span class="eval-label">L'ho saputa?</span>
+      <button class="eval-btn btn-yes" onclick="setEval(23,'yes')">✓ Sì</button>
+      <button class="eval-btn btn-part" onclick="setEval(23,'part')">~ In parte</button>
+      <button class="eval-btn btn-no" onclick="setEval(23,'no')">✗ No</button>
+    </div>
+  </div>
+</div>
+
+</div>
+<div class="reset-wrap">
+  <button class="reset-btn" onclick="resetAll()">↺ Azzera autovalutazione</button>
+</div>
+
+<script>
+var evals={};
+var counts={yes:0,part:0,no:0};
+var total=24;
+
+function toggleQ(i){
+  var item=document.getElementById('qi-'+i);
+  item.classList.toggle('open');
+}
+
+function setEval(i,val){
+  var item=document.getElementById('qi-'+i);
+  var prev=evals[i];
+  if(prev){
+    counts[prev]--;
+    item.classList.remove('eval-'+prev);
+    item.querySelectorAll('.eval-btn').forEach(function(b){b.classList.remove('active');});
+  }
+  evals[i]=val;
+  counts[val]++;
+  item.classList.add('eval-'+val);
+  item.querySelector('.btn-'+val).classList.add('active');
+  updateDash();
+}
+
+function updateDash(){
+  document.getElementById('cnt-yes').textContent=counts.yes;
+  document.getElementById('cnt-part').textContent=counts.part;
+  document.getElementById('cnt-no').textContent=counts.no;
+  document.getElementById('cnt-open').textContent=total-counts.yes-counts.part-counts.no;
+}
+
+function resetAll(){
+  evals={};counts={yes:0,part:0,no:0};
+  for(var i=0;i<total;i++){
+    var item=document.getElementById('qi-'+i);
+    item.classList.remove('eval-yes','eval-part','eval-no','open');
+    item.querySelectorAll('.eval-btn').forEach(function(b){b.classList.remove('active');});
+  }
+  updateDash();
+}
+</script>
+</body>
+</html>
