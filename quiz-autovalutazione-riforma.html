@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz di autovalutazione — Riforma, impero e Controriforma</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Georgia,'Times New Roman',serif;background:#FAF7F2;color:#2C2C2A;min-height:100vh}
+.header{background:#2C2C2A;padding:1.4rem 2.5rem;border-bottom:4px solid #8B7355}
+.header-title{font-size:1.15rem;font-weight:normal;color:#F0EBE0}
+.header-title em{color:#C2A882;font-style:italic}
+.header-sub{font-family:'Gill Sans','Gill Sans MT',Calibri,sans-serif;font-size:0.78rem;color:#888070;margin-top:0.35rem}
+.instructions{background:#F5F0E8;border-bottom:1px solid #D4C9B8;padding:0.7rem 2.5rem;font-family:'Gill Sans','Gill Sans MT',Calibri,sans-serif;font-size:0.8rem;color:#5C4A2A;line-height:1.55}
+.instructions strong{color:#2C2C2A}
+.dashboard{background:#FFFDF8;border-bottom:1px solid #D4C9B8;padding:0.65rem 2.5rem;display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap}
+.dash-label{font-family:'Gill Sans','Gill Sans MT',Calibri,sans-serif;font-size:0.75rem;color:#888070;text-transform:uppercase;letter-spacing:0.05em}
+.dash-counters{display:flex;gap:1rem}
+.dash-item{display:flex;align-items:center;gap:5px;font-family:'Gill Sans','Gill Sans MT',Calibri,sans-serif;font-size:0.8rem}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+.dot-correct{background:#4A6741}
+.dot-wrong{background:#7A2E1A}
+.dot-unanswered{background:#C8BBA8}
+.sections-nav{padding:0.6rem 2.5rem;display:flex;gap:0.5rem;flex-wrap:wrap;border-bottom:1px solid #D4C9B8;background:#FFFDF8}
+.sec-tab{font-family:'Gill Sans','Gill Sans MT',Calibri,sans-serif;font-size:0.75rem;padding:4px 12px;border-radius:20px;border:1.5px solid #C8BBA8;background:transparent;color:#888070;cursor:pointer;transition:all 0.18s}
+.sec-tab.active{background:#8B7355;border-color:#8B7355;color:#fff}
+.sec-tab.completed{border-color:#4A6741;color:#4A6741}
+.section-block{display:none;padding:1.5rem 2.5rem}
+.section-block.active{display:block}
+.section-title{font-size:1rem;font-weight:normal;color:#2C2C2A;margin-bottom:0.3rem;border-bottom:2px solid #8B7355;padding-bottom:0.4rem;display:flex;align-items:center;gap:0.6rem}
+.section-period{font-family:'Gill Sans','Gill Sans MT',Calibri,sans-serif;font-size:0.75rem;color:#8B7355;font-style:italic}
+.section-score{margin-left:auto;font-family:'Gill Sans','Gill Sans MT',Calibri,sans-serif;font-size:0.78rem;color:#888070}
+.q-block{margin:1.2rem 0;border:1px solid #D4C9B8;border-radius:6px;overflow:hidden;background:#fff}
+.q-text{padding:0.85rem 1rem;font-size:0.9rem;line-height:1.6;color:#2C2C2A}
+.q-num{font-family:'Gill Sans','Gill Sans MT',Calibri,sans-serif;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.07em;color:#8B7355;display:block;margin-bottom:0.3rem}
+.q-type{font-family:'Gill Sans','Gill Sans MT',Calibri,sans-serif;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.06em;color:#B0A090;margin-left:0.5rem}
+.options{padding:0 1rem 0.85rem;display:flex;flex-direction:column;gap:0.4rem}
+.opt-btn{font-family:'Gill Sans','Gill Sans MT',Calibri,sans-serif;font-size:0.83rem;text-align:left;padding:0.5rem 0.85rem;border-radius:5px;border:1.5px solid #D4C9B8;background:#FAFAF8;cursor:pointer;transition:all 0.15s;color:#2C2C2A;line-height:1.45}
+.opt-btn:hover:not(:disabled){background:#F5F0E8;border-color:#8B7355}
+.opt-btn:disabled{cursor:default}
+.opt-btn.correct{background:#EDF4EB;border-color:#4A6741;color:#2A3D28}
+.opt-btn.wrong{background:#F9EDEB;border-color:#7A2E1A;color:#4A1A10}
+.opt-btn.reveal{background:#EDF4EB;border-color:#4A6741;color:#2A3D28;opacity:0.7}
+.feedback{display:none;margin:0 1rem 0.85rem;padding:0.6rem 0.85rem;border-radius:5px;font-family:'Gill Sans','Gill Sans MT',Calibri,sans-serif;font-size:0.8rem;line-height:1.55;animation:fadeIn 0.2s ease}
+.feedback.show{display:block}
+.feedback.fb-correct{background:#EDF4EB;border-left:3px solid #4A6741;color:#2A3D28}
+.feedback.fb-wrong{background:#F9EDEB;border-left:3px solid #7A2E1A;color:#4A1A10}
+.section-result{display:none;margin-top:1.2rem;padding:1rem 1.2rem;border-radius:8px;border:1px solid #D4C9B8;background:#F5F0E8;font-family:'Gill Sans','Gill Sans MT',Calibri,sans-serif}
+.section-result.show{display:block}
+.sr-score{font-size:1.1rem;color:#2C2C2A;margin-bottom:0.3rem}
+.sr-msg{font-size:0.82rem;color:#5C4A2A;line-height:1.5}
+.sr-next{margin-top:0.75rem;background:#8B7355;color:#fff;border:none;border-radius:5px;padding:0.5rem 1.2rem;font-family:'Gill Sans','Gill Sans MT',Calibri,sans-serif;font-size:0.82rem;cursor:pointer;transition:background 0.15s}
+.sr-next:hover{background:#7A6245}
+.final-result{display:none;padding:1.5rem 2.5rem}
+.final-result.show{display:block}
+.fr-title{font-size:1.1rem;font-weight:normal;color:#2C2C2A;margin-bottom:1rem;border-bottom:2px solid #8B7355;padding-bottom:0.4rem}
+.fr-total{font-size:1.5rem;color:#8B7355;margin-bottom:0.4rem}
+.fr-msg{font-family:'Gill Sans','Gill Sans MT',Calibri,sans-serif;font-size:0.88rem;color:#5C4A2A;line-height:1.6;margin-bottom:1rem}
+.fr-bars{display:flex;flex-direction:column;gap:0.5rem;margin-bottom:1.2rem}
+.fr-bar-row{display:flex;align-items:center;gap:0.8rem}
+.fr-bar-label{font-family:'Gill Sans','Gill Sans MT',Calibri,sans-serif;font-size:0.75rem;color:#5C4A2A;width:160px;flex-shrink:0}
+.fr-bar-bg{flex:1;height:10px;border-radius:5px;background:#D4C9B8;overflow:hidden}
+.fr-bar-fill{height:100%;border-radius:5px;background:#8B7355;transition:width 0.5s ease}
+.fr-bar-val{font-family:'Gill Sans','Gill Sans MT',Calibri,sans-serif;font-size:0.75rem;color:#8B7355;width:32px;text-align:right}
+.restart-btn{font-family:'Gill Sans','Gill Sans MT',Calibri,sans-serif;font-size:0.82rem;padding:0.5rem 1.4rem;border-radius:5px;border:1.5px solid #C8BBA8;background:transparent;color:#888070;cursor:pointer;transition:all 0.18s}
+.restart-btn:hover{border-color:#8B7355;color:#5C4A2A;background:#F5F0E8}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-title"><em>Quiz di autovalutazione</em> — Riforma, impero e Controriforma</div>
+  <div class="header-sub">20 domande in 4 sezioni · fattuali, di comprensione, interpretative</div>
+</div>
+<div class="instructions">
+  <strong>Come usare questo quiz.</strong> Seleziona una sezione dalla barra in alto e rispondi alle domande a scelta multipla. Dopo ogni risposta riceverai un feedback immediato. Il punteggio di sezione appare al completamento. Puoi navigare liberamente tra le sezioni.
+</div>
+<div class="dashboard">
+  <span class="dash-label">Avanzamento</span>
+  <div class="dash-counters">
+    <div class="dash-item"><span class="dot dot-correct"></span><span id="cnt-correct">0</span> corrette</div>
+    <div class="dash-item"><span class="dot dot-wrong"></span><span id="cnt-wrong">0</span> errate</div>
+    <div class="dash-item"><span class="dot dot-unanswered"></span><span id="cnt-open">20</span> da rispondere</div>
+  </div>
+</div>
+<div class="sections-nav">
+  <button class="sec-tab active" onclick="showSection(0)" id="tab-0">1. La crisi della Chiesa</button>
+  <button class="sec-tab" onclick="showSection(1)" id="tab-1">2. Lutero e la rottura</button>
+  <button class="sec-tab" onclick="showSection(2)" id="tab-2">3. La Riforma si moltiplica</button>
+  <button class="sec-tab" onclick="showSection(3)" id="tab-3">4. La risposta cattolica</button>
+</div>
+
+<div id="quiz-body">
+<!-- SEZIONE 1 -->
+<div class="section-block active" id="sec-0">
+  <div class="section-title">La crisi della Chiesa di Roma <span class="section-period">contesto e premesse della Riforma</span><span class="section-score" id="score-0"></span></div>
+
+  <div class="q-block" id="q-0-0">
+    <div class="q-text"><span class="q-num">Domanda 1 <span class="q-type">fattuale</span></span>Nel 1514 papa Leone X indisse un'indulgenza plenaria straordinaria con lo scopo principale di:</div>
+    <div class="options">
+      <button class="opt-btn" onclick="answer(0,0,0,false)">Finanziare una crociata contro i Turchi ottomani</button>
+      <button class="opt-btn" onclick="answer(0,0,1,true)">Finanziare la ricostruzione della basilica di San Pietro a Roma</button>
+      <button class="opt-btn" onclick="answer(0,0,2,false)">Ripianare i debiti contratti con i banchieri Fugger dalla Santa Sede</button>
+      <button class="opt-btn" onclick="answer(0,0,3,false)">Sostenere le spese del Concilio Lateranense V</button>
+    </div>
+    <div class="feedback" id="fb-0-0"></div>
+  </div>
+
+  <div class="q-block" id="q-0-1">
+    <div class="q-text"><span class="q-num">Domanda 2 <span class="q-type">comprensione</span></span>Perché le critiche di Wycliffe e Hus alla Chiesa non produssero una rottura stabile, mentre quelle di Lutero sì?</div>
+    <div class="options">
+      <button class="opt-btn" onclick="answer(0,1,0,false)">Perché Wycliffe e Hus non avevano formulato critiche teologiche sistematiche</button>
+      <button class="opt-btn" onclick="answer(0,1,1,false)">Perché la Chiesa medievale era più autorevole di quella rinascimentale</button>
+      <button class="opt-btn" onclick="answer(0,1,2,true)">Perché nel Cinquecento la stampa, la frammentazione politica dell'Impero e gli interessi dei principi crearono condizioni che un secolo prima non esistevano</button>
+      <button class="opt-btn" onclick="answer(0,1,3,false)">Perché Hus e Wycliffe non avevano il sostegno di alcun principe tedesco</button>
+    </div>
+    <div class="feedback" id="fb-0-1"></div>
+  </div>
+
+  <div class="q-block" id="q-0-2">
+    <div class="q-text"><span class="q-num">Domanda 3 <span class="q-type">fattuale</span></span>La simonia indica:</div>
+    <div class="options">
+      <button class="opt-btn" onclick="answer(0,2,0,false)">La pratica di assegnare cariche ecclesiastiche ai propri familiari</button>
+      <button class="opt-btn" onclick="answer(0,2,1,true)">La compravendita di cariche, sacramenti o beni spirituali ecclesiastici</button>
+      <button class="opt-btn" onclick="answer(0,2,2,false)">L'obbligo per i vescovi di risiedere lontano dalle proprie diocesi</button>
+      <button class="opt-btn" onclick="answer(0,2,3,false)">La pratica di cumulare più benefici ecclesiastici nella stessa persona</button>
+    </div>
+    <div class="feedback" id="fb-0-2"></div>
+  </div>
+
+  <div class="q-block" id="q-0-3">
+    <div class="q-text"><span class="q-num">Domanda 4 <span class="q-type">comprensione</span></span>Quale fu il ruolo di Johann Tetzel nella vicenda che portò alle 95 Tesi di Lutero?</div>
+    <div class="options">
+      <button class="opt-btn" onclick="answer(0,3,0,false)">Fu il teologo che redigesse la bolla di condanna delle tesi luterane</button>
+      <button class="opt-btn" onclick="answer(0,3,1,false)">Fu il nunzio papale incaricato di processare Lutero per eresia</button>
+      <button class="opt-btn" onclick="answer(0,3,2,true)">Fu il predicatore domenicano che organizzò la vendita delle indulgenze in Germania promettendo la remissione immediata dei peccati senza necessità di pentimento interiore</button>
+      <button class="opt-btn" onclick="answer(0,3,3,false)">Fu il cancelliere di Alberto di Hohenzollern che gestì i proventi della campagna delle indulgenze</button>
+    </div>
+    <div class="feedback" id="fb-0-3"></div>
+  </div>
+
+  <div class="q-block" id="q-0-4">
+    <div class="q-text"><span class="q-num">Domanda 5 <span class="q-type">interpretativa</span></span>Quale delle seguenti affermazioni descrive meglio la natura della crisi della Chiesa alla vigilia della Riforma?</div>
+    <div class="options">
+      <button class="opt-btn" onclick="answer(0,4,0,false)">Una crisi improvvisa causata dalla corruzione morale di alcuni singoli papi</button>
+      <button class="opt-btn" onclick="answer(0,4,1,false)">Una crisi puramente finanziaria dovuta alle spese della ricostruzione di San Pietro</button>
+      <button class="opt-btn" onclick="answer(0,4,2,true)">Una crisi strutturale di lungo periodo: un sistema istituzionale che aveva perso la capacità di rispondere alle domande religiose del tempo, non solo corruzione morale</button>
+      <button class="opt-btn" onclick="answer(0,4,3,false)">Una crisi di autorità limitata ai vertici della gerarchia, che non riguardava il clero locale</button>
+    </div>
+    <div class="feedback" id="fb-0-4"></div>
+  </div>
+
+  <div class="section-result" id="res-0">
+    <div class="sr-score" id="sr-score-0"></div>
+    <div class="sr-msg" id="sr-msg-0"></div>
+    <button class="sr-next" onclick="showSection(1)">Sezione successiva →</button>
+  </div>
+</div>
+
+<!-- SEZIONE 2 -->
+<div class="section-block" id="sec-1">
+  <div class="section-title">Lutero e la rottura <span class="section-period">1517–1521</span><span class="section-score" id="score-1"></span></div>
+
+  <div class="q-block" id="q-1-0">
+    <div class="q-text"><span class="q-num">Domanda 6 <span class="q-type">fattuale</span></span>Quale evento segna convenzionalmente l'inizio della Riforma protestante?</div>
+    <div class="options">
+      <button class="opt-btn" onclick="answer(1,0,0,false)">La pubblicazione dell'Institutio Christianae Religionis di Calvino nel 1536</button>
+      <button class="opt-btn" onclick="answer(1,0,1,false)">La scomunica di Lutero da parte di Leone X nel gennaio 1521</button>
+      <button class="opt-btn" onclick="answer(1,0,2,true)">L'affissione delle 95 Tesi da parte di Lutero il 31 ottobre 1517 a Wittenberg</button>
+      <button class="opt-btn" onclick="answer(1,0,3,false)">La Dieta di Worms dell'aprile 1521</button>
+    </div>
+    <div class="feedback" id="fb-1-0"></div>
+  </div>
+
+  <div class="q-block" id="q-1-1">
+    <div class="q-text"><span class="q-num">Domanda 7 <span class="q-type">comprensione</span></span>Perché il processo per eresia aperto contro Lutero nel 1518 procedette con insolita cautela?</div>
+    <div class="options">
+      <button class="opt-btn" onclick="answer(1,1,0,true)">Per ragioni politiche: Leone X non poteva inimicarsi Federico il Saggio di Sassonia, protettore di Lutero, nella delicata fase dell'elezione imperiale</button>
+      <button class="opt-btn" onclick="answer(1,1,1,false)">Perché le 95 Tesi non contenevano ancora posizioni tecnicamente eretiche</button>
+      <button class="opt-btn" onclick="answer(1,1,2,false)">Perché Carlo V aveva chiesto esplicitamente alla curia di non procedere contro Lutero</button>
+      <button class="opt-btn" onclick="answer(1,1,3,false)">Perché l'Inquisizione romana non era ancora stata istituita</button>
+    </div>
+    <div class="feedback" id="fb-1-1"></div>
+  </div>
+
+  <div class="q-block" id="q-1-2">
+    <div class="q-text"><span class="q-num">Domanda 8 <span class="q-type">comprensione</span></span>Quale fu la risposta di Lutero alla bolla Exsurge Domine con cui Leone X lo condannava nel 1520?</div>
+    <div class="options">
+      <button class="opt-btn" onclick="answer(1,2,0,false)">Presentò una formale richiesta di riconciliazione con la curia romana</button>
+      <button class="opt-btn" onclick="answer(1,2,1,false)">Fuggì in Sassonia sotto la protezione di Federico il Saggio senza rispondere</button>
+      <button class="opt-btn" onclick="answer(1,2,2,true)">Bruciò pubblicamente la bolla sulla piazza di Wittenberg insieme ai volumi di diritto canonico</button>
+      <button class="opt-btn" onclick="answer(1,2,3,false)">Appellandosi a un concilio generale della Chiesa per la revisione della condanna</button>
+    </div>
+    <div class="feedback" id="fb-1-2"></div>
+  </div>
+
+  <div class="q-block" id="q-1-3">
+    <div class="q-text"><span class="q-num">Domanda 9 <span class="q-type">fattuale</span></span>Cosa stabilì l'Editto di Worms dell'8 maggio 1521?</div>
+    <div class="options">
+      <button class="opt-btn" onclick="answer(1,3,0,false)">Che Lutero era libero di predicare nei territori dell'Impero ma non in quelli della Chiesa</button>
+      <button class="opt-btn" onclick="answer(1,3,1,true)">Che Lutero era condannato come eretico e messo al bando dall'Impero</button>
+      <button class="opt-btn" onclick="answer(1,3,2,false)">Che la questione luterana sarebbe stata deferita a un concilio generale</button>
+      <button class="opt-btn" onclick="answer(1,3,3,false)">Che i principi tedeschi potevano scegliere liberamente la confessione dei loro territori</button>
+    </div>
+    <div class="feedback" id="fb-1-3"></div>
+  </div>
+
+  <div class="q-block" id="q-1-4">
+    <div class="q-text"><span class="q-num">Domanda 10 <span class="q-type">interpretativa</span></span>La posizione di Lutero alla Dieta di Worms — «ritratterò se qualcuno mi confuterà con le Scritture o la retta ragione» — aveva una portata che andava oltre la teologia perché:</div>
+    <div class="options">
+      <button class="opt-btn" onclick="answer(1,4,0,false)">Metteva in discussione la legittimità dell'Impero come istituzione politica</button>
+      <button class="opt-btn" onclick="answer(1,4,1,true)">Affermava il primato della coscienza individuale su qualsiasi autorità istituzionale, anticipando la separazione tra foro interiore e obbedienza esterna</button>
+      <button class="opt-btn" onclick="answer(1,4,2,false)">Rivendicava per i principi tedeschi il diritto di definire la religione dei propri sudditi</button>
+      <button class="opt-btn" onclick="answer(1,4,3,false)">Negava esplicitamente la sovranità temporale del papato sullo Stato pontificio</button>
+    </div>
+    <div class="feedback" id="fb-1-4"></div>
+  </div>
+
+  <div class="section-result" id="res-1">
+    <div class="sr-score" id="sr-score-1"></div>
+    <div class="sr-msg" id="sr-msg-1"></div>
+    <button class="sr-next" onclick="showSection(2)">Sezione successiva →</button>
+  </div>
+</div>
+
+<!-- SEZIONE 3 -->
+<div class="section-block" id="sec-2">
+  <div class="section-title">La Riforma si moltiplica <span class="section-period">Calvino, anabattisti, scisma anglicano</span><span class="section-score" id="score-2"></span></div>
+
+  <div class="q-block" id="q-2-0">
+    <div class="q-text"><span class="q-num">Domanda 11 <span class="q-type">fattuale</span></span>Su quale questione teologica Lutero e Zwingli non riuscirono a trovare un accordo al Colloquio di Marburgo nel 1529?</div>
+    <div class="options">
+      <button class="opt-btn" onclick="answer(2,0,0,false)">La dottrina della predestinazione</button>
+      <button class="opt-btn" onclick="answer(2,0,1,false)">Il valore del battesimo infantile</button>
+      <button class="opt-btn" onclick="answer(2,0,2,true)">La presenza reale di Cristo nell'eucaristia: Lutero sosteneva la consustanziazione, Zwingli la vedeva come pura commemorazione simbolica</button>
+      <button class="opt-btn" onclick="answer(2,0,3,false)">Il ruolo dei principi nella guida della chiesa territoriale</button>
+    </div>
+    <div class="feedback" id="fb-2-0"></div>
+  </div>
+
+  <div class="q-block" id="q-2-1">
+    <div class="q-text"><span class="q-num">Domanda 12 <span class="q-type">comprensione</span></span>Qual era la caratteristica principale del modello di chiesa istituito da Calvino a Ginevra?</div>
+    <div class="options">
+      <button class="opt-btn" onclick="answer(2,1,0,false)">Il governo episcopale affidato a vescovi eletti dalla comunità dei fedeli</button>
+      <button class="opt-btn" onclick="answer(2,1,1,false)">La completa separazione tra potere religioso e potere civile</button>
+      <button class="opt-btn" onclick="answer(2,1,2,true)">Il Concistoro — organo di pastori e anziani laici — che esercitava una sorveglianza capillare sulla vita morale dei cittadini, unendo potere religioso e civile</button>
+      <button class="opt-btn" onclick="answer(2,1,3,false)">L'assemblea democratica di tutti i fedeli come organo sovrano della comunità</button>
+    </div>
+    <div class="feedback" id="fb-2-1"></div>
+  </div>
+
+  <div class="q-block" id="q-2-2">
+    <div class="q-text"><span class="q-num">Domanda 13 <span class="q-type">fattuale</span></span>Quale fu la causa diretta dello scisma anglicano del 1534?</div>
+    <div class="options">
+      <button class="opt-btn" onclick="answer(2,2,0,false)">L'adesione di Enrico VIII alla dottrina luterana della giustificazione per sola fede</button>
+      <button class="opt-btn" onclick="answer(2,2,1,false)">Il rifiuto del parlamento inglese di versare le decime a Roma</button>
+      <button class="opt-btn" onclick="answer(2,2,2,true)">Il rifiuto del papa di annullare il matrimonio di Enrico VIII con Caterina d'Aragona, necessario al re per ottenere un erede maschio</button>
+      <button class="opt-btn" onclick="answer(2,2,3,false)">La diffusione delle idee calviniste tra l'aristocrazia inglese</button>
+    </div>
+    <div class="feedback" id="fb-2-2"></div>
+  </div>
+
+  <div class="q-block" id="q-2-3">
+    <div class="q-text"><span class="q-num">Domanda 14 <span class="q-type">comprensione</span></span>Perché Lutero condannò la Guerra dei contadini del 1524-1525, esortando i principi a reprimerla?</div>
+    <div class="options">
+      <button class="opt-btn" onclick="answer(2,3,0,false)">Perché i contadini avevano attaccato alcune chiese luterane nel corso della rivolta</button>
+      <button class="opt-btn" onclick="answer(2,3,1,true)">Perché aveva bisogno della protezione delle autorità laiche e non era disposto a confondere la libertà spirituale con la sovversione dell'ordine politico</button>
+      <button class="opt-btn" onclick="answer(2,3,2,false)">Perché Thomas Müntzer aveva pubblicamente attaccato la teologia luterana</button>
+      <button class="opt-btn" onclick="answer(2,3,3,false)">Perché la rivolta era guidata da anabattisti che Lutero considerava eretici</button>
+    </div>
+    <div class="feedback" id="fb-2-3"></div>
+  </div>
+
+  <div class="q-block" id="q-2-4">
+    <div class="q-text"><span class="q-num">Domanda 15 <span class="q-type">interpretativa</span></span>Il calvinismo è stato definito da alcuni storici una «religione della resistenza». Guardando alla sua diffusione geografica, questa definizione si giustifica perché:</div>
+    <div class="options">
+      <button class="opt-btn" onclick="answer(2,4,0,false)">Il calvinismo predicava esplicitamente il diritto di ribellarsi alle autorità politiche ingiuste</button>
+      <button class="opt-btn" onclick="answer(2,4,1,false)">Calvino aveva fondato Ginevra come città-rifugio per i protestanti perseguitati in tutta Europa</button>
+      <button class="opt-btn" onclick="answer(2,4,2,true)">Il calvinismo si radicò prevalentemente in aree in conflitto con le monarchie cattoliche — Province Unite contro la Spagna, ugonotti in Francia, Scozia contro l'Inghilterra anglicana — dove si intrecciò con rivendicazioni di autonomia politica</button>
+      <button class="opt-btn" onclick="answer(2,4,3,false)">La dottrina della predestinazione eliminava il timore della morte, rendendo i calvinisti più combattivi in battaglia</button>
+    </div>
+    <div class="feedback" id="fb-2-4"></div>
+  </div>
+
+  <div class="section-result" id="res-2">
+    <div class="sr-score" id="sr-score-2"></div>
+    <div class="sr-msg" id="sr-msg-2"></div>
+    <button class="sr-next" onclick="showSection(3)">Sezione successiva →</button>
+  </div>
+</div>
+
+<!-- SEZIONE 4 -->
+<div class="section-block" id="sec-3">
+  <div class="section-title">La risposta cattolica <span class="section-period">Trento, Gesuiti, Inquisizione</span><span class="section-score" id="score-3"></span></div>
+
+  <div class="q-block" id="q-3-0">
+    <div class="q-text"><span class="q-num">Domanda 16 <span class="q-type">fattuale</span></span>Il Concilio di Trento si svolse tra il:</div>
+    <div class="options">
+      <button class="opt-btn" onclick="answer(3,0,0,false)">1517 e il 1540</button>
+      <button class="opt-btn" onclick="answer(3,0,1,true)">1545 e il 1563</button>
+      <button class="opt-btn" onclick="answer(3,0,2,false)">1540 e il 1555</button>
+      <button class="opt-btn" onclick="answer(3,0,3,false)">1555 e il 1598</button>
+    </div>
+    <div class="feedback" id="fb-3-0"></div>
+  </div>
+
+  <div class="q-block" id="q-3-1">
+    <div class="q-text"><span class="q-num">Domanda 17 <span class="q-type">comprensione</span></span>In che modo il Concilio di Trento rispose alla dottrina luterana della sola Scriptura?</div>
+    <div class="options">
+      <button class="opt-btn" onclick="answer(3,1,0,false)">Vietò la lettura della Bibbia ai laici e ai chierici che non conoscessero il latino</button>
+      <button class="opt-btn" onclick="answer(3,1,1,false)">Riconobbe la Scrittura come fonte primaria ma subordinata all'autorità del papa</button>
+      <button class="opt-btn" onclick="answer(3,1,2,true)">Affermò la pari dignità di Scrittura e Tradizione come fonti della Rivelazione, dichiarò autentica la Vulgata latina e riservò al magistero ecclesiastico l'interpretazione autentica</button>
+      <button class="opt-btn" onclick="answer(3,1,3,false)">Promosse nuove traduzioni della Bibbia nelle lingue nazionali per contrastare le versioni protestanti</button>
+    </div>
+    <div class="feedback" id="fb-3-1"></div>
+  </div>
+
+  <div class="q-block" id="q-3-2">
+    <div class="q-text"><span class="q-num">Domanda 18 <span class="q-type">fattuale</span></span>Qual era il «quarto voto» che distingueva i Gesuiti dagli altri ordini religiosi?</div>
+    <div class="options">
+      <button class="opt-btn" onclick="answer(3,2,0,false)">Il voto di dedicarsi esclusivamente all'educazione dei giovani</button>
+      <button class="opt-btn" onclick="answer(3,2,1,false)">Il voto di povertà assoluta, senza possesso di beni nemmeno collettivi</button>
+      <button class="opt-btn" onclick="answer(3,2,2,true)">Il voto di obbedienza incondizionata al papa, espressa nella formula ignaziana del perinde ac cadaver</button>
+      <button class="opt-btn" onclick="answer(3,2,3,false)">Il voto di svolgere attività missionaria fuori dall'Europa per almeno dieci anni</button>
+    </div>
+    <div class="feedback" id="fb-3-2"></div>
+  </div>
+
+  <div class="q-block" id="q-3-3">
+    <div class="q-text"><span class="q-num">Domanda 19 <span class="q-type">comprensione</span></span>Quale riforma disciplinare del Concilio di Trento affrontava direttamente uno degli abusi più diffusi nella Chiesa pre-riformata?</div>
+    <div class="options">
+      <button class="opt-btn" onclick="answer(3,3,0,false)">La proibizione del matrimonio tra laici e chierici</button>
+      <button class="opt-btn" onclick="answer(3,3,1,false)">Il divieto per i papi di provenire dalle grandi famiglie aristocratiche italiane</button>
+      <button class="opt-btn" onclick="answer(3,3,2,true)">L'obbligo di residenza per vescovi e parroci nelle proprie sedi e il divieto del cumulo dei benefici ecclesiastici</button>
+      <button class="opt-btn" onclick="answer(3,3,3,false)">L'abolizione della vendita delle indulgenze come strumento dottrinale</button>
+    </div>
+    <div class="feedback" id="fb-3-3"></div>
+  </div>
+
+  <div class="q-block" id="q-3-4">
+    <div class="q-text"><span class="q-num">Domanda 20 <span class="q-type">interpretativa</span></span>La storiografia ha discusso se chiamare il processo post-tridentino «Controriforma» o «Riforma cattolica». La seconda definizione è preferita da storici come Hubert Jedin perché:</div>
+    <div class="options">
+      <button class="opt-btn" onclick="answer(3,4,0,false)">Il Concilio di Trento si svolse prima che la Riforma protestante si fosse diffusa in modo significativo</button>
+      <button class="opt-btn" onclick="answer(3,4,1,false)">La Chiesa cattolica non reagì mai direttamente alle posizioni teologiche di Lutero</button>
+      <button class="opt-btn" onclick="answer(3,4,2,true)">Esisteva già prima del 1517 un impulso al rinnovamento spirituale interno alla Chiesa — l'Osservanza francescana, la Devotio moderna, l'umanesimo cristiano — che sarebbe maturato indipendentemente da Lutero</button>
+      <button class="opt-btn" onclick="answer(3,4,3,false)">Il termine «Controriforma» fu coniato dai protestanti come strumento polemico e va perciò rifiutato dalla storiografia scientifica</button>
+    </div>
+    <div class="feedback" id="fb-3-4"></div>
+  </div>
+
+  <div class="section-result" id="res-3">
+    <div class="sr-score" id="sr-score-3"></div>
+    <div class="sr-msg" id="sr-msg-3"></div>
+    <button class="sr-next" onclick="showFinal()">Vedi risultato finale →</button>
+  </div>
+</div>
+</div>
+
+<!-- RISULTATO FINALE -->
+<div class="final-result" id="final-result">
+  <div class="fr-title">Risultato finale</div>
+  <div class="fr-total" id="fr-total"></div>
+  <div class="fr-msg" id="fr-msg"></div>
+  <div class="fr-bars" id="fr-bars"></div>
+  <button class="restart-btn" onclick="restart()">↺ Ricomincia</button>
+</div>
+
+<script>
+var feedbacks = {
+  '0-0': {
+    correct: "Esatto. Nel 1514 Leone X indisse un'indulgenza plenaria straordinaria per finanziare la ricostruzione della basilica di San Pietro. In Germania la gestione fu affidata ad Alberto di Hohenzollern, che si servì di Tetzel per massimizzare gli incassi.",
+    wrong: "Rileggi la sezione 'La crisi della Chiesa di Roma' e il focus 'L'affare delle indulgenze': la ricostruzione di San Pietro è la causa diretta dell'indulgenza del 1514."
+  },
+  '0-1': {
+    correct: "Esatto. La stampa consentì la diffusione capillare delle idee di Lutero; la frammentazione politica dell'Impero impedì a Carlo V di reprimere la Riforma; i principi tedeschi videro nella Riforma un'opportunità politica ed economica. Nessuna di queste condizioni esisteva ai tempi di Hus.",
+    wrong: "Rileggi la sezione introduttiva del capitolo: la domanda chiave non è 'perché la Riforma?', ma 'perché la Riforma riuscì, stavolta?'."
+  },
+  '0-2': {
+    correct: "Esatto. Simonia deriva da Simone Mago, che tentò di comprare il dono dello Spirito Santo. Indica la compravendita di cariche e beni spirituali, praticata a ogni livello della gerarchia con una normalità che rendeva le condanne teoriche poco più che rituali.",
+    wrong: "Rileggi la sezione 'La crisi della Chiesa di Roma': la simonia è distinta dal nepotismo (favoritismo verso i familiari) e dall'absenteismo (assenza dei vescovi dalle diocesi)."
+  },
+  '0-3': {
+    correct: "Esatto. Tetzel organizzò la vendita con i metodi di uno spettacolo itinerante, promettendo la remissione immediata senza necessità di pentimento interiore. Uno dei suoi slogan: 'non appena la moneta cade nella cassetta, l'anima vola in Paradiso'.",
+    wrong: "Rileggi il focus 'L'affare delle indulgenze': Tetzel era un predicatore domenicano incaricato da Alberto di Hohenzollern di gestire la campagna in Germania."
+  },
+  '0-4': {
+    correct: "Esatto. Il testo lo dice esplicitamente: 'Non solo corruzione morale, ma un sistema istituzionale che ha perso la capacità di rispondere alle domande religiose del tempo'. La crisi era strutturale e di lungo periodo.",
+    wrong: "Rileggi l'introduzione alla sezione 'La crisi della Chiesa di Roma': la chiave interpretativa è la distinzione tra corruzione morale individuale e crisi istituzionale sistemica."
+  },
+  '1-0': {
+    correct: "Esatto. Il 31 ottobre 1517 è la data convenzionale dell'inizio della Riforma. Le tesi non erano un manifesto rivoluzionario: erano domande formulate nel linguaggio della disputa universitaria sul fondamento dottrinale delle indulgenze.",
+    wrong: "Rileggi la sezione 'Lutero e la rottura': la data del 31 ottobre 1517 e le 95 Tesi sono il punto di partenza convenzionale della Riforma."
+  },
+  '1-1': {
+    correct: "Esatto. Leone X si opponeva all'elezione di Carlo V come imperatore e non poteva permettersi di inimicarsi Federico il Saggio, uno dei principi elettori. Il processo fu sospeso: Lutero guadagnò tempo decisivo.",
+    wrong: "Rileggi la sezione 'Lutero e la rottura': la lentezza del processo era determinata dal contesto politico dell'elezione imperiale, non da ragioni teologiche."
+  },
+  '1-2': {
+    correct: "Esatto. Lutero rispose bruciando pubblicamente la bolla sulla piazza di Wittenberg, insieme ai volumi di diritto canonico. La scomunica seguì il 3 gennaio 1521.",
+    wrong: "Rileggi la sezione 'Lutero e la rottura': la risposta di Lutero alla bolla Exsurge Domine fu un gesto pubblico di rottura definitiva con Roma."
+  },
+  '1-3': {
+    correct: "Esatto. L'Editto di Worms dell'8 maggio 1521 condannò Lutero come eretico e lo mise al bando dall'Impero. Federico il Saggio organizzò un finto rapimento e lo fece nascondere nel castello di Wartburg.",
+    wrong: "Rileggi la sezione 'Lutero e la rottura': l'Editto di Worms è la risposta imperiale al rifiuto di Lutero di ritrattare alla Dieta."
+  },
+  '1-4': {
+    correct: "Esatto. Rivendicare il primato della coscienza individuale su qualsiasi autorità istituzionale significava che nessun potere umano poteva costringere il foro interiore. Era una posizione moderna che anticipava la libertà di coscienza come categoria giuridica.",
+    wrong: "Rileggi la sezione dedicata alla Dieta di Worms nella simulazione interattiva e nel testo: la portata del gesto di Lutero andava oltre la disputa teologica, toccando il principio dell'autorità."
+  },
+  '2-0': {
+    correct: "Esatto. Al Colloquio di Marburgo (1529) Lutero e Zwingli non riuscirono a trovare un accordo sull'eucaristia: Lutero sosteneva la consustanziazione (il corpo di Cristo presente 'in, con e sotto' il pane), Zwingli la interpretava come pura commemorazione simbolica.",
+    wrong: "Rileggi la sezione 'Zwingli e Zurigo' nella parte 'La Riforma si moltiplica': il Colloquio di Marburgo naufragò proprio sulla questione della presenza reale nell'eucaristia."
+  },
+  '2-1': {
+    correct: "Esatto. Il Concistoro era l'organo di governo di Ginevra calvinista: composto da pastori e anziani laici, esercitava una sorveglianza capillare sulla vita morale dei cittadini. Era vietato ballare, giocare d'azzardo, indossare ornamenti.",
+    wrong: "Rileggi la sezione 'Ginevra come laboratorio' nella parte 'La Riforma si moltiplica': il Concistoro è l'istituzione chiave del modello ginevrino."
+  },
+  '2-2': {
+    correct: "Esatto. Enrico VIII aveva bisogno di un erede maschio e il papa non poteva concedere l'annullamento del matrimonio con Caterina d'Aragona per ragioni politiche (Caterina era zia di Carlo V). L'Atto di Supremazia del 1534 dichiarò il re capo supremo della Chiesa d'Inghilterra.",
+    wrong: "Rileggi la sezione 'Lo scisma anglicano': la rottura inglese ebbe origini politiche e dinastiche, non teologiche."
+  },
+  '2-3': {
+    correct: "Esatto. Lutero aveva bisogno della protezione dei principi e non era disposto a confondere la libertà spirituale con la sovversione dell'ordine sociale. Scrisse il pamphlet 'Contro le empie e scellerate bande dei contadini' esortando i principi a reprimere la rivolta.",
+    wrong: "Rileggi la sezione 'La diffusione della Riforma in Germania': la condanna di Lutero della Guerra dei contadini fu insieme politica e teologica."
+  },
+  '2-4': {
+    correct: "Esatto. Il calvinismo si diffuse principalmente in aree in conflitto con le monarchie cattoliche: Province Unite in rivolta contro la Spagna, ugonotti francesi come minoranza organizzata, Scozia in tensione con l'Inghilterra. Il modello presbiteriano si adattava a contesti non monarchici o di resistenza.",
+    wrong: "Rileggi la sezione 'Calvino e Ginevra' e la cartina della diffusione della Riforma: la distribuzione geografica del calvinismo rivela una correlazione con le aree di conflitto con le monarchie cattoliche."
+  },
+  '3-0': {
+    correct: "Esatto. Il Concilio di Trento fu convocato da Paolo III Farnese nel 1545 e si concluse nel 1563. I lavori si protrassero per quasi vent'anni con lunghe interruzioni.",
+    wrong: "Rileggi la sezione 'La risposta cattolica': le date del Concilio di Trento (1545-1563) sono un riferimento cronologico fondamentale del capitolo."
+  },
+  '3-1': {
+    correct: "Esatto. Trento (sessione IV, 1546) affermò la pari dignità di Scrittura e Tradizione, dichiarò autentica la Vulgata latina e riservò al magistero ecclesiastico l'interpretazione autentica. Una risposta diretta e sistematica alla sola Scriptura luterana.",
+    wrong: "Rileggi la sezione 'La risposta dottrinale' nel testo: Trento rispose sistematicamente a ciascuno dei principi protestanti, inclusa la questione dell'autorità scritturale."
+  },
+  '3-2': {
+    correct: "Esatto. A differenza degli altri ordini, i Gesuiti affiancavano ai voti tradizionali un quarto voto: l'obbedienza incondizionata al pontefice, espressa nella formula ignaziana del perinde ac cadaver — con la stessa docilità di un cadavere.",
+    wrong: "Rileggi la sezione dedicata alla Compagnia di Gesù: il quarto voto è la caratteristica distintiva dei Gesuiti rispetto agli altri ordini religiosi."
+  },
+  '3-3': {
+    correct: "Esatto. L'obbligo di residenza e il divieto del cumulo dei benefici affrontavano direttamente due degli abusi più denunciati: i vescovi che vivevano lontano dalle diocesi e il clero che accumulava più benefici senza curarsi pastoralmente di nessuno.",
+    wrong: "Rileggi la sezione 'La riforma disciplinare': le misure di Trento rispondevano agli abusi che avevano alimentato il malcontento dei fedeli prima della Riforma."
+  },
+  '3-4': {
+    correct: "Esatto. Jedin distingueva tra Gegenreformation (reazione anti-protestante) e Katholische Reform (riforma con radici proprie): l'Osservanza francescana, la Devotio moderna, i circoli umanisti cristiani esistevano già prima del 1517 e suggeriscono che la riforma interna non nacque solo in risposta a Lutero.",
+    wrong: "Rileggi la questione controversa 'La Controriforma fu davvero solo contro?' e la distinzione di Jedin tra Gegenreformation e Katholische Reform."
+  }
+};
+
+var state = {
+  answers: {},
+  sectionScores: [0,0,0,0],
+  sectionAnswered: [0,0,0,0]
+};
+var totalCorrect=0, totalWrong=0;
+
+function answer(sec, q, opt, correct){
+  var key = sec+'-'+q;
+  if(state.answers[key] !== undefined) return;
+  state.answers[key] = correct;
+  var opts = document.querySelectorAll('#q-'+sec+'-'+q+' .opt-btn');
+  opts.forEach(function(b,i){
+    b.disabled=true;
+    if(i===opt) b.classList.add(correct?'correct':'wrong');
+    else if(correct===false && /* find correct */ false) {}
+  });
+  // reveal correct if wrong
+  if(!correct){
+    opts.forEach(function(b,i){
+      var fn = b.getAttribute('onclick');
+      if(fn && fn.indexOf(',true)')+')') b.classList.add('reveal');
+    });
+    // find and highlight correct
+    opts.forEach(function(b){
+      var fn=b.getAttribute('onclick')||'';
+      if(fn.indexOf(',true)')>-1) b.classList.add('reveal');
+    });
+  }
+  var fb = document.getElementById('fb-'+sec+'-'+q);
+  var data = feedbacks[key];
+  fb.textContent = correct ? data.correct : data.wrong;
+  fb.className = 'feedback show '+(correct?'fb-correct':'fb-wrong');
+  if(correct){state.sectionScores[sec]++;totalCorrect++;}
+  else{totalWrong++;}
+  state.sectionAnswered[sec]++;
+  updateDashboard();
+  if(state.sectionAnswered[sec]===5) showSectionResult(sec);
+}
+
+function showSectionResult(sec){
+  var score=state.sectionScores[sec];
+  var el=document.getElementById('res-'+sec);
+  var msgs=['Rileggi attentamente questa sezione prima di procedere.','Qualche incertezza: rileggi i paragrafi indicati nei feedback.','Discreto: tre domande corrette su cinque.','Buona padronanza della sezione.','Perfetto: cinque su cinque!'];
+  document.getElementById('sr-score-'+sec).textContent=score+'/5 risposte corrette';
+  document.getElementById('sr-msg-'+sec).textContent=msgs[score]||msgs[0];
+  document.getElementById('score-'+sec).textContent='('+score+'/5)';
+  el.classList.add('show');
+  document.getElementById('tab-'+sec).classList.add('completed');
+}
+
+function showFinal(){
+  document.getElementById('quiz-body').style.display='none';
+  document.getElementById('final-result').classList.add('show');
+  var total=totalCorrect;
+  document.getElementById('fr-total').textContent=total+'/20 risposte corrette';
+  var msgs={
+    range:[18,20,15,17,12,14,8,11,0,7],
+    texts:[
+      'Ottima padronanza del capitolo. Sei pronto per la verifica.',
+      'Buon livello complessivo. Rileggi le sezioni dove hai sbagliato.',
+      'Conoscenza sufficiente. Concentrati sui feedback delle risposte errate.',
+      'Lacune significative. Riprendi le sezioni con punteggi bassi prima della verifica.',
+      'Studia di nuovo il capitolo dall\'inizio: ci sono troppe lacune da colmare.'
+    ]
+  };
+  var msg=msgs.texts[4];
+  if(total>=18)msg=msgs.texts[0];
+  else if(total>=15)msg=msgs.texts[1];
+  else if(total>=12)msg=msgs.texts[2];
+  else if(total>=8)msg=msgs.texts[3];
+  document.getElementById('fr-msg').textContent=msg;
+  var labels=['La crisi della Chiesa','Lutero e la rottura','La Riforma si moltiplica','La risposta cattolica'];
+  var bars='';
+  state.sectionScores.forEach(function(s,i){
+    bars+='<div class="fr-bar-row"><div class="fr-bar-label">'+labels[i]+'</div><div class="fr-bar-bg"><div class="fr-bar-fill" style="width:'+(s/5*100)+'%"></div></div><div class="fr-bar-val">'+s+'/5</div></div>';
+  });
+  document.getElementById('fr-bars').innerHTML=bars;
+}
+
+function updateDashboard(){
+  document.getElementById('cnt-correct').textContent=totalCorrect;
+  document.getElementById('cnt-wrong').textContent=totalWrong;
+  document.getElementById('cnt-open').textContent=20-totalCorrect-totalWrong;
+}
+
+function showSection(i){
+  document.querySelectorAll('.section-block').forEach(function(b){b.classList.remove('active');});
+  document.querySelectorAll('.sec-tab').forEach(function(t){t.classList.remove('active');});
+  document.getElementById('sec-'+i).classList.add('active');
+  document.getElementById('tab-'+i).classList.add('active');
+}
+
+function restart(){
+  state={answers:{},sectionScores:[0,0,0,0],sectionAnswered:[0,0,0,0]};
+  totalCorrect=0;totalWrong=0;
+  document.querySelectorAll('.opt-btn').forEach(function(b){b.disabled=false;b.className='opt-btn';});
+  document.querySelectorAll('.feedback').forEach(function(f){f.className='feedback';f.textContent='';});
+  document.querySelectorAll('.section-result').forEach(function(r){r.classList.remove('show');});
+  document.querySelectorAll('.sec-tab').forEach(function(t){t.classList.remove('completed','active');});
+  document.querySelectorAll('.section-score').forEach(function(s){s.textContent='';});
+  document.getElementById('tab-0').classList.add('active');
+  document.getElementById('quiz-body').style.display='block';
+  document.getElementById('final-result').classList.remove('show');
+  updateDashboard();
+  showSection(0);
+}
+</script>
+</body>
+</html>
