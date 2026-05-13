@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Riforma e Controriforma — mappa concettuale e tavola comparativa</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Gill Sans','Gill Sans MT',Calibri,sans-serif;background:#F5F0E8}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.wrap{background:#F5F0E8;padding:1.5rem;max-width:860px;margin:0 auto}
+.tab-bar{display:flex;gap:8px;margin-bottom:1.5rem}
+.tab-btn{background:#fff;border:1px solid #c9b89a;border-radius:6px;padding:0.45rem 0.9rem;font-family:'Gill Sans',Calibri,sans-serif;font-size:13px;color:#3a2e1e;cursor:pointer;transition:background 0.15s,border-color 0.15s}
+.tab-btn:hover{background:#f5efe4;border-color:#8B7355}
+.tab-btn.active{background:#8B7355;color:#f5efe4;border-color:#8B7355}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+.map-svg{width:100%;cursor:default}
+.map-panel{display:none;background:#fff;border:1px solid #c9b89a;border-radius:6px;margin-top:1rem;overflow:hidden}
+.map-panel.open{display:block}
+.map-panel-header{padding:0.7rem 1rem;display:flex;align-items:center;gap:10px;border-bottom:1px solid #ede5d8}
+.map-panel-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0}
+.map-panel-title{font-family:Georgia,serif;font-size:15px;color:#2c2218}
+.map-panel-close{margin-left:auto;background:none;border:none;cursor:pointer;color:#8B7355;font-size:18px;line-height:1;padding:0 2px}
+.map-cols{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.map-col{padding:0.85rem 1rem;font-size:13.5px;color:#3a2e1e;line-height:1.65}
+.map-col:first-child{border-right:1px solid #ede5d8}
+.map-col-label{font-size:11px;letter-spacing:0.07em;text-transform:uppercase;margin-bottom:0.4rem}
+.map-conseq{padding:0.75rem 1rem;background:#f5f0e8;border-top:1px solid #ede5d8;font-size:13px;color:#4a3c28;line-height:1.6}
+.map-conseq-label{font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:#8B7355;margin-bottom:0.3rem}
+
+.temi-list{display:flex;flex-direction:column;gap:2px;margin-bottom:1.25rem}
+.tema-btn{width:100%;text-align:left;background:#fff;border:1px solid #c9b89a;border-radius:6px;padding:0.6rem 1rem;font-family:'Gill Sans',Calibri,sans-serif;font-size:13.5px;color:#2c2218;cursor:pointer;display:flex;align-items:center;gap:10px;transition:background 0.15s,border-color 0.15s}
+.tema-btn:hover{background:#f5efe4;border-color:#8B7355}
+.tema-btn.active{background:#8B7355;color:#f5efe4;border-color:#8B7355}
+.tema-btn.active .tema-icon{color:#f5efe4}
+.tema-icon{color:#8B7355;font-size:15px;flex-shrink:0}
+.col-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:1rem}
+.col-card{border-radius:6px;overflow:hidden;border:1px solid #c9b89a}
+.col-header{padding:0.5rem 0.75rem;font-size:11px;letter-spacing:0.06em;text-transform:uppercase}
+.col-body{padding:0.75rem;font-size:13px;line-height:1.65;color:#2c2218;background:#fff;min-height:120px}
+.col-body.clickable{cursor:pointer;transition:background 0.15s}
+.col-body.clickable:hover{background:#faf7f2}
+.col-body.clickable::after{content:'↓ Clicca per segnare come letta';display:block;margin-top:0.6rem;font-size:11px;color:#a08060;letter-spacing:0.03em}
+.col-body.read::after{display:none}
+.col-locked{padding:0.75rem;font-size:13px;line-height:1.65;color:#8B7355;background:#faf7f2;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px}
+.col-cat{background:#f0ede4;color:#5c4a33}
+.col-lut{background:#dde0f0;color:#2e3266}
+.col-tri{background:#dde8e0;color:#2a4a33}
+.progress-bar{height:3px;background:#ede5d8;border-radius:2px;margin-bottom:0.5rem;overflow:hidden}
+.progress-fill{height:100%;background:#8B7355;border-radius:2px;transition:width 0.3s}
+.progress-label{font-size:11px;color:#8B7355;margin-bottom:0.75rem}
+.istr-box{background:#fff8f0;border:1px solid #d4b896;border-left:3px solid #8B7355;border-radius:0 6px 6px 0;padding:0.65rem 0.9rem;margin-bottom:1rem;font-size:13px;color:#4a3c28;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h2 class="sr-only">Riforma e Controriforma — mappa concettuale e tavola comparativa interattive</h2>
+
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('mappa')"><i class="ti ti-topology-star-3" aria-hidden="true" style="font-size:14px;margin-right:5px"></i>Mappa concettuale</button>
+  <button class="tab-btn" onclick="switchTab('tavola')"><i class="ti ti-columns-3" aria-hidden="true" style="font-size:14px;margin-right:5px"></i>Tavola comparativa</button>
+</div>
+
+<!-- TAB 1: MAPPA -->
+<div class="tab-panel active" id="tab-mappa">
+<svg class="map-svg" viewBox="0 0 680 480" role="img">
+<title>Mappa concettuale dei principi teologici della Riforma</title>
+<desc>Grafo interattivo con sette nodi tematici collegati. Clicca su un nodo per leggere le posizioni delle due confessioni.</desc>
+<defs>
+  <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- Connections -->
+<g stroke="#c9b89a" stroke-width="0.8" fill="none" opacity="0.6">
+  <line x1="200" y1="160" x2="290" y2="210"/>
+  <line x1="360" y1="200" x2="420" y2="160"/>
+  <line x1="470" y1="145" x2="510" y2="195"/>
+  <line x1="330" y1="240" x2="290" y2="310"/>
+  <line x1="440" y1="170" x2="460" y2="280"/>
+  <line x1="450" y1="330" x2="390" y2="400"/>
+  <line x1="190" y1="180" x2="340" y2="400"/>
+  <line x1="280" y1="340" x2="340" y2="400"/>
+</g>
+
+<!-- Peccato originale — viola -->
+<g style="cursor:pointer" onclick="openNode('peccato')">
+  <ellipse cx="175" cy="158" rx="74" ry="30" fill="#eae4f4" stroke="#7a60b0" stroke-width="1.3"/>
+  <text font-family="Georgia,serif" font-size="12" fill="#3a2060" text-anchor="middle" dominant-baseline="central" x="175" y="158">Peccato originale</text>
+</g>
+
+<!-- Grazia — marrone/ambra, nodo centrale -->
+<g style="cursor:pointer" onclick="openNode('grazia')">
+  <ellipse cx="325" cy="218" rx="62" ry="30" fill="#e8ddd0" stroke="#8B7355" stroke-width="2"/>
+  <text font-family="Georgia,serif" font-size="13" font-weight="bold" fill="#3a2e1e" text-anchor="middle" dominant-baseline="central" x="325" y="218">Grazia</text>
+</g>
+
+<!-- Fede — ambra, nodo centrale -->
+<g style="cursor:pointer" onclick="openNode('fede')">
+  <ellipse cx="455" cy="148" rx="57" ry="30" fill="#faeeda" stroke="#ba7517" stroke-width="2"/>
+  <text font-family="Georgia,serif" font-size="13" font-weight="bold" fill="#412402" text-anchor="middle" dominant-baseline="central" x="455" y="148">Fede</text>
+</g>
+
+<!-- Opere — verde tenue -->
+<g style="cursor:pointer" onclick="openNode('opere')">
+  <ellipse cx="530" cy="220" rx="57" ry="30" fill="#eaf3de" stroke="#639922" stroke-width="1.3"/>
+  <text font-family="Georgia,serif" font-size="12" fill="#173404" text-anchor="middle" dominant-baseline="central" x="530" y="220">Opere</text>
+</g>
+
+<!-- Sacramenti — azzurro -->
+<g style="cursor:pointer" onclick="openNode('sacramenti')">
+  <ellipse cx="268" cy="330" rx="67" ry="30" fill="#e6f1fb" stroke="#378add" stroke-width="1.3"/>
+  <text font-family="Georgia,serif" font-size="12" fill="#042c53" text-anchor="middle" dominant-baseline="central" x="268" y="330">Sacramenti</text>
+</g>
+
+<!-- Scrittura — corallo -->
+<g style="cursor:pointer" onclick="openNode('scrittura')">
+  <ellipse cx="470" cy="318" rx="67" ry="30" fill="#faece7" stroke="#d85a30" stroke-width="1.3"/>
+  <text font-family="Georgia,serif" font-size="12" fill="#4a1b0c" text-anchor="middle" dominant-baseline="central" x="470" y="318">Scrittura</text>
+</g>
+
+<!-- Autorità — grigio-marrone scuro, nodo centrale -->
+<g style="cursor:pointer" onclick="openNode('autorita')">
+  <ellipse cx="370" cy="420" rx="74" ry="30" fill="#e8ddd0" stroke="#8B7355" stroke-width="2"/>
+  <text font-family="Georgia,serif" font-size="13" font-weight="bold" fill="#3a2e1e" text-anchor="middle" dominant-baseline="central" x="370" y="420">Autorità</text>
+</g>
+
+<text font-family="'Gill Sans',Calibri,sans-serif" font-size="11" fill="#8B7355" text-anchor="middle" x="90" y="450">Clicca su un nodo</text>
+</svg>
+
+<div class="map-panel" id="map-panel">
+  <div class="map-panel-header">
+    <div class="map-panel-dot" id="map-dot"></div>
+    <div class="map-panel-title" id="map-title"></div>
+    <button class="map-panel-close" onclick="closeNode()" aria-label="Chiudi">×</button>
+  </div>
+  <div class="map-cols">
+    <div class="map-col">
+      <div class="map-col-label" style="color:#8B7355">Posizione luterana</div>
+      <div id="map-lut"></div>
+    </div>
+    <div class="map-col">
+      <div class="map-col-label" style="color:#3a6a3a">Posizione cattolica</div>
+      <div id="map-cat"></div>
+    </div>
+  </div>
+  <div class="map-conseq">
+    <div class="map-conseq-label">Conseguenze istituzionali</div>
+    <div id="map-conseq"></div>
+  </div>
+</div>
+</div>
+
+<!-- TAB 2: TAVOLA -->
+<div class="tab-panel" id="tab-tavola">
+<div class="istr-box">
+  <i class="ti ti-info-circle" aria-hidden="true" style="font-size:14px;margin-right:5px;vertical-align:-2px;color:#8B7355"></i>
+  Seleziona un tema, poi <strong>clicca sulle prime due colonne</strong> per leggerle. La terza colonna — la risposta cattolica post-Trento — si sblocca automaticamente dopo che entrambe le prime due sono state lette.
+</div>
+<div class="temi-list" id="temi-list"></div>
+<div id="tema-detail-area"></div>
+</div>
+
+</div>
+
+<script>
+var mapData = {
+  peccato: {
+    title:"Peccato originale", color:"#7a60b0",
+    lut:"Il peccato di Adamo ha corrotto radicalmente la natura umana. La volontà dell'uomo è serva del peccato e incapace di orientarsi liberamente verso il bene. Non c'è spazio per il libero arbitrio in senso pieno.",
+    cat:"Il peccato originale ha ferito la natura umana, ma non l'ha corrotta integralmente. La volontà conserva una capacità residua di cooperare con la grazia. Il Battesimo cancella il peccato originale e restituisce la grazia.",
+    conseq:"La disputa sul peccato originale implicava la questione del libero arbitrio — su cui Lutero ed Erasmo si scontrarono esplicitamente nel 1525. Essa condizionava l'intera architettura della salvezza: se la volontà è serva, solo Dio può salvarla."
+  },
+  grazia: {
+    title:"Grazia", color:"#8B7355",
+    lut:"La grazia è pura iniziativa divina, non condizionata dai meriti umani. Dio giustifica il peccatore per grazia sola (sola gratia), senza che l'uomo possa contribuirvi con le proprie opere. La grazia è irresistibile.",
+    cat:"La grazia è necessaria, ma l'uomo può cooperarvi liberamente. La Chiesa, i sacramenti e le opere buone sono canali attraverso cui la grazia agisce. Trento ribadì la necessità della grazia pur salvaguardando la cooperazione umana.",
+    conseq:"Questa differenza strutturava tutto il resto: se la grazia è irresistibile e totale, i sacramenti come 'canali di grazia' perdono il loro ruolo centrale, e con essi il sacerdozio e la gerarchia ecclesiastica."
+  },
+  fede: {
+    title:"Fede", color:"#ba7517",
+    lut:"La giustificazione avviene per sola fede (sola fide): è la fede — non le opere — che salva il peccatore. La fede non è un atto umano ma un dono di Dio. Le opere buone sono il frutto della fede, non la sua condizione.",
+    cat:"La fede è necessaria ma non sufficiente: deve essere una fede che opera per mezzo della carità. Trento condannò esplicitamente la dottrina della sola fide, riaffermando che la giustificazione comprende anche la santificazione.",
+    conseq:"Il principio della sola fide eliminava il ruolo mediatore della Chiesa nella salvezza: se la fede è il solo strumento, il sistema penitenziale (confessione, indulgenze, purgatorio) perde il suo fondamento teologico."
+  },
+  opere: {
+    title:"Opere", color:"#639922",
+    lut:"Le opere buone non contribuiscono alla salvezza: il peccatore è giustificato da Dio indipendentemente da esse. Le opere sono il frutto naturale della fede, ma non il suo fondamento. Le opere 'meritorie' cattoliche (pellegrinaggi, indulgenze) sono superstizioni.",
+    cat:"Le opere sono parte integrante della vita cristiana e possono avere valore meritorio in virtù della grazia. Trento ribadì che le opere buone, compiute in stato di grazia, contribuiscono alla giustificazione.",
+    conseq:"La polemica sulle opere investiva direttamente le pratiche della pietà popolare medievale — pellegrinaggi, culto dei santi, indulgenze — e metteva in discussione l'intera economia della penitenza."
+  },
+  sacramenti: {
+    title:"Sacramenti", color:"#378add",
+    lut:"Lutero riconobbe solo due sacramenti — Battesimo ed Eucaristia — come istituiti da Cristo nella Scrittura. Negò la transustanziazione, affermando la consustanziazione (il corpo di Cristo è presente insieme al pane). Gli altri cinque sacramenti cattolici furono rigettati.",
+    cat:"La Chiesa conta sette sacramenti, tutti istituiti da Cristo. L'Eucaristia comporta la transustanziazione: il pane e il vino si trasformano realmente nel corpo e nel sangue di Cristo. Trento codificò questa dottrina in risposta alla Riforma.",
+    conseq:"La riduzione dei sacramenti da sette a due implicava l'abolizione di gran parte del ruolo clericale: confessione, cresima, ordine sacro, matrimonio e unzione degli infermi erano i momenti in cui il sacerdote interveniva come mediatore tra Dio e i fedeli."
+  },
+  scrittura: {
+    title:"Scrittura", color:"#d85a30",
+    lut:"La Scrittura è l'unica fonte e norma della fede (sola Scriptura). Il credente può e deve interpretarla direttamente, senza bisogno della mediazione ecclesiastica. Lutero tradusse la Bibbia in tedesco per renderla accessibile a tutti.",
+    cat:"La Scrittura e la Tradizione sono fonti parallele della Rivelazione. Il magistero della Chiesa — papa e concili — ha l'autorità esclusiva di interpretare la Scrittura. Trento confermò il valore normativo della Tradizione e della Vulgata latina.",
+    conseq:"Il principio della sola Scriptura aprì la questione dell'interpretazione individuale: chi decide il significato del testo? Questo problema portò, nel corso del Cinquecento, alla moltiplicazione delle sette protestanti e alla crisi interna alla Riforma."
+  },
+  autorita: {
+    title:"Autorità", color:"#8B7355",
+    lut:"L'unica autorità in materia di fede è la Scrittura, interpretata dalla coscienza individuale illuminata dallo Spirito. Né il papa né i concili possono imporre dottrine contrarie alla Scrittura. Questa fu la posizione che Lutero difese alla Dieta di Worms.",
+    cat:"L'autorità in materia di fede spetta al papa e ai concili, in quanto successori degli apostoli. Trento riaffermò il primato papale e l'infallibilità del magistero ecclesiastico. La Tradizione ha pari dignità della Scrittura.",
+    conseq:"La questione dell'autorità era il cuore del conflitto: non una singola dottrina, ma il principio che stabilisce chi ha il diritto di definire la dottrina. Da questa frattura derivarono tutte le altre: istituzionale, politica, culturale."
+  }
+};
+
+var temi = [
+  {id:"giustificazione",label:"Giustificazione",icon:"ti-scale",
+   cat_pre:"La giustificazione è un processo che comprende sia la remissione del peccato sia la santificazione dell'anima. L'uomo coopera con la grazia attraverso le opere, i sacramenti e la penitenza. I meriti delle opere buone contribuiscono alla salvezza.",
+   lut:"L'uomo è giustificato per sola fede, per sola grazia, senza alcun contributo delle opere. Dio 'imputa' la giustizia di Cristo al peccatore: non lo rende giusto, lo dichiara tale. È un atto istantaneo e totale, non un processo graduale.",
+   cat_post:"Trento (sessione VI, 1547) condannò esplicitamente la sola fides e affermò che la giustificazione è un processo reale di trasformazione interiore. Riconobbe tuttavia che la grazia è il fondamento necessario, e riformò la prassi della penitenza."},
+  {id:"sacramenti",label:"Sacramenti",icon:"ti-droplet",
+   cat_pre:"Sette sacramenti istituiti da Cristo, tutti necessari alla salvezza in misura diversa. Il sacerdote è il ministro indispensabile dei sacramenti. L'Eucaristia comporta la transustanziazione: il pane e il vino diventano realmente corpo e sangue di Cristo.",
+   lut:"Solo due sacramenti sono istituiti dalla Scrittura: Battesimo ed Eucaristia. Il sacerdote non è mediatore necessario. Nella Cena del Signore il corpo di Cristo è presente 'in, con e sotto' il pane (consustanziazione), non al suo posto.",
+   cat_post:"Trento confermò tutti e sette i sacramenti e dogmatizzò la transustanziazione. Riformò la disciplina sacramentale: obbligo annuale della confessione, norme per il matrimonio, formazione del clero per la corretta amministrazione dei sacramenti."},
+  {id:"autorita",label:"Autorità scritturale",icon:"ti-book",
+   cat_pre:"La Scrittura e la Tradizione apostolica sono fonti parallele della Rivelazione. Il magistero della Chiesa — papa e concili — interpreta autenticamente la Scrittura. I fedeli non hanno autorità di interpretare la Scrittura autonomamente.",
+   lut:"La Scrittura è l'unica norma della fede (sola Scriptura). Ogni cristiano può e deve leggere la Bibbia nella propria lingua. Né il papa né i concili hanno autorità superiore alla Scrittura — e si sono spesso contraddetti tra loro.",
+   cat_post:"Trento (sessione IV, 1546) affermò esplicitamente la pari dignità di Scrittura e Tradizione, dichiarò autentica la Vulgata latina, e riservò al magistero ecclesiastico l'interpretazione autentica. Promosse tuttavia la lettura della Bibbia da parte del clero."},
+  {id:"clero",label:"Ruolo del clero",icon:"ti-user",
+   cat_pre:"Il sacerdote è mediatore necessario tra Dio e i fedeli. Il sacramento dell'Ordine imprime un carattere indelebile: il sacerdote è ontologicamente diverso dal laico. Il celibato sacerdotale è obbligo universale della Chiesa latina.",
+   lut:"Lutero affermò il 'sacerdozio universale dei credenti': ogni cristiano è sacerdote davanti a Dio, senza bisogno di mediatori umani. Il pastore è un ministro della comunità, non un sacerdote nel senso cattolico. Il celibato fu abolito.",
+   cat_post:"Trento ribadì il carattere ontologico dell'ordine sacro e l'obbligo del celibato. Ma riformò profondamente la formazione del clero: istituì i seminari, impose la residenza dei vescovi nelle loro diocesi, combatté il cumulo dei benefici."},
+  {id:"indulgenze",label:"Indulgenze",icon:"ti-coin",
+   cat_pre:"Le indulgenze rimettono la pena temporale del peccato già perdonato, attingendo al 'tesoro dei meriti' della Chiesa. Possono essere applicate anche alle anime del Purgatorio. La loro concessione è prerogativa del papa.",
+   lut:"Le indulgenze sono una frode teologica: se la giustificazione è per sola fede, non esiste una 'pena temporale' da scontare con opere o pagamenti. Le 95 Tesi del 1517 nascono proprio come critica alla predicazione delle indulgenze.",
+   cat_post:"Trento abolì la vendita delle indulgenze — l'abuso che aveva scatenato la polemica di Lutero — ma confermò la dottrina delle indulgenze stessa. Dichiarò che esse rimettono la pena ma non il peccato, e che devono essere concesse gratuitamente."},
+  {id:"libero-arbitrio",label:"Libero arbitrio",icon:"ti-arrows-split-2",
+   cat_pre:"L'uomo conserva, dopo il peccato originale, una volontà capace di cooperare con la grazia. Il libero arbitrio è ferito ma non distrutto. La salvezza richiede la cooperazione dell'uomo con la grazia di Dio.",
+   lut:"Il libero arbitrio è un'illusione: dopo il peccato originale, la volontà è serva del peccato e incapace di orientarsi verso il bene senza la grazia. Nel trattato 'De servo arbitrio' (1525) Lutero confutò esplicitamente Erasmo su questo punto.",
+   cat_post:"Trento (sessione VI) condannò la dottrina della servitù del volere e affermò che la grazia di Dio 'non impedisce ma anzi suscita' la cooperazione libera dell'uomo. Evitò tuttavia di pronunciarsi sulla questione della predestinazione."},
+  {id:"liturgia",label:"Lingua della liturgia",icon:"ti-language",
+   cat_pre:"La liturgia si celebra in latino in tutta la Chiesa occidentale. Il latino garantisce l'unità della preghiera e della dottrina al di là delle differenze linguistiche nazionali. I fedeli partecipano attraverso la preghiera personale e i gesti liturgici.",
+   lut:"La liturgia deve essere celebrata nella lingua del popolo, perché i fedeli possano comprendere e partecipare attivamente. Lutero compose la prima messa in tedesco (Deutsche Messe, 1526) e tradusse la Bibbia in tedesco tra il 1521 e il 1534.",
+   cat_post:"Trento confermò il latino come lingua liturgica della Chiesa cattolica. Ma ammise alcune eccezioni per le Chiese orientali unite a Roma, e raccomandò che i sacerdoti spiegassero ai fedeli il significato dei riti. La riforma liturgica completa arrivò solo con il Concilio Vaticano II (1965)."}
+];
+
+var readCols = {};
+var activeTema = null;
+
+function openNode(id){
+  var d=mapData[id];
+  if(!d) return;
+  document.getElementById('map-title').textContent=d.title;
+  document.getElementById('map-dot').style.background=d.color;
+  document.getElementById('map-lut').textContent=d.lut;
+  document.getElementById('map-cat').textContent=d.cat;
+  document.getElementById('map-conseq').textContent=d.conseq;
+  document.getElementById('map-panel').classList.add('open');
+}
+
+function closeNode(){
+  document.getElementById('map-panel').classList.remove('open');
+}
+
+function renderTemi(){
+  var html='';
+  temi.forEach(function(t){
+    html+='<button class="tema-btn" id="tbtn-'+t.id+'" onclick="selectTema(\''+t.id+'\')">';
+    html+='<i class="ti '+t.icon+' tema-icon" aria-hidden="true"></i>';
+    html+=t.label+'</button>';
+  });
+  document.getElementById('temi-list').innerHTML=html;
+}
+
+function selectTema(id){
+  if(activeTema===id) return;
+  activeTema=id;
+  temi.forEach(function(t){
+    var b=document.getElementById('tbtn-'+t.id);
+    if(b) b.classList.toggle('active',t.id===id);
+  });
+  if(!readCols[id]) readCols[id]={cat:false,lut:false};
+  renderDetail(id);
+}
+
+function renderDetail(id){
+  var t=temi.find(function(x){return x.id===id;});
+  if(!t) return;
+  var rc=readCols[id];
+  var unlocked=rc.cat&&rc.lut;
+  var pct=Math.round(((rc.cat?1:0)+(rc.lut?1:0))/2*100);
+
+  var html='';
+  html+='<div class="progress-bar"><div class="progress-fill" style="width:'+pct+'%"></div></div>';
+  if(!unlocked){
+    html+='<div class="progress-label">Clicca sulle prime due colonne per leggerle e sbloccare la risposta tridentina ('+pct+'% letto)</div>';
+  } else {
+    html+='<div class="progress-label" style="color:#3a6a3a"><i class="ti ti-lock-open" style="font-size:12px;margin-right:4px"></i>Risposta tridentina sbloccata</div>';
+  }
+  html+='<div class="col-grid">';
+
+  var catClass='col-body'+(rc.cat?'':' clickable')+(rc.cat?' read':'');
+  html+='<div class="col-card"><div class="col-header col-cat">Cattolicesimo pre-Trento</div>';
+  html+='<div class="'+catClass+'" id="col-cat-'+id+'" onclick="markRead(\''+id+'\',\'cat\')">'+t.cat_pre+'</div></div>';
+
+  var lutClass='col-body'+(rc.lut?'':' clickable')+(rc.lut?' read':'');
+  html+='<div class="col-card"><div class="col-header col-lut">Posizione luterana</div>';
+  html+='<div class="'+lutClass+'" id="col-lut-'+id+'" onclick="markRead(\''+id+'\',\'lut\')">'+t.lut+'</div></div>';
+
+  html+='<div class="col-card"><div class="col-header col-tri">Risposta cattolica post-Trento</div>';
+  if(unlocked){
+    html+='<div class="col-body">'+t.cat_post+'</div>';
+  } else {
+    html+='<div class="col-locked"><i class="ti ti-lock" aria-hidden="true" style="font-size:20px;opacity:0.4"></i><span>Leggi prima le colonne a sinistra</span></div>';
+  }
+  html+='</div></div>';
+
+  document.getElementById('tema-detail-area').innerHTML=html;
+}
+
+function markRead(id,col){
+  if(!readCols[id]) readCols[id]={cat:false,lut:false};
+  if(readCols[id][col]) return;
+  readCols[id][col]=true;
+  renderDetail(id);
+}
+
+function switchTab(tab){
+  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
+  document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.remove('active');});
+  if(tab==='mappa'){
+    document.querySelector('.tab-btn:nth-child(1)').classList.add('active');
+    document.getElementById('tab-mappa').classList.add('active');
+  } else {
+    document.querySelector('.tab-btn:nth-child(2)').classList.add('active');
+    document.getElementById('tab-tavola').classList.add('active');
+  }
+}
+
+renderTemi();
+</script>
+</body>
+</html>
