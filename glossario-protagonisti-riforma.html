@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Glossario dei termini — Riforma, impero e Controriforma</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Georgia,'Times New Roman',serif;background:#FAF7F2;color:#2C2C2A;min-height:100vh}
+.header{background:#2C2C2A;padding:1.4rem 2.5rem;border-bottom:4px solid #8B7355}
+.header-title{font-size:1.15rem;font-weight:normal;color:#F0EBE0}
+.header-title em{color:#C2A882;font-style:italic}
+.header-sub{font-family:'Gill Sans','Gill Sans MT',Calibri,sans-serif;font-size:0.78rem;color:#888070;margin-top:0.35rem}
+.instructions{background:#F5F0E8;border-bottom:1px solid #D4C9B8;padding:0.7rem 2.5rem;font-family:'Gill Sans','Gill Sans MT',Calibri,sans-serif;font-size:0.8rem;color:#5C4A2A;line-height:1.55}
+.instructions strong{color:#2C2C2A}
+.dashboard{background:#FFFDF8;border-bottom:1px solid #D4C9B8;padding:0.65rem 2.5rem;display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap}
+.dash-label{font-family:'Gill Sans','Gill Sans MT',Calibri,sans-serif;font-size:0.75rem;color:#888070;text-transform:uppercase;letter-spacing:0.05em}
+.dash-counters{display:flex;gap:1rem}
+.dash-item{display:flex;align-items:center;gap:5px;font-family:'Gill Sans','Gill Sans MT',Calibri,sans-serif;font-size:0.8rem}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+.dot-yes{background:#4A6741}.dot-part{background:#C2A882}.dot-no{background:#7A2E1A}.dot-open{background:#C8BBA8}
+.g-list{padding:1.5rem 2.5rem;display:flex;flex-direction:column;gap:0.5rem}
+.g-item{border:1px solid #D4C9B8;border-radius:6px;overflow:hidden;background:#fff}
+.g-item.eval-yes{border-left:4px solid #4A6741}
+.g-item.eval-part{border-left:4px solid #C2A882}
+.g-item.eval-no{border-left:4px solid #7A2E1A}
+.g-header{padding:0.65rem 1rem;cursor:pointer;display:flex;align-items:center;gap:0.75rem;transition:background 0.15s}
+.g-header:hover{background:#F5F0E8}
+.g-term{font-family:Georgia,serif;font-size:0.92rem;font-weight:normal;color:#2C2C2A;flex:1}
+.g-cat{font-family:'Gill Sans','Gill Sans MT',Calibri,sans-serif;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.07em;color:#B0A090;margin-left:0.5rem}
+.g-chevron{font-size:0.75rem;color:#B0A090;transition:transform 0.2s;flex-shrink:0}
+.g-item.open .g-chevron{transform:rotate(180deg)}
+.g-body{display:none;padding:0 1rem 0.85rem 1rem;border-top:1px solid #EDE5D8}
+.g-item.open .g-body{display:block}
+.def-label{font-family:'Gill Sans','Gill Sans MT',Calibri,sans-serif;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.07em;color:#8B7355;margin:0.6rem 0 0.25rem}
+.def-text{font-size:0.83rem;line-height:1.65;color:#3A2E1E}
+.eval-row{display:flex;align-items:center;gap:0.5rem;margin-top:0.7rem;padding-top:0.55rem;border-top:1px solid #EDE5D8;flex-wrap:wrap}
+.eval-label{font-family:'Gill Sans','Gill Sans MT',Calibri,sans-serif;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.06em;color:#B0A090;margin-right:0.15rem}
+.eval-btn{font-family:'Gill Sans','Gill Sans MT',Calibri,sans-serif;font-size:0.75rem;padding:4px 12px;border-radius:20px;border:1.5px solid;cursor:pointer;transition:all 0.18s;background:transparent}
+.btn-yes{border-color:#4A6741;color:#4A6741}.btn-yes:hover,.btn-yes.active{background:#4A6741;color:#fff}
+.btn-part{border-color:#C2A882;color:#8B6A3A}.btn-part:hover,.btn-part.active{background:#C2A882;color:#fff}
+.btn-no{border-color:#7A2E1A;color:#7A2E1A}.btn-no:hover,.btn-no.active{background:#7A2E1A;color:#fff}
+.reset-wrap{padding:0 2.5rem 2rem;display:flex;justify-content:flex-end}
+.reset-btn{font-family:'Gill Sans','Gill Sans MT',Calibri,sans-serif;font-size:0.78rem;padding:5px 14px;border-radius:4px;border:1.5px solid #C8BBA8;background:transparent;color:#888070;cursor:pointer;transition:all 0.18s}
+.reset-btn:hover{border-color:#8B7355;color:#5C4A2A;background:#F5F0E8}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-title"><em>Glossario dei protagonisti</em> — Riforma, impero e Controriforma</div>
+  <div class="header-sub">12 voci · riformatori, imperatori, pontefici, antagonisti</div>
+</div>
+<div class="instructions">
+  <strong>Come usare questo glossario.</strong> Clicca su un nome per aprire la scheda biografica. Dopo averla letta, indica se conoscevi il personaggio usando i tre pulsanti di autovalutazione.
+</div>
+<div class="dashboard">
+  <span class="dash-label">Avanzamento</span>
+  <div class="dash-counters">
+    <div class="dash-item"><span class="dot dot-yes"></span><span id="cnt-yes">0</span> saputa</div>
+    <div class="dash-item"><span class="dot dot-part"></span><span id="cnt-part">0</span> parziale</div>
+    <div class="dash-item"><span class="dot dot-no"></span><span id="cnt-no">0</span> non saputa</div>
+    <div class="dash-item"><span class="dot dot-open"></span><span id="cnt-open">12</span> da fare</div>
+  </div>
+</div>
+
+<div class="g-list">
+<div class="g-item" id="gi-0">
+  <div class="g-header" onclick="toggleG(0)">
+    <span class="g-term">Sola fide <span class="g-cat">dottrina luterana</span></span>
+    <span class="g-chevron">&#9660;</span>
+  </div>
+  <div class="g-body">
+    <div class="def-label">Definizione</div>
+    <div class="def-text">Principio fondamentale della teologia luterana: la giustificazione davanti a Dio avviene per sola fede, senza alcun contributo delle opere umane. Dio «imputa» la giustizia di Cristo al peccatore: non lo rende giusto, lo dichiara tale. È un atto istantaneo e totale, non un processo graduale. Questo principio negava il sistema sacramentale e penitenziale su cui la Chiesa fondava la propria mediazione tra Dio e i fedeli, e fu esplicitamente condannato dal Concilio di Trento.</div>
+    <div class="eval-row"><span class="eval-label">La conosco?</span>
+      <button class="eval-btn btn-yes" onclick="setEval(0,'yes')">&#10003; S&igrave;</button>
+      <button class="eval-btn btn-part" onclick="setEval(0,'part')">&#126; In parte</button>
+      <button class="eval-btn btn-no" onclick="setEval(0,'no')">&#10007; No</button>
+    </div>
+  </div>
+</div>
+<div class="g-item" id="gi-1">
+  <div class="g-header" onclick="toggleG(1)">
+    <span class="g-term">Sola Scriptura <span class="g-cat">dottrina luterana</span></span>
+    <span class="g-chevron">&#9660;</span>
+  </div>
+  <div class="g-body">
+    <div class="def-label">Definizione</div>
+    <div class="def-text">Principio per cui la Scrittura è l'unica fonte e norma della fede, senza che la Tradizione ecclesiastica o il magistero papale abbiano autorità normativa equivalente. Il credente può e deve interpretarla direttamente, senza mediazione ecclesiastica. Il principio aprì la questione dell'interpretazione individuale — chi decide il significato del testo? — che portò alla moltiplicazione delle sette protestanti. Trento rispose affermando la pari dignità di Scrittura e Tradizione.</div>
+    <div class="eval-row"><span class="eval-label">La conosco?</span>
+      <button class="eval-btn btn-yes" onclick="setEval(1,'yes')">&#10003; S&igrave;</button>
+      <button class="eval-btn btn-part" onclick="setEval(1,'part')">&#126; In parte</button>
+      <button class="eval-btn btn-no" onclick="setEval(1,'no')">&#10007; No</button>
+    </div>
+  </div>
+</div>
+<div class="g-item" id="gi-2">
+  <div class="g-header" onclick="toggleG(2)">
+    <span class="g-term">Giustificazione <span class="g-cat">teologia</span></span>
+    <span class="g-chevron">&#9660;</span>
+  </div>
+  <div class="g-body">
+    <div class="def-label">Definizione</div>
+    <div class="def-text">Il processo o atto con cui Dio rende o dichiara giusto il peccatore, consentendogli la salvezza. Al centro del conflitto tra cattolici e protestanti: per Lutero era un atto istantaneo di imputazione della giustizia di Cristo, ottenuto per sola fede; per la teologia cattolica tradizionale era un processo reale di trasformazione interiore che richiedeva fede, opere buone e partecipazione ai sacramenti. Trento (sessione VI, 1547) affermò esplicitamente la seconda posizione, condannando la sola fides.</div>
+    <div class="eval-row"><span class="eval-label">La conosco?</span>
+      <button class="eval-btn btn-yes" onclick="setEval(2,'yes')">&#10003; S&igrave;</button>
+      <button class="eval-btn btn-part" onclick="setEval(2,'part')">&#126; In parte</button>
+      <button class="eval-btn btn-no" onclick="setEval(2,'no')">&#10007; No</button>
+    </div>
+  </div>
+</div>
+<div class="g-item" id="gi-3">
+  <div class="g-header" onclick="toggleG(3)">
+    <span class="g-term">Predestinazione <span class="g-cat">dottrina calvinista</span></span>
+    <span class="g-chevron">&#9660;</span>
+  </div>
+  <div class="g-body">
+    <div class="def-label">Definizione</div>
+    <div class="def-text">Dottrina centrale del calvinismo: Dio ha stabilito dall'eternità chi è destinato alla salvezza (gli eletti) e chi alla dannazione, e nessuna opera umana può modificare questo decreto. Il fedele non può conquistare la grazia ma può cercarne i segni nel mondo — il successo nel lavoro e nella vita civile fu progressivamente interpretato come indizio della benevolenza divina. Max Weber collegò questa dottrina all'origine del capitalismo moderno come sistema etico del lavoro e dell'accumulazione.</div>
+    <div class="eval-row"><span class="eval-label">La conosco?</span>
+      <button class="eval-btn btn-yes" onclick="setEval(3,'yes')">&#10003; S&igrave;</button>
+      <button class="eval-btn btn-part" onclick="setEval(3,'part')">&#126; In parte</button>
+      <button class="eval-btn btn-no" onclick="setEval(3,'no')">&#10007; No</button>
+    </div>
+  </div>
+</div>
+<div class="g-item" id="gi-4">
+  <div class="g-header" onclick="toggleG(4)">
+    <span class="g-term">Conciliarismo <span class="g-cat">ecclesiologia medievale</span></span>
+    <span class="g-chevron">&#9660;</span>
+  </div>
+  <div class="g-body">
+    <div class="def-label">Definizione</div>
+    <div class="def-text">Dottrina ecclesiastica che sosteneva la superiorità del concilio generale sul papa in materia di governo della Chiesa. Si affermò nel XV secolo come risposta alla crisi dello Scisma d'Occidente (1378-1417): il Concilio di Costanza (1414-1418) depose tre papi concorrenti ed elesse Martino V. Il conciliarismo rimase tuttavia una soluzione incompiuta: la curia romana ne contrastò sistematicamente le pretese, dichiarando che un concilio non poteva essere superiore al papa. Alla Dieta di Worms la via conciliare era già chiusa.</div>
+    <div class="eval-row"><span class="eval-label">La conosco?</span>
+      <button class="eval-btn btn-yes" onclick="setEval(4,'yes')">&#10003; S&igrave;</button>
+      <button class="eval-btn btn-part" onclick="setEval(4,'part')">&#126; In parte</button>
+      <button class="eval-btn btn-no" onclick="setEval(4,'no')">&#10007; No</button>
+    </div>
+  </div>
+</div>
+<div class="g-item" id="gi-5">
+  <div class="g-header" onclick="toggleG(5)">
+    <span class="g-term">Eresia <span class="g-cat">diritto canonico</span></span>
+    <span class="g-chevron">&#9660;</span>
+  </div>
+  <div class="g-body">
+    <div class="def-label">Definizione</div>
+    <div class="def-text">Posizione dottrinale che si discosta dalla dottrina ufficiale della Chiesa su questioni di fede. Diversamente dallo scisma (rottura dell'unità istituzionale), l'eresia riguarda il contenuto della credenza: si può restare formalmente nella Chiesa sostenendo posizioni teologiche condannate. Lutero fu inizialmente accusato di eresia; solo dopo la rottura definitiva il luteranesimo assunse i caratteri dello scisma. Il processo per eresia era di competenza dell'Inquisizione; la pena massima era il rogo dopo l'eventuale abiura.</div>
+    <div class="eval-row"><span class="eval-label">La conosco?</span>
+      <button class="eval-btn btn-yes" onclick="setEval(5,'yes')">&#10003; S&igrave;</button>
+      <button class="eval-btn btn-part" onclick="setEval(5,'part')">&#126; In parte</button>
+      <button class="eval-btn btn-no" onclick="setEval(5,'no')">&#10007; No</button>
+    </div>
+  </div>
+</div>
+<div class="g-item" id="gi-6">
+  <div class="g-header" onclick="toggleG(6)">
+    <span class="g-term">Scisma <span class="g-cat">ecclesiologia</span></span>
+    <span class="g-chevron">&#9660;</span>
+  </div>
+  <div class="g-body">
+    <div class="def-label">Definizione</div>
+    <div class="def-text">Rottura dell'unità istituzionale della Chiesa che non implica necessariamente un disaccordo dottrinale: ci si separa dall'autorità ecclesiastica riconosciuta pur continuando ad aderire agli stessi dogmi (come nello Scisma d'Oriente del 1054). A differenza dell'eresia, che riguarda il contenuto della credenza, lo scisma riguarda l'obbedienza all'autorità. Lo Scisma d'Occidente (1378-1417) — con tre papi concorrenti — fu la crisi più grave della Chiesa medievale e aprì la strada al conciliarismo.</div>
+    <div class="eval-row"><span class="eval-label">La conosco?</span>
+      <button class="eval-btn btn-yes" onclick="setEval(6,'yes')">&#10003; S&igrave;</button>
+      <button class="eval-btn btn-part" onclick="setEval(6,'part')">&#126; In parte</button>
+      <button class="eval-btn btn-no" onclick="setEval(6,'no')">&#10007; No</button>
+    </div>
+  </div>
+</div>
+<div class="g-item" id="gi-7">
+  <div class="g-header" onclick="toggleG(7)">
+    <span class="g-term">Simonia <span class="g-cat">abusi ecclesiastici</span></span>
+    <span class="g-chevron">&#9660;</span>
+  </div>
+  <div class="g-body">
+    <div class="def-label">Definizione</div>
+    <div class="def-text">La compravendita di cariche, sacramenti o beni spirituali ecclesiastici. Il termine deriva da Simone Mago (Atti degli Apostoli), che tentò di comprare il dono dello Spirito Santo dagli apostoli. Era considerata un abuso perché introduceva logiche mercantili nel rapporto con il sacro. Nel XVI secolo era praticata a ogni livello della gerarchia ecclesiastica con una normalità che rendeva le condanne teoriche poco più che rituali. Il Concilio di Trento cercò di arginare il fenomeno vietando il cumulo dei benefici e imponendo criteri più rigorosi per le nomine.</div>
+    <div class="eval-row"><span class="eval-label">La conosco?</span>
+      <button class="eval-btn btn-yes" onclick="setEval(7,'yes')">&#10003; S&igrave;</button>
+      <button class="eval-btn btn-part" onclick="setEval(7,'part')">&#126; In parte</button>
+      <button class="eval-btn btn-no" onclick="setEval(7,'no')">&#10007; No</button>
+    </div>
+  </div>
+</div>
+<div class="g-item" id="gi-8">
+  <div class="g-header" onclick="toggleG(8)">
+    <span class="g-term">Nepotismo <span class="g-cat">abusi ecclesiastici</span></span>
+    <span class="g-chevron">&#9660;</span>
+  </div>
+  <div class="g-body">
+    <div class="def-label">Definizione</div>
+    <div class="def-text">L'assegnazione di cariche ecclesiastiche (vescovati, cardinalati, benefici) ai propri familiari, indipendentemente dalla loro idoneità spirituale o intellettuale. Il termine deriva da «nipote» (nephews), poiché i papi rinascimentali erano soliti favorire i propri nipoti. Rappresentava l'intreccio tra interessi familiari e governo della Chiesa, tipico di un'istituzione che nel Rinascimento era anche una grande potenza politica e patrimoniale. Alessandro VI Borgia e Sisto IV sono esempi paradigmatici.</div>
+    <div class="eval-row"><span class="eval-label">La conosco?</span>
+      <button class="eval-btn btn-yes" onclick="setEval(8,'yes')">&#10003; S&igrave;</button>
+      <button class="eval-btn btn-part" onclick="setEval(8,'part')">&#126; In parte</button>
+      <button class="eval-btn btn-no" onclick="setEval(8,'no')">&#10007; No</button>
+    </div>
+  </div>
+</div>
+<div class="g-item" id="gi-9">
+  <div class="g-header" onclick="toggleG(9)">
+    <span class="g-term">Indulgenza <span class="g-cat">dottrina cattolica</span></span>
+    <span class="g-chevron">&#9660;</span>
+  </div>
+  <div class="g-body">
+    <div class="def-label">Definizione</div>
+    <div class="def-text">Remissione della pena temporale dovuta per i peccati già perdonati, concessa dalla Chiesa attingendo al «tesoro dei meriti» accumulato da Cristo, dalla Vergine e dai santi. In origine si otteneva attraverso atti di devozione genuina; tra il XV e il XVI secolo la concessione fu progressivamente legata al versamento di un'offerta in denaro, producendo un mercato di «lettere di indulgenza». Questa degenerazione fu la scintilla diretta delle 95 Tesi. Trento abolì la vendita delle indulgenze ma ne confermò la dottrina.</div>
+    <div class="eval-row"><span class="eval-label">La conosco?</span>
+      <button class="eval-btn btn-yes" onclick="setEval(9,'yes')">&#10003; S&igrave;</button>
+      <button class="eval-btn btn-part" onclick="setEval(9,'part')">&#126; In parte</button>
+      <button class="eval-btn btn-no" onclick="setEval(9,'no')">&#10007; No</button>
+    </div>
+  </div>
+</div>
+<div class="g-item" id="gi-10">
+  <div class="g-header" onclick="toggleG(10)">
+    <span class="g-term">Transustanziazione <span class="g-cat">dottrina cattolica</span></span>
+    <span class="g-chevron">&#9660;</span>
+  </div>
+  <div class="g-body">
+    <div class="def-label">Definizione</div>
+    <div class="def-text">Dottrina cattolica sull'eucaristia: nella celebrazione della messa il pane e il vino si trasformano realmente nel corpo e nel sangue di Cristo, pur mantenendo le apparenze esteriori (gli «accidenti»). Dogmatizzata dal Concilio di Trento in risposta alle posizioni protestanti. Lutero le opponeva la consustanziazione (il corpo di Cristo è presente «in, con e sotto» il pane, non al suo posto); Zwingli e Calvino la interpretavano come pura commemorazione simbolica dell'Ultima Cena.</div>
+    <div class="eval-row"><span class="eval-label">La conosco?</span>
+      <button class="eval-btn btn-yes" onclick="setEval(10,'yes')">&#10003; S&igrave;</button>
+      <button class="eval-btn btn-part" onclick="setEval(10,'part')">&#126; In parte</button>
+      <button class="eval-btn btn-no" onclick="setEval(10,'no')">&#10007; No</button>
+    </div>
+  </div>
+</div>
+<div class="g-item" id="gi-11">
+  <div class="g-header" onclick="toggleG(11)">
+    <span class="g-term">Consustanziazione <span class="g-cat">dottrina luterana</span></span>
+    <span class="g-chevron">&#9660;</span>
+  </div>
+  <div class="g-body">
+    <div class="def-label">Definizione</div>
+    <div class="def-text">Dottrina luterana sull'eucaristia: il corpo di Cristo è presente «in, con e sotto» il pane e il vino, che non si trasformano ma rimangono tali. Diversamente dalla transustanziazione cattolica (il pane cessa di essere pane) e dalla posizione calvinista (pura commemorazione simbolica), la consustanziazione afferma una presenza reale ma non esclusiva di Cristo nel sacramento. Fu il punto di rottura insuperabile al Colloquio di Marburgo (1529) tra Lutero e Zwingli.</div>
+    <div class="eval-row"><span class="eval-label">La conosco?</span>
+      <button class="eval-btn btn-yes" onclick="setEval(11,'yes')">&#10003; S&igrave;</button>
+      <button class="eval-btn btn-part" onclick="setEval(11,'part')">&#126; In parte</button>
+      <button class="eval-btn btn-no" onclick="setEval(11,'no')">&#10007; No</button>
+    </div>
+  </div>
+</div>
+<div class="g-item" id="gi-12">
+  <div class="g-header" onclick="toggleG(12)">
+    <span class="g-term">Cuius regio, eius religio <span class="g-cat">diritto imperiale</span></span>
+    <span class="g-chevron">&#9660;</span>
+  </div>
+  <div class="g-body">
+    <div class="def-label">Definizione</div>
+    <div class="def-text">Principio giuridico sancito dalla Pace di Augusta del 1555: «di chi è il regno, di lui è la religione». Ogni principe del Sacro Romano Impero aveva il diritto di scegliere la propria confessione — cattolica o luterana — e i sudditi erano tenuti a seguirla o a emigrare (ius emigrandi). Riconosceva formalmente la divisione religiosa della Germania e segnò la fine del sogno di un impero unito sotto un'unica fede. Il principio fu poi superato dalla Pace di Vestfalia (1648), che ampliò la tolleranza anche al calvinismo.</div>
+    <div class="eval-row"><span class="eval-label">La conosco?</span>
+      <button class="eval-btn btn-yes" onclick="setEval(12,'yes')">&#10003; S&igrave;</button>
+      <button class="eval-btn btn-part" onclick="setEval(12,'part')">&#126; In parte</button>
+      <button class="eval-btn btn-no" onclick="setEval(12,'no')">&#10007; No</button>
+    </div>
+  </div>
+</div>
+<div class="g-item" id="gi-13">
+  <div class="g-header" onclick="toggleG(13)">
+    <span class="g-term">Index librorum prohibitorum <span class="g-cat">repressione culturale</span></span>
+    <span class="g-chevron">&#9660;</span>
+  </div>
+  <div class="g-body">
+    <div class="def-label">Definizione</div>
+    <div class="def-text">L'Indice dei libri proibiti, istituito da Paolo IV nel 1559: un elenco ufficiale di testi la cui lettura o possesso era vietata ai cattolici, pena il rischio di un processo per eresia. Colpì scritti protestanti, Bibbie in volgare, ma anche Boccaccio, Machiavelli ed Erasmo. Nel 1571 fu istituita una Congregazione apposita per aggiornarne i divieti. Rimase in vigore, con successive revisioni, fino al 1966. Insieme all'Inquisizione, fu uno degli strumenti della repressione culturale post-tridentina.</div>
+    <div class="eval-row"><span class="eval-label">La conosco?</span>
+      <button class="eval-btn btn-yes" onclick="setEval(13,'yes')">&#10003; S&igrave;</button>
+      <button class="eval-btn btn-part" onclick="setEval(13,'part')">&#126; In parte</button>
+      <button class="eval-btn btn-no" onclick="setEval(13,'no')">&#10007; No</button>
+    </div>
+  </div>
+</div>
+<div class="g-item" id="gi-14">
+  <div class="g-header" onclick="toggleG(14)">
+    <span class="g-term">Sacerdozio universale dei credenti <span class="g-cat">dottrina luterana</span></span>
+    <span class="g-chevron">&#9660;</span>
+  </div>
+  <div class="g-body">
+    <div class="def-label">Definizione</div>
+    <div class="def-text">Principio luterano per cui ogni fedele battezzato è sacerdote davanti a Dio, senza bisogno di mediatori umani. Negava la distinzione ontologica tra laici ed ecclesiastici su cui si fondava il sistema sacramentale cattolico: se ogni credente può accedere direttamente a Dio attraverso la fede e la Scrittura, il ruolo del clero come mediatore necessario perde il suo fondamento. Implicava l'abolizione degli ordini monastici, la soppressione del celibato per i pastori e la negazione del carattere sacro dell'ordine sacerdotale.</div>
+    <div class="eval-row"><span class="eval-label">La conosco?</span>
+      <button class="eval-btn btn-yes" onclick="setEval(14,'yes')">&#10003; S&igrave;</button>
+      <button class="eval-btn btn-part" onclick="setEval(14,'part')">&#126; In parte</button>
+      <button class="eval-btn btn-no" onclick="setEval(14,'no')">&#10007; No</button>
+    </div>
+  </div>
+</div>
+<div class="g-item" id="gi-15">
+  <div class="g-header" onclick="toggleG(15)">
+    <span class="g-term">Beneficio ecclesiastico <span class="g-cat">diritto canonico</span></span>
+    <span class="g-chevron">&#9660;</span>
+  </div>
+  <div class="g-body">
+    <div class="def-label">Definizione</div>
+    <div class="def-text">Reddito o insieme di beni e diritti assegnati a un ecclesiastico in cambio dello svolgimento di un ufficio religioso (una parrocchia, un vescovato, un canonicato). Il sistema dei benefici era fonte di gravi abusi: la simonia (compravendita dei benefici), il cumulo (una stessa persona deteneva più benefici senza esercitarne le funzioni), l'absenteismo (il titolare risiedeva lontano dalla sede). Il Concilio di Trento tentò di riformare il sistema vietando il cumulo e imponendo la residenza.</div>
+    <div class="eval-row"><span class="eval-label">La conosco?</span>
+      <button class="eval-btn btn-yes" onclick="setEval(15,'yes')">&#10003; S&igrave;</button>
+      <button class="eval-btn btn-part" onclick="setEval(15,'part')">&#126; In parte</button>
+      <button class="eval-btn btn-no" onclick="setEval(15,'no')">&#10007; No</button>
+    </div>
+  </div>
+</div>
+</div>
+<div class="reset-wrap">
+  <button class="reset-btn" onclick="resetAll()">↺ Azzera autovalutazione</button>
+</div>
+
+<script>
+var evals={};
+var counts={yes:0,part:0,no:0};
+var total=12;
+function toggleG(i){document.getElementById('gi-'+i).classList.toggle('open');}
+function setEval(i,val){
+  var item=document.getElementById('gi-'+i);
+  var prev=evals[i];
+  if(prev){counts[prev]--;item.classList.remove('eval-'+prev);item.querySelectorAll('.eval-btn').forEach(function(b){b.classList.remove('active');});}
+  evals[i]=val;counts[val]++;
+  item.classList.add('eval-'+val);
+  item.querySelector('.btn-'+val).classList.add('active');
+  updateDash();
+}
+function updateDash(){
+  document.getElementById('cnt-yes').textContent=counts.yes;
+  document.getElementById('cnt-part').textContent=counts.part;
+  document.getElementById('cnt-no').textContent=counts.no;
+  document.getElementById('cnt-open').textContent=total-counts.yes-counts.part-counts.no;
+}
+function resetAll(){
+  evals={};counts={yes:0,part:0,no:0};
+  for(var i=0;i<total;i++){
+    var item=document.getElementById('gi-'+i);
+    if(item){item.classList.remove('eval-yes','eval-part','eval-no','open');item.querySelectorAll('.eval-btn').forEach(function(b){b.classList.remove('active');});}
+  }
+  updateDash();
+}
+</script>
+</body>
+</html>
