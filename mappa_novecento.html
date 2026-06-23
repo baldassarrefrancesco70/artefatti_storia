@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Mappa del Novecento — Convitto Vico</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue',Arial,sans-serif;background:#faf9f6;color:#1a1a18}
+#hd{padding:.6rem 1.25rem .4rem;border-bottom:1px solid #d4d0c8;display:flex;align-items:baseline;gap:.75rem;flex-wrap:wrap}
+#hd h1{font-size:.9rem;font-weight:700}
+#hd p{font-size:.72rem;color:#888780}
+#cb{display:flex;flex-wrap:wrap;align-items:center;gap:5px 10px;padding:.4rem 1.25rem;border-bottom:1px solid #d4d0c8;background:#f0ede6}
+.cl{font-weight:700;text-transform:uppercase;letter-spacing:.05em;font-size:.67rem;color:#888780}
+.fb,.ab{display:inline-flex;align-items:center;gap:5px;border:1px solid #d4d0c8;background:#faf9f6;padding:2px 8px;border-radius:4px;cursor:pointer;font-size:.77rem;font-family:inherit;transition:all .15s}
+.fb:hover{border-color:var(--fc)} .ab:hover{border-color:var(--ac)}
+.fb.on{background:rgba(0,0,0,.05);border-color:var(--fc);font-weight:600}
+.ab.on{background:rgba(0,0,0,.05);border-color:var(--ac);font-weight:600}
+.fd{width:8px;height:8px;border-radius:50%;background:var(--fc);flex-shrink:0}
+.ad{width:8px;height:8px;border-radius:2px;background:var(--ac);flex-shrink:0}
+.sep{width:1px;height:16px;background:#d4d0c8}
+.hint{font-size:.7rem;color:#888780;font-style:italic}
+#mw{overflow-x:auto}
+svg#map{display:block;max-width:900px;margin:0 auto}
+.nodo{cursor:pointer}
+.nodo:hover .nrect{filter:brightness(.93)}
+#ip{position:fixed;bottom:1rem;right:1rem;background:white;border:1px solid #d4d0c8;border-radius:8px;padding:.7rem 1rem .8rem;font-size:.8rem;max-width:240px;max-height:280px;overflow-y:auto;box-shadow:0 2px 12px rgba(0,0,0,.12);z-index:100;line-height:1.6}
+#ipc{position:absolute;top:5px;right:8px;background:none;border:none;cursor:pointer;font-size:1rem;color:#888;padding:0}
+#ipn{font-weight:700;margin-right:1.2rem;margin-bottom:.4rem;font-size:.85rem;line-height:1.3}
+#ipd{color:#3d3d3a;font-size:.77rem;line-height:1.6}
+</style>
+</head>
+<body>
+<div id="hd">
+  <h1>Mappa del Novecento partendo dal presente</h1>
+  <p>Convitto Nazionale Vico · Chieti</p>
+</div>
+<div id="cb">
+  <span class="cl">fili</span>
+  <button id="fbtn-dem" class="fb" onclick="toggleFilo('dem')" style="--fc:#378ADD"><span class="fd"></span>democrazia</button>
+<button id="fbtn-vio" class="fb" onclick="toggleFilo('vio')" style="--fc:#E24B4A"><span class="fd"></span>stato-violenza</button>
+<button id="fbtn-ord" class="fb" onclick="toggleFilo('ord')" style="--fc:#7F77DD"><span class="fd"></span>ordine internazionale</button>
+<button id="fbtn-mer" class="fb" onclick="toggleFilo('mer')" style="--fc:#EF9F27"><span class="fd"></span>stato-mercato</button>
+<button id="fbtn-ita" class="fb" onclick="toggleFilo('ita')" style="--fc:#1D9E75"><span class="fd"></span>vicenda italiana</button>
+  <span class="sep"></span>
+  <span class="cl">ambienti</span>
+  <button id="abtn-gf" class="ab" onclick="toggleAmb('gf')" style="--ac:#E24B4A"><span class="ad"></span>guerra fredda</button>
+<button id="abtn-dc" class="ab" onclick="toggleAmb('dc')" style="--ac:#639922"><span class="ad"></span>decolonizzazione</button>
+  <span class="sep"></span>
+  <span class="hint">clicca un nodo per i dettagli</span>
+</div>
+
+<div id="ip" style="display:none">
+  <button id="ipc" onclick="closeI()">×</button>
+  <div id="ipn"></div>
+  <div id="ipd"></div>
+</div>
+
+<div id="mw">
+<svg id="map" viewBox="0 0 900 850" width="900" xmlns="http://www.w3.org/2000/svg">
+  <rect width="900" height="850" fill="#faf9f6"/>
+  <rect x="0" y="0" width="68" height="850" fill="#ece9e2" opacity="0.6"/>
+  <!-- separatore questioni/mappa -->
+  <line x1="0" y1="95" x2="900" y2="95" stroke="#d4d0c8" stroke-width="0.8"/>
+  <line x1="67" y1="95" x2="67" y2="820" stroke="#d4d0c8" stroke-width="1"/>
+
+<text x="141" y="28" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="12" font-weight="700" fill="#185fa5">Democrazie</text>
+<text x="141" y="45" text-anchor="middle" font-family="Georgia,serif" font-size="8.5" fill="#185fa5" font-style="italic" opacity="0.88">
+<tspan x="141" dy="0">Le democrazie possono morire</tspan>
+<tspan x="141" dy="12">dall'interno, per via legale</tspan>
+<tspan x="141" dy="12">e per voto?</tspan>
+</text>
+<text x="303" y="28" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="12" font-weight="700" fill="#534AB7">Ordine internazionale</text>
+<text x="303" y="45" text-anchor="middle" font-family="Georgia,serif" font-size="8.5" fill="#534AB7" font-style="italic" opacity="0.88">
+<tspan x="303" dy="0">Chi comanda nel mondo,</tspan>
+<tspan x="303" dy="12">e con quale diritto?</tspan>
+</text>
+<text x="465" y="28" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="12" font-weight="700" fill="#993c1d">Israele-Palestina</text>
+<text x="465" y="45" text-anchor="middle" font-family="Georgia,serif" font-size="8.5" fill="#993c1d" font-style="italic" opacity="0.88">
+<tspan x="465" dy="0">Perché una terra contesa</tspan>
+<tspan x="465" dy="12">non trova pace e perché</tspan>
+<tspan x="465" dy="12">divide il mondo?</tspan>
+</text>
+<text x="627" y="28" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="12" font-weight="700" fill="#854f0b">Stato e mercato</text>
+<text x="627" y="45" text-anchor="middle" font-family="Georgia,serif" font-size="8.5" fill="#854f0b" font-style="italic" opacity="0.88">
+<tspan x="627" dy="0">Chi governa l'economia —</tspan>
+<tspan x="627" dy="12">Stato o mercato — e chi</tspan>
+<tspan x="627" dy="12">paga quando salta?</tspan>
+</text>
+<text x="789" y="28" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="12" font-weight="700" fill="#0f6e56">Europa</text>
+<text x="789" y="45" text-anchor="middle" font-family="Georgia,serif" font-size="8.5" fill="#0f6e56" font-style="italic" opacity="0.88">
+<tspan x="789" dy="0">L'Europa unita è ancora</tspan>
+<tspan x="789" dy="12">possibile — e serve ancora?</tspan>
+</text>
+<line x1="58" y1="144" x2="67" y2="144" stroke="#c4c0b8"/>
+<text x="55" y="144" text-anchor="end" dominant-baseline="central" font-family="Helvetica Neue,Arial,sans-serif" font-size="9.5" fill="#888780">oggi</text>
+<line x1="58" y1="218" x2="67" y2="218" stroke="#c4c0b8"/>
+<text x="55" y="218" text-anchor="end" dominant-baseline="central" font-family="Helvetica Neue,Arial,sans-serif" font-size="9.5" fill="#888780">2008</text>
+<line x1="58" y1="250" x2="67" y2="250" stroke="#c4c0b8"/>
+<text x="55" y="250" text-anchor="end" dominant-baseline="central" font-family="Helvetica Neue,Arial,sans-serif" font-size="9.5" fill="#888780">2001</text>
+<line x1="58" y1="305" x2="67" y2="305" stroke="#c4c0b8"/>
+<text x="55" y="305" text-anchor="end" dominant-baseline="central" font-family="Helvetica Neue,Arial,sans-serif" font-size="9.5" fill="#888780">1989</text>
+<line x1="58" y1="378" x2="67" y2="378" stroke="#c4c0b8"/>
+<text x="55" y="378" text-anchor="end" dominant-baseline="central" font-family="Helvetica Neue,Arial,sans-serif" font-size="9.5" fill="#888780">1973</text>
+<line x1="58" y1="452" x2="67" y2="452" stroke="#c4c0b8"/>
+<text x="55" y="452" text-anchor="end" dominant-baseline="central" font-family="Helvetica Neue,Arial,sans-serif" font-size="9.5" fill="#888780">1957</text>
+<line x1="58" y1="507" x2="67" y2="507" stroke="#c4c0b8"/>
+<text x="55" y="507" text-anchor="end" dominant-baseline="central" font-family="Helvetica Neue,Arial,sans-serif" font-size="9.5" fill="#888780">1945</text>
+<line x1="58" y1="580" x2="67" y2="580" stroke="#c4c0b8"/>
+<text x="55" y="580" text-anchor="end" dominant-baseline="central" font-family="Helvetica Neue,Arial,sans-serif" font-size="9.5" fill="#888780">1929</text>
+<line x1="58" y1="631" x2="67" y2="631" stroke="#c4c0b8"/>
+<text x="55" y="631" text-anchor="end" dominant-baseline="central" font-family="Helvetica Neue,Arial,sans-serif" font-size="9.5" fill="#888780">1918</text>
+<line x1="58" y1="713" x2="67" y2="713" stroke="#c4c0b8"/>
+<text x="55" y="713" text-anchor="end" dominant-baseline="central" font-family="Helvetica Neue,Arial,sans-serif" font-size="9.5" fill="#888780">1900</text>
+<line x1="58" y1="805" x2="67" y2="805" stroke="#c4c0b8"/>
+<text x="55" y="805" text-anchor="end" dominant-baseline="central" font-family="Helvetica Neue,Arial,sans-serif" font-size="9.5" fill="#888780">1880</text>
+<line x1="141" y1="97" x2="141" y2="815" stroke="#d4d0c8" stroke-width="0.5" stroke-dasharray="4 4"/>
+<line x1="303" y1="97" x2="303" y2="815" stroke="#d4d0c8" stroke-width="0.5" stroke-dasharray="4 4"/>
+<line x1="465" y1="97" x2="465" y2="815" stroke="#d4d0c8" stroke-width="0.5" stroke-dasharray="4 4"/>
+<line x1="627" y1="97" x2="627" y2="815" stroke="#d4d0c8" stroke-width="0.5" stroke-dasharray="4 4"/>
+<line x1="789" y1="97" x2="789" y2="815" stroke="#d4d0c8" stroke-width="0.5" stroke-dasharray="4 4"/>
+<rect x="68" y="631" width="821" height="18" fill="#2c2c2a" opacity="0.09"/>
+<text x="73" y="640" dominant-baseline="central" font-family="Helvetica Neue,Arial,sans-serif" font-size="9" fill="#2c2c2a" opacity="0.65" font-weight="700" font-style="italic">Prima guerra mondiale</text>
+<rect x="68" y="507" width="821" height="27" fill="#2c2c2a" opacity="0.09"/>
+<text x="73" y="520" dominant-baseline="central" font-family="Helvetica Neue,Arial,sans-serif" font-size="9" fill="#2c2c2a" opacity="0.65" font-weight="700" font-style="italic">Seconda guerra mondiale · Shoah</text>
+<g id="amb-gf" style="display:none">
+<ellipse cx="303" cy="401" rx="258" ry="114" fill="#E24B4A" opacity="0.08" stroke="#E24B4A" stroke-width="0.8" stroke-dasharray="6 4"/>
+<text x="53" y="301" font-family="Helvetica Neue,Arial,sans-serif" font-size="9.5" font-weight="700" fill="#E24B4A" opacity="0.8">Guerra fredda 1947-89</text>
+</g>
+<g id="amb-dc" style="display:none">
+<ellipse cx="465" cy="438" rx="248" ry="87" fill="#639922" opacity="0.08" stroke="#639922" stroke-width="0.8" stroke-dasharray="6 4"/>
+<text x="225" y="365" font-family="Helvetica Neue,Arial,sans-serif" font-size="9.5" font-weight="700" fill="#639922" opacity="0.8">Decolonizzazione 1945-75</text>
+</g>
+  <!-- fili -->
+<polyline id="filo-dem" points="153,612 129,562 141,392 789,369 627,337 789,195 789,144 141,144" fill="none" stroke="#378ADD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.55" style="display:none"/>
+<polyline id="filo-vio" points="153,612 129,562 465,452 465,149" fill="none" stroke="#E24B4A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.55" style="display:none"/>
+<polyline id="filo-ord" points="465,667 303,519 281,476 465,452 477,379 453,331 303,273 303,144" fill="none" stroke="#7F77DD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.55" style="display:none"/>
+<polyline id="filo-mer" points="627,566 610,446 644,407 644,378 789,369 627,337 627,218 789,195 627,144" fill="none" stroke="#EF9F27" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.55" style="display:none"/>
+<polyline id="filo-ita" points="153,612 610,446 644,407 141,392 789,195 141,144" fill="none" stroke="#1D9E75" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.55" style="display:none"/>
+  <!-- nodi -->
+<g class="nodo" data-id="pop" data-fili="dem,ita" onclick="showInfo('pop')">
+<rect x="73" y="131" width="136" height="26" rx="5" fill="#e8f1fb" stroke="#185fa5" stroke-width="2" class="nrect" data-fili="dem,ita" data-bs="#185fa5"/>
+<text x="141" y="145" text-anchor="middle" dominant-baseline="central" font-family="Helvetica Neue,Arial,sans-serif" font-size="9.5" fill="#1a1a18" class="ntxt" data-fili="dem,ita">Populismi oggi</text>
+</g>
+<g class="nodo" data-id="weim" data-fili="dem,vio" onclick="showInfo('weim')">
+<rect x="61" y="544" width="136" height="36" rx="5" fill="#e8f1fb" stroke="#185fa5" stroke-width="1.5" class="nrect" data-fili="dem,vio" data-bs="#185fa5"/>
+<text x="129" y="557" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="9.5" fill="#1a1a18" class="ntxt" data-fili="dem,vio">
+<tspan x="129" dy="0">Germania da Weimar</tspan><tspan x="129" dy="13">al nazismo</tspan>
+</text>
+</g>
+<g class="nodo" data-id="fasc" data-fili="dem,vio,ita" onclick="showInfo('fasc')">
+<rect x="85" y="599" width="136" height="26" rx="5" fill="#e8f1fb" stroke="#185fa5" stroke-width="1.5" class="nrect" data-fili="dem,vio,ita" data-bs="#185fa5"/>
+<text x="153" y="613" text-anchor="middle" dominant-baseline="central" font-family="Helvetica Neue,Arial,sans-serif" font-size="9.5" fill="#1a1a18" class="ntxt" data-fili="dem,vio,ita">Fascismo italiano</text>
+</g>
+<g class="nodo" data-id="rep" data-fili="dem,ita" onclick="showInfo('rep')">
+<rect x="73" y="379" width="136" height="26" rx="5" fill="#e8f1fb" stroke="#185fa5" stroke-width="1" class="nrect" data-fili="dem,ita" data-bs="#185fa5"/>
+<text x="141" y="393" text-anchor="middle" dominant-baseline="central" font-family="Helvetica Neue,Arial,sans-serif" font-size="9.5" fill="#1a1a18" class="ntxt" data-fili="dem,ita">Repubblica dei partiti</text>
+</g>
+<g class="nodo" data-id="rel" data-fili="ord" onclick="showInfo('rel')">
+<rect x="235" y="131" width="136" height="26" rx="5" fill="#eeedfe" stroke="#534AB7" stroke-width="2" class="nrect" data-fili="ord" data-bs="#534AB7"/>
+<text x="303" y="145" text-anchor="middle" dominant-baseline="central" font-family="Helvetica Neue,Arial,sans-serif" font-size="9.5" fill="#1a1a18" class="ntxt" data-fili="ord">Relazioni int. oggi</text>
+</g>
+<g class="nodo" data-id="onu" data-fili="ord,mer" onclick="showInfo('onu')">
+<rect x="235" y="501" width="136" height="36" rx="5" fill="#eeedfe" stroke="#534AB7" stroke-width="1.5" class="nrect" data-fili="ord,mer" data-bs="#534AB7"/>
+<text x="303" y="514" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="9.5" fill="#1a1a18" class="ntxt" data-fili="ord,mer">
+<tspan x="303" dy="0">L'ONU e il nuovo</tspan><tspan x="303" dy="13">ordine mondiale</tspan>
+</text>
+</g>
+<g class="nodo" data-id="cina" data-fili="ord" onclick="showInfo('cina')">
+<rect x="213" y="463" width="136" height="26" rx="5" fill="#eeedfe" stroke="#534AB7" stroke-width="1" class="nrect" data-fili="ord" data-bs="#534AB7"/>
+<text x="281" y="477" text-anchor="middle" dominant-baseline="central" font-family="Helvetica Neue,Arial,sans-serif" font-size="9.5" fill="#1a1a18" class="ntxt" data-fili="ord">Cina 1949-oggi</text>
+</g>
+<g class="nodo" data-id="m91" data-fili="ord" onclick="showInfo('m91')">
+<rect x="235" y="260" width="136" height="26" rx="5" fill="#eeedfe" stroke="#534AB7" stroke-width="1.5" class="nrect" data-fili="ord" data-bs="#534AB7"/>
+<text x="303" y="274" text-anchor="middle" dominant-baseline="central" font-family="Helvetica Neue,Arial,sans-serif" font-size="9.5" fill="#1a1a18" class="ntxt" data-fili="ord">Mondo 1991-2001</text>
+</g>
+<g class="nodo" data-id="s7ott" data-fili="ord,vio" onclick="showInfo('s7ott')">
+<rect x="397" y="136" width="136" height="26" rx="5" fill="#faece7" stroke="#993c1d" stroke-width="2" class="nrect" data-fili="ord,vio" data-bs="#993c1d"/>
+<text x="465" y="150" text-anchor="middle" dominant-baseline="central" font-family="Helvetica Neue,Arial,sans-serif" font-size="9.5" fill="#1a1a18" class="ntxt" data-fili="ord,vio">7 ottobre 2023</text>
+</g>
+<g class="nodo" data-id="sion" data-fili="ord" onclick="showInfo('sion')">
+<rect x="397" y="649" width="136" height="36" rx="5" fill="#faece7" stroke="#993c1d" stroke-width="1.5" class="nrect" data-fili="ord" data-bs="#993c1d"/>
+<text x="465" y="662" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="9.5" fill="#1a1a18" class="ntxt" data-fili="ord">
+<tspan x="465" dy="0">Dal sionismo alla</tspan><tspan x="465" dy="13">nascita di Israele</tspan>
+</text>
+</g>
+<g class="nodo" data-id="p47" data-fili="ord,vio" onclick="showInfo('p47')">
+<rect x="397" y="434" width="136" height="36" rx="5" fill="#faece7" stroke="#993c1d" stroke-width="1.5" class="nrect" data-fili="ord,vio" data-bs="#993c1d"/>
+<text x="465" y="447" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="9.5" fill="#1a1a18" class="ntxt" data-fili="ord,vio">
+<tspan x="465" dy="0">G. arabo-israeliane</tspan><tspan x="465" dy="13">1948-67</tspan>
+</text>
+</g>
+<g class="nodo" data-id="oslo" data-fili="ord" onclick="showInfo('oslo')">
+<rect x="385" y="313" width="136" height="36" rx="5" fill="#faece7" stroke="#993c1d" stroke-width="1" class="nrect" data-fili="ord" data-bs="#993c1d"/>
+<text x="453" y="326" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="9.5" fill="#1a1a18" class="ntxt" data-fili="ord">
+<tspan x="453" dy="0">Questione palestinese</tspan><tspan x="453" dy="13">1964-1995</tspan>
+</text>
+</g>
+<g class="nodo" data-id="mear" data-fili="ord,mer" onclick="showInfo('mear')">
+<rect x="409" y="361" width="136" height="36" rx="5" fill="#faece7" stroke="#993c1d" stroke-width="1" class="nrect" data-fili="ord,mer" data-bs="#993c1d"/>
+<text x="477" y="374" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="9.5" fill="#1a1a18" class="ntxt" data-fili="ord,mer">
+<tspan x="477" dy="0">Medioriente nel</tspan><tspan x="477" dy="13">sec. dopoguerra</tspan>
+</text>
+</g>
+<g class="nodo" data-id="costo" data-fili="mer" onclick="showInfo('costo')">
+<rect x="559" y="126" width="136" height="36" rx="5" fill="#faeeda" stroke="#854f0b" stroke-width="2" class="nrect" data-fili="mer" data-bs="#854f0b"/>
+<text x="627" y="139" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="9.5" fill="#1a1a18" class="ntxt" data-fili="mer">
+<tspan x="627" dy="0">Disuguaglianze</tspan><tspan x="627" dy="13">contemporanee</tspan>
+</text>
+</g>
+<g class="nodo" data-id="p29" data-fili="mer" onclick="showInfo('p29')">
+<rect x="559" y="553" width="136" height="26" rx="5" fill="#faeeda" stroke="#854f0b" stroke-width="1.5" class="nrect" data-fili="mer" data-bs="#854f0b"/>
+<text x="627" y="567" text-anchor="middle" dominant-baseline="central" font-family="Helvetica Neue,Arial,sans-serif" font-size="9.5" fill="#1a1a18" class="ntxt" data-fili="mer">1929 · New Deal</text>
+</g>
+<g class="nodo" data-id="trig" data-fili="mer,ita" onclick="showInfo('trig')">
+<rect x="542" y="433" width="136" height="26" rx="5" fill="#faeeda" stroke="#854f0b" stroke-width="1" class="nrect" data-fili="mer,ita" data-bs="#854f0b"/>
+<text x="610" y="447" text-anchor="middle" dominant-baseline="central" font-family="Helvetica Neue,Arial,sans-serif" font-size="9.5" fill="#1a1a18" class="ntxt" data-fili="mer,ita">Trenta gloriosi</text>
+</g>
+<g class="nodo" data-id="pet" data-fili="mer,ord" onclick="showInfo('pet')">
+<rect x="576" y="365" width="136" height="26" rx="5" fill="#faeeda" stroke="#854f0b" stroke-width="1" class="nrect" data-fili="mer,ord" data-bs="#854f0b"/>
+<text x="644" y="379" text-anchor="middle" dominant-baseline="central" font-family="Helvetica Neue,Arial,sans-serif" font-size="9.5" fill="#1a1a18" class="ntxt" data-fili="mer,ord">Shock petrolifero</text>
+</g>
+<g class="nodo" data-id="neo" data-fili="mer,dem" onclick="showInfo('neo')">
+<rect x="559" y="324" width="136" height="26" rx="5" fill="#faeeda" stroke="#854f0b" stroke-width="1.5" class="nrect" data-fili="mer,dem" data-bs="#854f0b"/>
+<text x="627" y="338" text-anchor="middle" dominant-baseline="central" font-family="Helvetica Neue,Arial,sans-serif" font-size="9.5" fill="#1a1a18" class="ntxt" data-fili="mer,dem">Neoliberismo</text>
+</g>
+<g class="nodo" data-id="c08" data-fili="mer" onclick="showInfo('c08')">
+<rect x="559" y="205" width="136" height="26" rx="5" fill="#faeeda" stroke="#854f0b" stroke-width="1" class="nrect" data-fili="mer" data-bs="#854f0b"/>
+<text x="627" y="219" text-anchor="middle" dominant-baseline="central" font-family="Helvetica Neue,Arial,sans-serif" font-size="9.5" fill="#1a1a18" class="ntxt" data-fili="mer">Crisi 2008</text>
+</g>
+<g class="nodo" data-id="boom" data-fili="ita,mer" onclick="showInfo('boom')">
+<rect x="576" y="389" width="136" height="36" rx="5" fill="#faeeda" stroke="#854f0b" stroke-width="1" class="nrect" data-fili="ita,mer" data-bs="#854f0b"/>
+<text x="644" y="402" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="9.5" fill="#1a1a18" class="ntxt" data-fili="ita,mer">
+<tspan x="644" dy="0">L'Italia: miracolo</tspan><tspan x="644" dy="13">economico all'euro</tspan>
+</text>
+</g>
+<g class="nodo" data-id="eleu" data-fili="dem,ord" onclick="showInfo('eleu')">
+<rect x="721" y="131" width="136" height="26" rx="5" fill="#e1f5ee" stroke="#0f6e56" stroke-width="2" class="nrect" data-fili="dem,ord" data-bs="#0f6e56"/>
+<text x="789" y="145" text-anchor="middle" dominant-baseline="central" font-family="Helvetica Neue,Arial,sans-serif" font-size="9.5" fill="#1a1a18" class="ntxt" data-fili="dem,ord">Elezioni EU 2024</text>
+</g>
+<g class="nodo" data-id="ceca" data-fili="dem,ord" onclick="showInfo('ceca')">
+<rect x="721" y="434" width="136" height="36" rx="5" fill="#e1f5ee" stroke="#0f6e56" stroke-width="1" class="nrect" data-fili="dem,ord" data-bs="#0f6e56"/>
+<text x="789" y="447" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="9.5" fill="#1a1a18" class="ntxt" data-fili="dem,ord">
+<tspan x="789" dy="0">Origini integrazione</tspan><tspan x="789" dy="13">europea</tspan>
+</text>
+</g>
+<g class="nodo" data-id="cee" data-fili="mer,dem" onclick="showInfo('cee')">
+<rect x="721" y="356" width="136" height="26" rx="5" fill="#e1f5ee" stroke="#0f6e56" stroke-width="1" class="nrect" data-fili="mer,dem" data-bs="#0f6e56"/>
+<text x="789" y="370" text-anchor="middle" dominant-baseline="central" font-family="Helvetica Neue,Arial,sans-serif" font-size="9.5" fill="#1a1a18" class="ntxt" data-fili="mer,dem">CEE → Maastricht</text>
+</g>
+<g class="nodo" data-id="bx" data-fili="dem,mer,ita" onclick="showInfo('bx')">
+<rect x="721" y="182" width="136" height="26" rx="5" fill="#e1f5ee" stroke="#0f6e56" stroke-width="1.5" class="nrect" data-fili="dem,mer,ita" data-bs="#0f6e56"/>
+<text x="789" y="196" text-anchor="middle" dominant-baseline="central" font-family="Helvetica Neue,Arial,sans-serif" font-size="9.5" fill="#1a1a18" class="ntxt" data-fili="dem,mer,ita">Crisi euro · Brexit</text>
+</g>
+</svg>
+</div>
+
+<script>
+const FL={"dem": {"label": "democrazia", "col": "#378ADD"}, "vio": {"label": "stato-violenza", "col": "#E24B4A"}, "ord": {"label": "ordine internazionale", "col": "#7F77DD"}, "mer": {"label": "stato-mercato", "col": "#EF9F27"}, "ita": {"label": "vicenda italiana", "col": "#1D9E75"}};
+const DS={"pop": "Movimenti politici che mettono in discussione le istituzioni liberali e la democrazia rappresentativa. I sovranismi europei e americani concentrano il potere nell'esecutivo e limitano i contrappesi. La domanda è se stiamo assistendo a un'erosione strutturale o a un normale ciclo politico.", "weim": "La Repubblica di Weimar nasce dalla sconfitta nella Prima guerra mondiale e muore per via legale nel 1933: Hitler viene nominato cancelliere e ottiene i pieni poteri dal Parlamento. Il caso più studiato di morte legale della democrazia, con un bivio reale — Weimar era condannata?", "fasc": "Il fascismo italiano prende il potere combinando pressione violenta e legittimità formale. La sequenza Matteotti–Aventino–3 gennaio 1925 è il momento in cui la dittatura si rivela aperta. Primo regime del Novecento di questo tipo, con una memoria pubblica ancora contesa.", "rep": "La Repubblica nata dalla Resistenza costruisce un sistema politico basato sui partiti di massa che regge per quarant'anni, poi crolla con Tangentopoli nel 1992. L'Uomo qualunque di Giannini (1944) ne anticipa le fragilità: la democrazia vista come ceto politico separato dai cittadini.", "rel": "L'ordine internazionale costruito nel 1945 è sotto pressione: disimpegno americano, sfida cinese, ritorno delle sfere d'influenza. La narrazione pubblica — 'stiamo tornando a un mondo di grandi potenze' — è il punto di partenza per la risalita storica.", "onu": "Nel 1945 gli Stati Uniti costruiscono un ordine internazionale a propria immagine: ONU, FMI, Banca Mondiale, il dollaro come valuta di riserva. Un comando diverso dall'impero ottocentesco — basato su istituzioni e regole — con la questione aperta di chi ne definisce le regole.", "cina": "La rivoluzione maoista del 1949 porta la Cina nel campo socialista, ma la rottura con l'URSS mostra che il bipolarismo non è monolitico. Con Deng l'economia si apre al mercato senza aprire la politica: un modello che sfida l'ordine liberale americano senza combatterlo militarmente.", "m91": "Con la dissoluzione dell'URSS gli USA restano l'unica superpotenza. Fukuyama annuncia la fine della storia: la democrazia liberale ha vinto definitivamente. La parentesi dura un decennio: il 2001 chiude il momento unipolare e apre una fase che non ha ancora trovato un nome.", "s7ott": "L'attacco di Hamas del 7 ottobre 2023 e la risposta militare israeliana a Gaza riaprono la questione palestinese con nuova violenza. In Europa le narrazioni si dividono nettamente: il conflitto divide l'opinione pubblica anche fuori dalla regione, riattivando la domanda sulle radici storiche.", "sion": "Il movimento sionista nasce nell'Europa dell'antisemitismo come risposta nazionale alla persecuzione. La dichiarazione Balfour del 1917 — 67 parole che promettono la stessa terra a due popoli — e i mandati britannici creano le premesse del conflitto. La partizione ONU del 1947 produce due narrazioni incompatibili.", "p47": "La nascita di Israele nel 1948 è la Nakba per i palestinesi: due nomi per lo stesso evento, due esperienze radicalmente diverse. Le guerre successive fissano le frontiere e costruiscono le narrazioni nazionali su entrambi i lati. Il caso di corroborazione più potente del corso.", "oslo": "L'OLP riconosce Israele e Israele riconosce l'OLP: gli accordi di Oslo del 1993 sembrano aprire la strada a due Stati. Il bivio mancato: dopo Oslo c'era ancora una soluzione possibile? La domanda aperta che il 7 ottobre 2023 rende urgente.", "mear": "Il Medio Oriente è il campo dove si scaricano le tensioni globali: petrolio, guerra fredda combattuta per procura, rivoluzione iraniana del 1979, guerre del Golfo. Non solo il conflitto israelo-palestinese: una regione strutturalmente instabile che connette ordine internazionale, mercato e violenza.", "costo": "Il costo della vita cresce, le case non si riescono a comprare, i lavori sono precari. Le disuguaglianze aumentano da quarant'anni in quasi tutti i paesi avanzati. Chi ha deciso che le cose funzionassero così, e quando? La domanda porta direttamente alla svolta degli anni Ottanta.", "p29": "Il crollo di Wall Street nel 1929 dimostra che il mercato non si regola da solo. Roosevelt risponde con il New Deal: lo Stato entra nell'economia come attore diretto — welfare, regolazione, spesa pubblica. È la prima risposta moderna alla crisi del capitalismo, e il modello che durerà fino agli anni Settanta.", "trig": "Tra il 1945 e il 1975 l'Europa occidentale conosce una crescita senza precedenti, accompagnata dalla costruzione del welfare state. Il compromesso tra Stato e mercato funziona: piena occupazione, aumento dei salari reali, riduzione delle disuguaglianze. La crisi petrolifera del 1973 lo mette in discussione.", "pet": "La guerra dello Yom Kippur del 1973 scatena l'embargo petrolifero dell'OPEC. Il prezzo del petrolio quadruplica in pochi mesi e la stagflazione — inflazione più disoccupazione — mette fine ai trenta gloriosi. È la crisi che apre la strada alla svolta neoliberale degli anni Ottanta.", "neo": "Reagan e Thatcher negli anni Ottanta rovesciano il paradigma del dopoguerra: meno Stato, più mercato. Privatizzazioni, deregolamentazione, riduzione delle tasse sui redditi alti, primato della finanza sull'economia reale. Una scelta politica presentata come necessità economica — il bivio da analizzare.", "c08": "Il crollo di Lehman Brothers nel 2008 è la contraddizione interna al neoliberismo: lo Stato salva il mercato che diceva di non aver bisogno dello Stato. Le politiche di austerità che seguono distribuiscono il costo sui ceti più vulnerabili. Connessione diretta con le disuguaglianze contemporanee.", "boom": "L'Italia degli anni Cinquanta-Sessanta cresce rapidamente e si trasforma da paese agricolo a potenza industriale. Il sistema dei partiti gestisce la crescita con spesa pubblica crescente, accumulando debito. L'adesione all'euro nel 1999 è il vincolo esterno che impone la disciplina che la politica interna non riusciva a produrre.", "eleu": "Le elezioni europee del 2024 registrano l'avanzata delle destre sovraniste in quasi tutta Europa. Il dibattito sulla difesa comune, accelerato dal disimpegno americano, riapre la domanda su cosa voglia essere l'Europa. La Brexit ha dimostrato che il processo di integrazione non è irreversibile.", "ceca": "La CECA nel 1951 e i Trattati di Roma nel 1957 nascono dal trauma delle due guerre mondiali. Tre paesi nemici decidono di rendere impossibile una nuova guerra legando le loro economie. Adenauer, De Gasperi, Schuman costruiscono il progetto europeo sui confini che li avevano separati.", "cee": "Il mercato comune si espande, l'allargamento a est segue la fine della guerra fredda, ma l'unione politica non tiene il passo dell'integrazione economica. Maastricht nel 1992 crea l'unione monetaria senza unione fiscale: una costruzione incompiuta che la crisi del 2010 metterà duramente alla prova.", "bx": "La crisi dell'euro tra il 2010 e il 2015 mostra le contraddizioni di un'unione monetaria senza solidarietà fiscale: la Grecia come caso estremo, l'austerità come politica imposta dall'esterno. Nel 2016 la Brexit dimostra che l'integrazione non è irreversibile. Un bivio che l'Europa non ha ancora superato."};
+const FN={"pop": "Populismi oggi", "weim": "Germania da Weimar al nazismo", "fasc": "Fascismo italiano", "rep": "Repubblica dei partiti", "rel": "Relazioni internazionali oggi", "onu": "L'ONU e il nuovo ordine mondiale", "cina": "Cina 1949-oggi", "m91": "Mondo 1991-2001", "s7ott": "7 ottobre 2023", "sion": "Dal sionismo alla nascita dello Stato di Israele", "p47": "Guerre arabo-israeliane 1948-67", "oslo": "Questione palestinese 1964-1995", "mear": "Medioriente nel secondo dopoguerra", "costo": "Disuguaglianze delle società contemporanee", "p29": "1929 e il New Deal", "trig": "I trenta gloriosi", "pet": "Shock petrolifero 1973", "neo": "Neoliberismo", "c08": "Crisi 2008", "boom": "L'Italia dal miracolo economico all'euro", "eleu": "Elezioni EU 2024", "ceca": "Le origini del processo di integrazione europeo", "cee": "CEE → Maastricht", "bx": "Crisi euro e Brexit"};
+const fa={},aa={};
+
+function toggleFilo(id){
+  fa[id]=!fa[id];
+  document.getElementById('filo-'+id).style.display=fa[id]?'':'none';
+  document.getElementById('fbtn-'+id).classList.toggle('on',!!fa[id]);
+  hilite();
+}
+function toggleAmb(id){
+  aa[id]=!aa[id];
+  document.getElementById('amb-'+id).style.display=aa[id]?'':'none';
+  document.getElementById('abtn-'+id).classList.toggle('on',!!aa[id]);
+}
+function hilite(){
+  const act=Object.keys(fa).filter(k=>fa[k]);
+  document.querySelectorAll('.nrect').forEach(r=>{
+    const nf=(r.dataset.fili||'').split(',');
+    const hit=act.filter(f=>nf.includes(f));
+    if(!act.length){r.style.opacity='1';r.setAttribute('stroke',r.dataset.bs);r.setAttribute('stroke-width', r.getAttribute('stroke-width')<1.5?'1':r.getAttribute('stroke-width'));}
+    else if(hit.length){r.style.opacity='1';r.setAttribute('stroke',FL[hit[0]].col);r.setAttribute('stroke-width','2.5');}
+    else{r.style.opacity='0.25';r.setAttribute('stroke',r.dataset.bs);}
+  });
+  document.querySelectorAll('.ntxt').forEach(t=>{
+    const nf=(t.dataset.fili||'').split(',');
+    t.style.opacity=(!act.length||act.filter(f=>nf.includes(f)).length)?'1':'0.15';
+  });
+}
+function showInfo(id){
+  document.getElementById('ipn').textContent=FN[id]||id;
+  document.getElementById('ipd').textContent=DS[id]||'';
+  document.getElementById('ip').style.display='block';
+}
+function closeI(){document.getElementById('ip').style.display='none';}
+</script>
+</body>
+</html>
