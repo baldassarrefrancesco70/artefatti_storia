@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pesa le interpretazioni</title>
+<style>
+  :root{
+    --paper:#efe9dc; --paper-2:#e6dfcd; --ink:#201d18; --ink-soft:#5b5346;
+    --line:#cdc2a8; --rule:#b7ab8d;
+    --a:#3d5566;      /* posizione A */
+    --b:#7c2e35;      /* posizione B */
+    --both:#a6812e;   /* regge entrambe */
+    --serif:Georgia,"Times New Roman",serif;
+    --sans:"Gill Sans","Gill Sans MT",Calibri,"Segoe UI",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--serif);
+    line-height:1.5;padding:22px;max-width:920px;margin-inline:auto}
+  .eyebrow{font-family:var(--sans);text-transform:uppercase;letter-spacing:.14em;font-size:.7rem;color:var(--ink-soft)}
+  h1{font-size:1.55rem;font-weight:600;margin:.15rem 0 .1rem}
+  .sub{color:var(--ink-soft);font-size:.98rem;margin:0 0 1rem}
+  .nodes{display:flex;gap:6px;border-bottom:2px solid var(--rule);margin-bottom:16px;flex-wrap:wrap}
+  .nodes button{appearance:none;border:0;background:transparent;font-family:var(--sans);font-size:.86rem;
+    padding:9px 13px;cursor:pointer;color:var(--ink-soft);border-bottom:2px solid transparent;margin-bottom:-2px}
+  .nodes button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--ink);font-weight:600}
+  .qline{font-size:1.05rem;margin:0 0 14px;font-weight:600}
+  .scale{display:block;width:100%;max-width:520px;margin:0 auto 6px;height:auto}
+  .pans{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+  @media(max-width:640px){.pans{grid-template-columns:1fr}}
+  .pan{border:1px solid var(--rule);border-radius:2px;min-height:74px;background:linear-gradient(180deg,#f3eee2,#ece5d3);padding:10px}
+  .pan h3{font-family:var(--sans);font-size:.74rem;letter-spacing:.05em;text-transform:uppercase;margin:0 0 8px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+  .pan.A h3{color:var(--a)} .pan.B h3{color:var(--b)}
+  .pool{margin-top:6px}
+  .poolhead{font-family:var(--sans);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin:6px 0 8px}
+  .card{border:1px solid var(--rule);background:var(--paper-2);border-radius:2px;padding:9px 11px;margin-bottom:8px;font-size:.93rem}
+  .card .txt{margin-bottom:8px}
+  .card .acts{display:flex;gap:7px}
+  .card .acts button{appearance:none;border:1px solid var(--rule);background:var(--paper);font-family:var(--sans);
+    font-size:.74rem;padding:5px 10px;border-radius:2px;cursor:pointer;color:var(--ink-soft)}
+  .card .acts button:hover{background:var(--ink);color:var(--paper)}
+  .card.placed{cursor:default}
+  .card.reveal-A{border-left:3px solid var(--a)} .card.reveal-B{border-left:3px solid var(--b)}
+  .card.reveal-both{border-left:3px solid var(--both);background:#efe6cf}
+  .verdict{font-family:var(--sans);font-size:.72rem;letter-spacing:.03em;margin-top:6px;color:var(--ink-soft)}
+  .back{appearance:none;border:0;background:transparent;color:var(--ink-soft);font-family:var(--sans);font-size:.72rem;cursor:pointer;padding:0;text-decoration:underline}
+  .controls{display:flex;gap:9px;margin-top:6px}
+  .controls button{appearance:none;border:1px solid var(--rule);background:var(--paper-2);font-family:var(--sans);
+    font-size:.84rem;padding:8px 15px;border-radius:2px;cursor:pointer;color:var(--ink)}
+  .controls button:hover{background:var(--ink);color:var(--paper)}
+  .outcome{margin-top:14px;background:var(--paper-2);border-left:3px solid var(--both);padding:12px 15px;border-radius:2px;font-size:.97rem;display:none}
+  .outcome.show{display:block}
+</style>
+</head>
+<body>
+  <div class="eyebrow">Capitolo 2 · Nodi storiografici</div>
+  <h1>Pesa le interpretazioni</h1>
+  <p class="sub">Scegli un nodo, poi assegna ogni prova alla lettura che, secondo te, sostiene. Alla fine premi «Rivela»: scoprirai che la bilancia, di proposito, non si chiude.</p>
+
+  <div class="nodes" id="nodes"></div>
+  <p class="qline" id="qline"></p>
+
+  <svg class="scale" id="scale" viewBox="0 0 520 150" aria-hidden="true"></svg>
+
+  <div class="pans">
+    <div class="pan A"><h3 id="labA"></h3><div id="panA"></div></div>
+    <div class="pan B"><h3 id="labB"></h3><div id="panB"></div></div>
+  </div>
+
+  <div class="pool">
+    <div class="poolhead">Prove e argomenti da collocare</div>
+    <div id="pool"></div>
+  </div>
+
+  <div class="controls">
+    <button id="reveal">Rivela l'esito</button>
+    <button id="reset">Ricomincia</button>
+  </div>
+  <div class="outcome" id="outcome"></div>
+
+<script>
+(function(){
+  const NODES=[
+    {key:'inghilterra', tab:"Perché l'Inghilterra",
+     q:"Perché la rivoluzione industriale cominciò proprio in Inghilterra: merito o fortuna?",
+     A:"Merito · superiorità strutturale (Landes)", B:"Fortuna · contingenza (Pomeranz)",
+     cards:[
+       {t:"Dopo il 1688 l'Inghilterra aveva istituzioni parlamentari e una salda tutela della proprietà.", side:'A'},
+       {t:"Una mentalità scientifica e pratica era diffusa nella società britannica.", side:'A'},
+       {t:"Fino alla metà del Settecento Cina ed Europa avevano tenore di vita simile.", side:'B'},
+       {t:"Presi uno a uno, quasi tutti i fattori si trovavano anche in Francia o in Olanda.", side:'B'},
+       {t:"L'Inghilterra aveva giacimenti di carbone proprio dove servivano.", side:'both'},
+       {t:"L'accesso a colonie e piantagioni fornì risorse e mercati enormi.", side:'both'}
+     ]},
+    {key:'vita', tab:"Condizioni di vita",
+     q:"Le condizioni di vita delle masse, con l'industrializzazione, migliorarono o peggiorarono?",
+     A:"Ottimisti · migliorarono", B:"Pessimisti · peggiorarono",
+     cards:[
+       {t:"Nel lungo periodo i salari reali medi salirono.", side:'A'},
+       {t:"L'industria, col tempo, sollevò il tenore di vita generale.", side:'A'},
+       {t:"Nei quartieri operai la speranza di vita era la metà di quella rurale.", side:'B'},
+       {t:"Ore di lavoro e mortalità urbana non migliorarono insieme ai salari.", side:'B'},
+       {t:"Il salario medio nasconde la distribuzione: pochi salgono, molti no.", side:'both'},
+       {t:"Che cosa conti come «vita migliore» è già un giudizio di valore.", side:'both'}
+     ]},
+    {key:'schiavitu', tab:"La schiavitù",
+     q:"Quanto la schiavitù atlantica pesò, economicamente, sull'industrializzazione britannica?",
+     A:"Fu decisiva (Williams, Beckert)", B:"Peso quantitativo minore (critica)",
+     cards:[
+       {t:"I profitti della tratta e delle piantagioni furono ingenti.", side:'A'},
+       {t:"La «nuova storia del capitalismo» rimette schiavitù e cotone al centro.", side:'A'},
+       {t:"I profitti schiavistici furono una quota piccola degli investimenti totali.", side:'B'},
+       {t:"L'abolizione ebbe anche moventi morali e politici, non solo economici.", side:'B'},
+       {t:"Il cotone delle piantagioni era la materia prima del settore trainante.", side:'both'},
+       {t:"Schiavitù e industria del cotone erano storicamente inseparabili.", side:'both'}
+     ]}
+  ];
+
+  let ni=0;                 // node index
+  let state={};             // cardIndex -> 'pool'|'A'|'B'
+  let revealed=false;
+
+  const nodesEl=document.getElementById('nodes');
+  const qline=document.getElementById('qline');
+  const labA=document.getElementById('labA'), labB=document.getElementById('labB');
+  const panA=document.getElementById('panA'), panB=document.getElementById('panB'), pool=document.getElementById('pool');
+  const outcome=document.getElementById('outcome');
+  const scale=document.getElementById('scale');
+
+  NODES.forEach((n,i)=>{
+    const b=document.createElement('button');
+    b.textContent=n.tab; b.setAttribute('aria-selected',i===ni);
+    b.addEventListener('click',()=>{ni=i;initNode();});
+    nodesEl.appendChild(b);
+  });
+
+  function initNode(){
+    [...nodesEl.children].forEach((b,i)=>b.setAttribute('aria-selected',i===ni));
+    const n=NODES[ni];
+    qline.textContent=n.q; labA.textContent=n.A; labB.textContent=n.B;
+    state={}; n.cards.forEach((c,i)=>state[i]='pool'); revealed=false;
+    outcome.classList.remove('show');
+    render();
+  }
+
+  function drawScale(){
+    let a=0,b=0;
+    Object.keys(state).forEach(i=>{ if(state[i]==='A')a++; else if(state[i]==='B')b++; });
+    // il piatto più carico scende: A a sinistra, B a destra
+    let ang=Math.max(-12,Math.min(12,(a-b)*4));
+    if(revealed) ang=0; // dopo la rivelazione si rimette in pari: il dibattito non si chiude
+    const cx=260, cy=52, arm=150, rad=ang*Math.PI/180;
+    const lX=cx-arm*Math.cos(rad), lY=cy+arm*Math.sin(rad);
+    const rX=cx+arm*Math.cos(rad), rY=cy-arm*Math.sin(rad);
+    scale.innerHTML=`
+      <line x1="${cx}" y1="${cy}" x2="${cx}" y2="120" stroke="#b7ab8d" stroke-width="3"/>
+      <polygon points="${cx-16},120 ${cx+16},120 ${cx},138" fill="#6b5545"/>
+      <line x1="${lX}" y1="${lY}" x2="${rX}" y2="${rY}" stroke="#201d18" stroke-width="4" stroke-linecap="round"/>
+      <line x1="${lX}" y1="${lY}" x2="${lX}" y2="${lY+22}" stroke="#3d5566" stroke-width="1.5"/>
+      <path d="M${lX-24} ${lY+22} A 24 12 0 0 0 ${lX+24} ${lY+22}" fill="none" stroke="#3d5566" stroke-width="2.5"/>
+      <text x="${lX}" y="${lY+40}" text-anchor="middle" font-family="'Gill Sans',sans-serif" font-size="12" fill="#3d5566">A · ${a}</text>
+      <line x1="${rX}" y1="${rY}" x2="${rX}" y2="${rY+22}" stroke="#7c2e35" stroke-width="1.5"/>
+      <path d="M${rX-24} ${rY+22} A 24 12 0 0 0 ${rX+24} ${rY+22}" fill="none" stroke="#7c2e35" stroke-width="2.5"/>
+      <text x="${rX}" y="${rY+40}" text-anchor="middle" font-family="'Gill Sans',sans-serif" font-size="12" fill="#7c2e35">B · ${b}</text>`;
+  }
+
+  function cardHTML(i,c,placed){
+    if(!revealed && !placed){
+      return `<div class="card"><div class="txt">${c.t}</div>
+        <div class="acts"><button data-i="${i}" data-to="A">◄ verso A</button><button data-i="${i}" data-to="B">verso B ►</button></div></div>`;
+    }
+    let cls='card placed', verdict='';
+    if(revealed){
+      if(c.side==='both'){ cls+=' reveal-both'; verdict='Regge entrambe le letture: non decide.'; }
+      else if(c.side===state[i]){ cls+=' reveal-'+c.side; verdict='Sostiene questa lettura.'; }
+      else{ cls+=' reveal-'+c.side; verdict='Sostiene piuttosto l\'altra lettura.'; }
+    }
+    return `<div class="${cls}"><div class="txt">${c.t}</div>
+      ${!revealed?`<button class="back" data-back="${i}">rimetti nel mazzo</button>`:''}
+      ${verdict?`<div class="verdict">${verdict}</div>`:''}</div>`;
+  }
+
+  function render(){
+    const n=NODES[ni];
+    let ph='',ah='',bh='';
+    n.cards.forEach((c,i)=>{
+      if(state[i]==='pool') ph+=cardHTML(i,c,false);
+      else if(state[i]==='A') ah+=cardHTML(i,c,true);
+      else bh+=cardHTML(i,c,true);
+    });
+    pool.innerHTML=ph||'<div class="verdict">Tutte le carte sono state collocate.</div>';
+    panA.innerHTML=ah; panB.innerHTML=bh;
+    drawScale();
+  }
+
+  document.addEventListener('click',e=>{
+    const to=e.target.closest('[data-to]');
+    if(to && !revealed){ state[+to.dataset.i]=to.dataset.to; render(); return; }
+    const bk=e.target.closest('[data-back]');
+    if(bk && !revealed){ state[+bk.dataset.back]='pool'; render(); return; }
+  });
+
+  document.getElementById('reveal').addEventListener('click',()=>{
+    const anyPlaced=Object.values(state).some(v=>v!=='pool');
+    if(!anyPlaced){ return; }
+    revealed=true; render();
+    const n=NODES[ni];
+    const both=n.cards.filter(c=>c.side==='both').length;
+    outcome.innerHTML=`La bilancia non si chiude, ed è il punto. Alcune prove sostengono nettamente l'una o l'altra lettura, ma <strong>${both} carte reggono entrambe</strong>: le stesse evidenze, lette da angolazioni diverse, alimentano posizioni opposte. È così che funziona un nodo storiografico: non un vincitore, ma un dibattito in cui le prove non bastano da sole a decidere. Il tuo compito non era trovare la risposta, ma vedere perché non ce n'è una sola.`;
+    outcome.classList.add('show');
+  });
+  document.getElementById('reset').addEventListener('click',initNode);
+
+  initNode();
+})();
+</script>
+</body>
+</html>
